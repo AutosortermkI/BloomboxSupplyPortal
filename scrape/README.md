@@ -56,22 +56,31 @@ playwright install chromium
 
 ## Usage
 
+**Run from inside `scrape/` (simplest):**
+
 ```bash
-# Dry-run — list adapters matching the filter without fetching
-python -m scrape.run --dry-run
+cd ~/BloomboxSupplyPortal/scrape
+source .venv/bin/activate
 
-# Run only the public-pricing suppliers (no login required)
-python -m scrape.run --public
-
-# Run only suppliers where credentials are stored in the vault
-python -m scrape.run --logged-in
-
-# Run specific supplier IDs
-python -m scrape.run --id 207 178 179
-
-# Verbose logging, serial (concurrency=1 to avoid tier conflicts when debugging)
-python -m scrape.run --public --concurrency 1 -v
+python run.py --dry-run            # list adapters, don't fetch
+python run.py --public             # all public-pricing suppliers
+python run.py --logged-in          # only suppliers with stored creds
+python run.py --id 207 178 179     # specific supplier IDs
+python run.py --public --concurrency 1 -v   # verbose + serial for debugging
 ```
+
+**Or from the repo root with `-m` (needed if you're scripting):**
+
+```bash
+cd ~/BloomboxSupplyPortal
+source scrape/.venv/bin/activate
+python -m scrape.run --public -v
+```
+
+Note: `python -m scrape.run` will **not** work from inside `scrape/`
+itself — `-m` resolves the `scrape` package name before the script runs,
+and it can't see it from one level down. Use `python run.py` there, or
+`cd ..` first.
 
 After a successful run:
 
