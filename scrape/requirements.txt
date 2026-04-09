@@ -1,0 +1,41 @@
+# Core HTTP with browser TLS fingerprints (bypasses Cloudflare/Akamai JA3 checks)
+curl_cffi>=0.7.0
+
+# Fallback: Playwright with stealth
+playwright>=1.44.0
+playwright-stealth>=1.0.6
+
+# Nuclear option: undetected Selenium
+undetected-chromedriver>=3.5.5
+selenium>=4.20.0
+
+# Parsing
+beautifulsoup4>=4.12.3
+lxml>=5.2.0
+parsel>=1.9.1
+
+# Price/unit parsing
+price-parser>=0.3.4
+python-dateutil>=2.9.0
+
+# PDF catalog handling
+pdfplumber>=0.11.0
+pypdf>=4.2.0
+
+# Data
+pandas>=2.2.0
+openpyxl>=3.1.2
+
+# Concurrency + retries
+tenacity>=8.2.3
+httpx>=0.27.0
+aiofiles>=23.2.1
+
+# Logging/CLI
+rich>=13.7.0
+click>=8.1.7
+python-dotenv>=1.0.1
+
+# Useful helpers
+fake-useragent>=1.5.1
+tldextract>=5.1.2

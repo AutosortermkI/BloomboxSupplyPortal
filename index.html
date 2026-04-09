@@ -7,6 +7,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin="anonymous"></script>
+    <!-- Live price feed written by scrape/run.py. Missing file is fine; the dashboard degrades gracefully. -->
+    <script src="prices.js" onerror="window.LIVE_PRICES=null;"></script>
     <style>
         :root {
             --bg-primary: #f0f2f5; --bg-card: #ffffff; --bg-header: #1b4332; --bg-header-accent: #2d6a4f;
@@ -404,6 +406,7 @@
 
     
     <div class="tab-content" id="tab-portal">
+        <div id="portal-live-banner"></div>
         <section class="kpi-row" style="margin-bottom:var(--gap);">
             <div class="kpi-card"><div class="kpi-label">Public Pricing</div><div class="kpi-value" id="portal-kpi-public" style="color:var(--green-1);">0</div><div class="kpi-sub">scrape now, no login</div></div>
             <div class="kpi-card"><div class="kpi-label">Login Required</div><div class="kpi-value" id="portal-kpi-login" style="color:var(--orange-2);">0</div><div class="kpi-sub">request account</div></div>
@@ -2463,6 +2466,36 @@ Dashboard.prototype.renderPortal = function(){
     const scraper = loadScraper();
     const counts = {public:0,login:0,pdf:0,quote:0,offline:0};
     this.raw.forEach(s => { counts[s.access] = (counts[s.access]||0)+1; });
+
+    // Live price feed banner (populated by scrape/run.py writing prices.js)
+    const feedEl = document.getElementById('portal-live-banner');
+    if (feedEl) {
+        if (window.LIVE_PRICES && window.LIVE_PRICES.products) {
+            const lp = window.LIVE_PRICES;
+            const by = {};
+            lp.products.forEach(p => { by[p.supplier_id] = (by[p.supplier_id]||0)+1; });
+            const top = Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,5)
+                .map(([sid,ct]) => {
+                    const s = this.raw.find(x => x.id == sid);
+                    return '<span style="margin-right:12px;">'+(s?s.n:('#'+sid))+' <strong>('+ct+')</strong></span>';
+                }).join('');
+            feedEl.innerHTML =
+                '<div style="padding:12px 16px;background:rgba(45,106,79,.1);border:1px solid var(--green-2);border-radius:var(--radius);margin-bottom:var(--gap);">'+
+                '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">'+
+                '<div><strong style="color:var(--green-1);">&#128994; LIVE PRICE FEED</strong> &mdash; '+
+                lp.total_products+' products across '+lp.supplier_count+' suppliers &middot; '+
+                'updated '+new Date(lp.generated_at).toLocaleString()+'</div>'+
+                '<button class="btn-export" onclick="dashboard.exportLivePrices()">Export Live CSV</button>'+
+                '</div>'+
+                '<div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">Top suppliers: '+top+'</div>'+
+                '</div>';
+        } else {
+            feedEl.innerHTML =
+                '<div style="padding:12px 16px;background:rgba(156,163,175,.08);border:1px dashed var(--border);border-radius:var(--radius);margin-bottom:var(--gap);font-size:12px;color:var(--text-secondary);">'+
+                '<strong>&#9675; Live price feed not detected.</strong> Run <code>python -m scrape.run --public</code> in the <code>scrape/</code> directory to generate <code>prices.js</code>, then reload this page.'+
+                '</div>';
+        }
+    }
     document.getElementById('portal-kpi-public').textContent = counts.public||0;
     document.getElementById('portal-kpi-login').textContent = counts.login||0;
     document.getElementById('portal-kpi-pdf').textContent = counts.pdf||0;
@@ -2565,6 +2598,21 @@ Dashboard.prototype.exportLoginQueue = function(){
     const csv = h.join(',') + '\n' + rows.map(s => [s.id,'"'+s.n.replace(/"/g,'""')+'"',s.st,s.web,s.signup,'"'+(s.accessNote||'').replace(/"/g,'""')+'"'].join(',')).join('\n');
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
     a.download = 'bloombox_login_queue_' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
+};
+Dashboard.prototype.exportLivePrices = function(){
+    if (!window.LIVE_PRICES || !window.LIVE_PRICES.products) return;
+    const h = ['Supplier ID','Supplier','Name','Container','Price','Unit','SKU','URL','Scraped At'];
+    const rows = window.LIVE_PRICES.products.map(p => [
+        p.supplier_id, '"'+(p.supplier_name||'').replace(/"/g,'""')+'"',
+        '"'+(p.name||'').replace(/"/g,'""')+'"', '"'+(p.container||'')+'"',
+        p.price, '"'+(p.unit||'')+'"', '"'+(p.sku||'')+'"',
+        '"'+(p.url||'')+'"', p._run_at||window.LIVE_PRICES.generated_at
+    ].join(','));
+    const csv = h.join(',')+'\n'+rows.join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+    a.download = 'bloombox_live_prices_'+new Date().toISOString().slice(0,10)+'.csv';
+    a.click();
 };
 Dashboard.prototype.exportVault = function(){
     const v = loadVault();
