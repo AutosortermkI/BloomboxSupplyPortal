@@ -236,7 +236,29 @@
             body { background: white; } .filters, .search-bar, .btn-reset, .export-btns, .pagination, .tab-row, .theme-toggle { display: none; }
             .tab-content { display: block !important; }
         }
-    </style>
+    
+.access-badge{display:inline-block;padding:2px 8px;font-size:10px;font-weight:700;border-radius:10px;letter-spacing:.3px;text-transform:uppercase;}
+.ab-public{background:rgba(45,106,79,.15);color:var(--green-1);border:1px solid var(--green-1);}
+.ab-login{background:rgba(234,179,8,.15);color:#92400e;border:1px solid var(--orange-2);}
+.ab-pdf{background:rgba(96,165,250,.15);color:#1e40af;border:1px solid #60a5fa;}
+.ab-quote{background:rgba(156,163,175,.15);color:#4b5563;border:1px solid #9ca3af;}
+.ab-offline{background:rgba(220,38,38,.1);color:#991b1b;border:1px solid #dc2626;}
+.scraper-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle;}
+.sd-live{background:var(--green-1);box-shadow:0 0 6px var(--green-1);}
+.sd-ready{background:var(--orange-2);}
+.sd-idle{background:#9ca3af;}
+.sd-dead{background:#dc2626;}
+.portal-detail{padding:12px 16px;background:rgba(45,106,79,.04);border-left:3px solid var(--green-2);}
+.cred-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px;}
+.cred-grid label{font-size:10px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:3px;}
+.cred-grid input{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:var(--surface);color:var(--text);}
+.cred-actions{margin-top:10px;display:flex;gap:8px;}
+.cred-actions button{padding:6px 14px;font-size:11px;font-weight:600;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;}
+.cred-actions button.primary{background:var(--green-2);color:white;border-color:var(--green-2);}
+.cred-actions button.danger{border-color:#dc2626;color:#dc2626;}
+.signup-link{display:inline-block;padding:4px 10px;background:rgba(45,106,79,.1);border:1px solid var(--green-2);border-radius:4px;color:var(--green-2);text-decoration:none;font-size:11px;font-weight:600;margin-top:4px;}
+.signup-link:hover{background:var(--green-2);color:white;}
+</style>
 </head>
 <body>
 <div class="dashboard-container">
@@ -282,6 +304,7 @@
         <button class="tab-btn" onclick="switchTab('analytics')">Analytics</button>
         <button class="tab-btn" onclick="switchTab('strategy')">Strategy</button>
         <button class="tab-btn" onclick="switchTab('favorites')">Favorites</button>
+        <button class="tab-btn" onclick="switchTab('portal')">Supplier Portal</button>
     </div>
 
     <div class="tab-content active" id="tab-suppliers">
@@ -379,6 +402,58 @@
         </div>
     </div>
 
+    
+    <div class="tab-content" id="tab-portal">
+        <section class="kpi-row" style="margin-bottom:var(--gap);">
+            <div class="kpi-card"><div class="kpi-label">Public Pricing</div><div class="kpi-value" id="portal-kpi-public" style="color:var(--green-1);">0</div><div class="kpi-sub">scrape now, no login</div></div>
+            <div class="kpi-card"><div class="kpi-label">Login Required</div><div class="kpi-value" id="portal-kpi-login" style="color:var(--orange-2);">0</div><div class="kpi-sub">request account</div></div>
+            <div class="kpi-card"><div class="kpi-label">PDF Catalogs</div><div class="kpi-value" id="portal-kpi-pdf">0</div><div class="kpi-sub">downloadable</div></div>
+            <div class="kpi-card"><div class="kpi-label">Quote Only</div><div class="kpi-value" id="portal-kpi-quote">0</div><div class="kpi-sub">contact supplier</div></div>
+            <div class="kpi-card"><div class="kpi-label">Vault Entries</div><div class="kpi-value" id="portal-kpi-vault" style="color:var(--green-2);">0</div><div class="kpi-sub">credentials stored</div></div>
+            <div class="kpi-card"><div class="kpi-label">Scraper Status</div><div class="kpi-value" style="color:var(--text-secondary);font-size:16px;">IDLE</div><div class="kpi-sub">awaiting credentials</div></div>
+        </section>
+
+        <div class="table-section">
+            <div class="table-header">
+                <h3>Live Price Scraping &mdash; Supplier Access Matrix</h3>
+                <div class="export-btns">
+                    <button class="btn-export" onclick="dashboard.filterPortal('all')">All</button>
+                    <button class="btn-export" onclick="dashboard.filterPortal('public')" style="border-color:var(--green-1);color:var(--green-1);">Public</button>
+                    <button class="btn-export" onclick="dashboard.filterPortal('login')" style="border-color:var(--orange-2);color:var(--orange-2);">Login Queue</button>
+                    <button class="btn-export" onclick="dashboard.filterPortal('pdf')">PDF</button>
+                    <button class="btn-export" onclick="dashboard.filterPortal('quote')">Quote</button>
+                    <button class="btn-export" onclick="dashboard.filterPortal('offline')">Offline</button>
+                    <button class="btn-export" onclick="dashboard.exportLoginQueue()" style="background:var(--green-2);color:white;">Export Login Queue CSV</button>
+                    <button class="btn-export" onclick="dashboard.exportVault()">Export Vault JSON</button>
+                </div>
+            </div>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">Credential vault stored locally in this browser (localStorage). Click any row to expand signup link, notes, and credential fields.</p>
+            <div id="portal-table-container"></div>
+        </div>
+
+        <div class="table-section" style="margin-top:var(--gap);">
+            <h3 style="margin-bottom:8px;">Scraper Playbook</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;font-size:12px;">
+                <div style="padding:12px;background:rgba(45,106,79,0.08);border-left:3px solid var(--green-1);border-radius:4px;">
+                    <strong style="color:var(--green-1);">STEP 1 &mdash; Public scrape</strong>
+                    <p style="margin-top:6px;line-height:1.5;">Run headless scrape nightly against <code id="playbook-public-count">0</code> public suppliers. Cache to <code>public_prices.json</code>. Feed results into the Price Comparison tab automatically.</p>
+                </div>
+                <div style="padding:12px;background:rgba(234,179,8,0.08);border-left:3px solid var(--orange-2);border-radius:4px;">
+                    <strong style="color:var(--orange-2);">STEP 2 &mdash; Login queue</strong>
+                    <p style="margin-top:6px;line-height:1.5;">Export CSV, apply for <code id="playbook-login-count">0</code> accounts ("I work for BloomBox"). Store credentials here as approvals come in. Scraper auto-activates when creds present.</p>
+                </div>
+                <div style="padding:12px;background:rgba(147,197,253,0.08);border-left:3px solid #60a5fa;border-radius:4px;">
+                    <strong style="color:#60a5fa;">STEP 3 &mdash; PDF pipeline</strong>
+                    <p style="margin-top:6px;line-height:1.5;">Download and OCR <code id="playbook-pdf-count">0</code> catalog PDFs weekly. Parse with pdfplumber + regex. Human review for layout changes.</p>
+                </div>
+                <div style="padding:12px;background:rgba(156,163,175,0.08);border-left:3px solid #9ca3af;border-radius:4px;">
+                    <strong style="color:var(--text-secondary);">STEP 4 &mdash; Quote suppliers</strong>
+                    <p style="margin-top:6px;line-height:1.5;">Bi-monthly RFQ emails to <code id="playbook-quote-count">0</code> quote-only suppliers. Ingest replies through the buyer inbox.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="dashboard-footer">BloomBox Supplier Command Center V3 — Data compiled April 2026 — 12 Second Chance Plants locations (PA &amp; Northern MD) — <span id="supplier-count-footer"></span> suppliers in database</footer>
 </div>
 
@@ -386,6 +461,7 @@
 // =========================================================================
 // MASTER DATABASE — 316 VERIFIED WHOLESALE PLANT SUPPLIERS
 // =========================================================================
+const ACCESS_META = {"1": {"t": "login", "u": "https://www.northcreeknurseries.com/page/How-To-Order", "n": "Apply for wholesale account; $500 min first order"}, "2": {"t": "login", "u": "https://www.octoraro.com/", "n": "Contact for wholesale account; mid-Atlantic natives"}, "3": {"t": "public", "u": "", "n": "Online pricing visible; 3-tree minimum"}, "4": {"t": "quote", "u": "", "n": "No visible pricing; call 610-942-8733 or email"}, "5": {"t": "quote", "u": "", "n": "Trade only; contact sales@feeneyswholesale.com"}, "6": {"t": "login", "u": "https://colesnurseries.com/product-catalog/", "n": "Product catalog password-protected"}, "7": {"t": "login", "u": "https://www.peacetreefarm.com/how-to-work-with-us-wholesale/", "n": "Weekly availability via email signup"}, "8": {"t": "public", "u": "", "n": "Mixed wholesale/retail; website catalog visible"}, "9": {"t": "public", "u": "", "n": "Availability shown online"}, "10": {"t": "quote", "u": "https://ginosnursery.com/wholesale/", "n": "Contact for sheet; 267-750-9042"}, "11": {"t": "public", "u": "https://gronsell.com/availability-guide", "n": "Availability guide accessible"}, "12": {"t": "quote", "u": "", "n": "Call 610-327-4328"}, "13": {"t": "login", "u": "https://archewild.com/native-plant-nurseries/", "n": "Email sales@archewild.com"}, "14": {"t": "login", "u": "https://www.heartwoodnursery.net/wholesale-form", "n": "Wholesale form on site"}, "15": {"t": "public", "u": "", "n": "Retail nursery; 300+ natives listed"}, "16": {"t": "public", "u": "https://www.qualitygreenhouses.net/forms/", "n": "Weekly availability files online"}, "17": {"t": "login", "u": "https://musselmangreenhouses.com/retail-info/", "n": "Password required for availability"}, "18": {"t": "quote", "u": "", "n": "No online pricing"}, "21": {"t": "pdf", "u": "https://www.ernstseed.com/price-list/", "n": "Price lists downloadable; 800-873-3321"}, "23": {"t": "public", "u": "https://www.creekhillnursery.com/index.php/availability", "n": "Availability PDFs/Excel online"}, "27": {"t": "public", "u": "https://millerplantfarm.com/wholesale", "n": "Wholesale section visible"}, "29": {"t": "login", "u": "https://www.babikow.com/page/Apply-for-Commercial-Account", "n": "Commercial account application online"}, "30": {"t": "quote", "u": "", "n": "Field-grown; contact for quotes"}, "31": {"t": "quote", "u": "", "n": "Call 410-823-1335"}, "32": {"t": "quote", "u": "", "n": "Call 410-775-7833"}, "33": {"t": "login", "u": "", "n": "Wholesale only; mobile availability system"}, "34": {"t": "quote", "u": "", "n": "Call 301-482-2009"}, "36": {"t": "public", "u": "https://www.clearridgenursery.com/products/wholesale/", "n": "Wholesale availability visible"}, "38": {"t": "login", "u": "", "n": "Email Sales@DelmarvaNativePlants.com"}, "39": {"t": "quote", "u": "", "n": "Eastern Shore family-run"}, "43": {"t": "quote", "u": "https://www.americannativeplants.com/contact-us/", "n": "Call 410-529-0552"}, "48": {"t": "quote", "u": "", "n": "Wholesale to garden centers only"}, "49": {"t": "login", "u": "https://newmoonnursery.com/ordering-shipping/", "n": "$250 min; email Sales@NewMoonNursery.com"}, "50": {"t": "quote", "u": "", "n": "Family-owned stockyard"}, "52": {"t": "public", "u": "https://www.riggins-nursery.com/complete-availability-prices", "n": "Availability PDFs with pricing"}, "53": {"t": "login", "u": "https://www.pinelandsnursery.com/all-products", "n": "Business verification required"}, "59": {"t": "public", "u": "https://www.lucasgreenhouses.com/page/Availability-Price-List", "n": "Availability and price lists online"}, "60": {"t": "quote", "u": "", "n": "Orders via brokers (Milikowski, Ball Seed, etc.)"}, "61": {"t": "public", "u": "https://dvflora.com/", "n": "Online gallery/ordering; 1-800-676-1212"}, "65": {"t": "quote", "u": "", "n": "VA progressive perennial grower"}, "69": {"t": "login", "u": "https://www.colesvillenursery.com/Wholesale-Center", "n": "Wholesale center login; 804-798-5472"}, "70": {"t": "quote", "u": "", "n": "Call 757-787-4732; 150+ fruit tree varieties"}, "80": {"t": "login", "u": "https://costafarms.com/pages/retailers", "n": "Email wholesale@costafarms.com"}, "81": {"t": "quote", "u": "", "n": "Call 407-886-1188"}, "82": {"t": "quote", "u": "", "n": "Call 305-242-1133"}, "83": {"t": "quote", "u": "", "n": "Wholesale B2B"}, "93": {"t": "quote", "u": "", "n": "Wholesale via listed brokers"}, "98": {"t": "quote", "u": "", "n": "Call 305-266-0188"}, "103": {"t": "quote", "u": "", "n": "Canada; email enquiries@agl.ca"}, "105": {"t": "quote", "u": "", "n": "Canada; email mail@nvknurseries.com"}, "160": {"t": "quote", "u": "", "n": "Wholesale tropical foliage"}, "161": {"t": "quote", "u": "", "n": "Email info@wekiwagardens.com"}, "162": {"t": "login", "u": "https://biostok.com/pages/wholesale-ordering-process", "n": "Registration for availability"}, "163": {"t": "quote", "u": "", "n": "Call 305-248-5109"}, "164": {"t": "quote", "u": "", "n": "Call 305-257-1010"}, "165": {"t": "public", "u": "", "n": "Catalog visible; 305-968-2427"}, "166": {"t": "login", "u": "https://www.plantlifefarms.com/Sign-In", "n": "Online ordering with account"}, "167": {"t": "quote", "u": "", "n": "Call 1-800-288-PALM"}, "168": {"t": "quote", "u": "", "n": "Call 305-247-4499"}, "169": {"t": "quote", "u": "", "n": "Email chris@midfloridanurseries.com"}, "300": {"t": "offline", "u": "", "n": "Acquired by Costa Farms; no direct portal"}, "301": {"t": "quote", "u": "", "n": "Call 407-886-2322"}, "302": {"t": "quote", "u": "", "n": "Call 305-245-4804 (silverkrome.com)"}, "303": {"t": "offline", "u": "", "n": "No web presence verified"}, "304": {"t": "offline", "u": "", "n": "Domain not found"}, "305": {"t": "login", "u": "https://www.oglesbytc.com/shop", "n": "Online purchasing for US growers (oglesbytc.com)"}, "306": {"t": "public", "u": "", "n": "Vegetable transplants catalog; 408-842-3030"}, "307": {"t": "login", "u": "https://www.agristarts.com/page/How-To-Order", "n": "Tissue culture liners; wholesale account"}, "308": {"t": "offline", "u": "", "n": "No website verified"}, "309": {"t": "offline", "u": "", "n": "Domain not found"}, "310": {"t": "offline", "u": "", "n": "Domain not found"}, "311": {"t": "login", "u": "", "n": "Canada wholesale; contact for setup"}, "312": {"t": "public", "u": "", "n": "Wholesale tab at thecactusking.com"}, "313": {"t": "offline", "u": "", "n": "Domain not found"}, "314": {"t": "offline", "u": "", "n": "Domain not found"}, "315": {"t": "offline", "u": "", "n": "Domain not found"}, "316": {"t": "offline", "u": "", "n": "Domain not verified"}, "317": {"t": "offline", "u": "", "n": "Domain not found"}, "318": {"t": "offline", "u": "", "n": "Domain not verified"}, "319": {"t": "offline", "u": "", "n": "Not plant supplier"}, "320": {"t": "offline", "u": "", "n": "Domain not verified"}, "321": {"t": "offline", "u": "", "n": "Domain not verified"}, "322": {"t": "offline", "u": "", "n": "Domain not found"}, "323": {"t": "offline", "u": "", "n": "Domain not verified"}, "324": {"t": "offline", "u": "", "n": "Domain not found"}, "325": {"t": "offline", "u": "", "n": "Domain not verified"}, "109": {"t": "quote", "u": "https://springmeadownursery.com/pages/catalog-request/", "n": "PDF catalog; contact account manager"}, "110": {"t": "login", "u": "https://www.waltersgardens.com/ordering.php", "n": "Credit app + sales tax form; 1-800-WALTERS"}, "111": {"t": "pdf", "u": "https://hoffmannursery.com/", "n": "Availability PDF online; 10-tray min first"}, "114": {"t": "quote", "u": "https://www.sungro.com/", "n": "Call 1-800-732-8667 (Fafard)"}, "120": {"t": "quote", "u": "", "n": "Call 717-872-9045"}, "121": {"t": "pdf", "u": "https://mountainspringnursery.com/catalogandavail", "n": "Wholesale catalog with pricing"}, "122": {"t": "quote", "u": "", "n": "Retail-focused; wholesale by inquiry"}, "123": {"t": "quote", "u": "", "n": "Email wholesale@musserforest.com"}, "124": {"t": "quote", "u": "", "n": "Wholesale evergreens"}, "125": {"t": "quote", "u": "", "n": "Call 1-888-384-8733; 25-tree min"}, "126": {"t": "quote", "u": "https://acnursery.com/pricing/", "n": "Commercial pricing by contact"}, "127": {"t": "quote", "u": "", "n": "Garden center/retail focus"}, "128": {"t": "quote", "u": "", "n": "No online pricing"}, "129": {"t": "public", "u": "https://www.schroedergardens.com/shop", "n": "Online shop with pricing"}, "130": {"t": "pdf", "u": "https://www.gonativetrees.com/download/price-list/", "n": "Downloadable price list"}, "131": {"t": "public", "u": "", "n": "Retail/wholesale with online pricing"}, "132": {"t": "quote", "u": "", "n": "Mum farm; contact for pricing"}, "133": {"t": "quote", "u": "", "n": "No online pricing"}, "134": {"t": "quote", "u": "", "n": "Farm-to-retail; no wholesale online"}, "135": {"t": "public", "u": "", "n": "Retail nursery online shop"}, "136": {"t": "login", "u": "", "n": "Availability/ordering requires account"}, "175": {"t": "quote", "u": "", "n": "Commercial greenhouse; quote basis"}, "176": {"t": "login", "u": "https://www.acornfarms.com/responsive/velocity/15AFlogin.html", "n": "Pre-approval required"}, "177": {"t": "quote", "u": "", "n": "Garden center; wholesale supplies"}, "178": {"t": "public", "u": "https://www.vanengelen.com/", "n": "Wholesale bulbs with volume discounts"}, "179": {"t": "public", "u": "https://www.colorblends.com/", "n": "Wholesale bulbs pricing visible"}, "180": {"t": "login", "u": "https://kgsplants.com/availability/", "n": "Requires FEIN/Retail License"}, "200": {"t": "quote", "u": "https://www.griffins.com/about-us", "n": "Contact sales team"}, "201": {"t": "pdf", "u": "https://noltsgreenhousesupplies.com/NGScatalog.pdf", "n": "Downloadable catalog + web order form"}, "202": {"t": "public", "u": "https://hc-companies.com/plant-pots/", "n": "Wholesale containers visible"}, "203": {"t": "quote", "u": "", "n": "Fertilizer wholesaler"}, "204": {"t": "quote", "u": "", "n": "Find distributor tool"}, "205": {"t": "quote", "u": "https://mastertag.com/contact/", "n": "Online ordering; quote pricing"}, "206": {"t": "login", "u": "https://www.bwicompanies.com/login", "n": "Login required for store/pricing"}, "207": {"t": "public", "u": "https://www.siteone.com/en/", "n": "Public online pricing; 477 locations"}, "208": {"t": "quote", "u": "", "n": "Landscape/irrigation supplies"}, "209": {"t": "public", "u": "", "n": "Beneficial insects; product info"}, "210": {"t": "public", "u": "https://www.arbico-organics.com/", "n": "Organic pest control; online orders"}, "211": {"t": "public", "u": "https://organicmechanicsoil.com/", "n": "E-commerce store with pricing"}, "212": {"t": "public", "u": "", "n": "Retail/wholesale mulch pricing"}, "213": {"t": "public", "u": "", "n": "Online store with pricing"}, "240": {"t": "public", "u": "", "n": "Canadian; online shop with pricing"}, "241": {"t": "pdf", "u": "https://dutchmasternurseries.com/pricing-catalogue/", "n": "Pricing catalogue (largest Ontario)"}, "242": {"t": "pdf", "u": "https://www.willowbrooknurseries.com/page/Catalogs", "n": "Downloadable catalogs"}, "243": {"t": "quote", "u": "", "n": "Wholesale only; call 519-647-3912"}, "244": {"t": "pdf", "u": "https://blueskynursery.ca/orders/2025-catalogue/", "n": "2025 catalogue download"}, "245": {"t": "quote", "u": "https://www.avknursery.com/contact", "n": "Plant search; no pricing"}, "140": {"t": "quote", "u": "", "n": "No public pricing"}, "141": {"t": "quote", "u": "", "n": "20% surcharge on small orders"}, "142": {"t": "quote", "u": "", "n": "Availability list with some prices"}, "143": {"t": "quote", "u": "", "n": "Email with wish list; 48hr quote"}, "144": {"t": "quote", "u": "", "n": "Contact by phone/email"}, "145": {"t": "quote", "u": "", "n": "Large grower; contact for quotes"}, "146": {"t": "quote", "u": "", "n": "Aquatic; contact for account"}, "147": {"t": "login", "u": "https://www.patuxentnursery.com/contractor-application", "n": "Contractor login with pricing"}, "148": {"t": "offline", "u": "", "n": "Primarily retail online"}, "220": {"t": "public", "u": "", "n": "Wholesale nursery with pricing visible"}, "221": {"t": "quote", "u": "", "n": "Contact for pricing"}, "222": {"t": "login", "u": "https://www.medfordnursery.com/", "n": "Open account for live availability"}, "223": {"t": "public", "u": "", "n": "Availability with wholesale pricing"}, "224": {"t": "login", "u": "https://www.pleasantrunnursery.com/Wholesale-Main", "n": "$500 pickup / $1500 delivery min"}, "225": {"t": "login", "u": "https://store.centertonnursery.com/Accounts/Login", "n": "Wholesale login portal"}, "226": {"t": "quote", "u": "", "n": "Wholesale grower"}, "227": {"t": "quote", "u": "", "n": "Contractor pricing by contact"}, "230": {"t": "login", "u": "https://www.davidsnursery.com/page/Wholesale-Accounts", "n": "Wholesale accounts page"}, "231": {"t": "quote", "u": "", "n": "Wholesale by contact"}, "232": {"t": "quote", "u": "", "n": "Wholesale only"}, "233": {"t": "login", "u": "https://www.bcnursery.com/", "n": "Login portal for wholesale"}, "234": {"t": "public", "u": "", "n": "Organic plug pricing; $150 min"}, "235": {"t": "quote", "u": "", "n": "Large regional nursery"}, "236": {"t": "login", "u": "https://www.bonaterradc.com/contractors-and-wholesale", "n": "Email for account setup"}, "250": {"t": "pdf", "u": "", "n": "Availability/price sheets on site"}, "251": {"t": "quote", "u": "", "n": "Tropical foliage supplier"}, "252": {"t": "offline", "u": "", "n": "No info found"}, "253": {"t": "quote", "u": "", "n": "Established 1978; no online pricing"}, "326": {"t": "login", "u": "https://sheridanwholesale.com/", "n": "Dedicated wholesale site"}, "327": {"t": "login", "u": "https://connon.com/trade-professionals", "n": "Trade professional portal"}, "328": {"t": "quote", "u": "", "n": "Largest Ontario wholesale"}, "329": {"t": "quote", "u": "", "n": "Manitoba wholesale"}, "330": {"t": "offline", "u": "", "n": "Retail specialist; no wholesale"}, "331": {"t": "offline", "u": "", "n": "Not verified"}, "332": {"t": "quote", "u": "", "n": "MI wholesale"}, "333": {"t": "offline", "u": "", "n": "Building products, not plants"}, "334": {"t": "offline", "u": "", "n": "No specific company"}, "335": {"t": "login", "u": "", "n": "Trade only; shrub liners"}, "336": {"t": "quote", "u": "", "n": "Major wholesale supplier"}, "337": {"t": "quote", "u": "", "n": "Large perennial wholesaler; 1-800-WALTERS (duplicate of 110)"}, "338": {"t": "offline", "u": "", "n": "Not verified"}, "339": {"t": "offline", "u": "", "n": "Not verified"}, "340": {"t": "offline", "u": "", "n": "Arboretum; no wholesale"}, "341": {"t": "offline", "u": "", "n": "Not verified"}, "342": {"t": "offline", "u": "", "n": "Not verified"}, "343": {"t": "quote", "u": "", "n": "MI wholesale"}, "344": {"t": "quote", "u": "", "n": "KY wholesale"}, "345": {"t": "quote", "u": "", "n": "Multi-location; wholesale quotes"}, "346": {"t": "quote", "u": "", "n": "GA wholesale"}, "347": {"t": "offline", "u": "", "n": "Not verified"}, "348": {"t": "quote", "u": "", "n": "NC native specialist"}, "349": {"t": "quote", "u": "", "n": "NC wholesale; 336-993-4114"}, "350": {"t": "offline", "u": "", "n": "Not verified"}, "351": {"t": "public", "u": "", "n": "TN Wholesale; native plant pricing"}, "352": {"t": "offline", "u": "", "n": "Not verified"}, "353": {"t": "quote", "u": "", "n": "1-800-PEAT-MOSS (duplicate of 114)"}, "354": {"t": "quote", "u": "", "n": "800-665-6677; professional media"}, "355": {"t": "quote", "u": "", "n": "Growing media manufacturer"}, "356": {"t": "public", "u": "", "n": "Pot supplier via distributors"}, "357": {"t": "public", "u": "", "n": "Wholesale containers (duplicate of 202)"}, "358": {"t": "public", "u": "", "n": "Via wholesale retailers"}, "359": {"t": "public", "u": "", "n": "Distributor locator"}, "360": {"t": "public", "u": "", "n": "Via retail/wholesale distributors"}, "361": {"t": "offline", "u": "", "n": "Industrial cable glands"}, "362": {"t": "quote", "u": "", "n": "Horticulture equipment"}, "363": {"t": "public", "u": "", "n": "Rockwool via distributors"}, "364": {"t": "quote", "u": "", "n": "Crop protection via distributors"}, "365": {"t": "quote", "u": "", "n": "B2B sales contact"}, "366": {"t": "quote", "u": "", "n": "IL fertilizer manufacturer"}, "367": {"t": "public", "u": "", "n": "Hydroponics; growellshop.com"}, "368": {"t": "offline", "u": "", "n": "Not verified"}, "369": {"t": "offline", "u": "", "n": "Not verified"}, "370": {"t": "quote", "u": "", "n": "Via Home Depot distribution"}, "371": {"t": "login", "u": "https://sheridannurseries.com/", "n": "Part of Sheridan (duplicate of 326)"}, "372": {"t": "offline", "u": "", "n": "UK-based, not US"}, "373": {"t": "offline", "u": "", "n": "Not verified"}, "374": {"t": "offline", "u": "", "n": "Not verified"}, "375": {"t": "quote", "u": "", "n": "OK; 918-341-3030"}, "376": {"t": "offline", "u": "", "n": "Not verified"}, "377": {"t": "offline", "u": "", "n": "Closed for business"}, "378": {"t": "offline", "u": "", "n": "Not verified"}, "379": {"t": "public", "u": "", "n": "Native seed pricing online; 507-452-1362"}, "380": {"t": "public", "u": "", "n": "Seeds/grasses pricing; 800-759-1520"}, "381": {"t": "public", "u": "", "n": "Wildflower pricing online"}, "382": {"t": "offline", "u": "", "n": "Not verified"}, "383": {"t": "quote", "u": "", "n": "Wholesale details by contact"}, "384": {"t": "offline", "u": "", "n": "Not verified"}, "385": {"t": "offline", "u": "", "n": "Not verified"}, "386": {"t": "quote", "u": "", "n": "Crescent Hill Nursery primary"}, "387": {"t": "offline", "u": "", "n": "Community co-op"}, "388": {"t": "quote", "u": "", "n": "Seasonal nonprofit sales"}, "389": {"t": "public", "u": "", "n": "Native seed pricing; 800-873-3321 (duplicate of 21)"}, "390": {"t": "public", "u": "", "n": "Botanical wholesaler pricing"}};
 const S = [
 
 // === PENNSYLVANIA ===
@@ -2164,12 +2240,13 @@ class Dashboard {
 // TAB SWITCHING
 // =========================================================================
 function switchTab(t) {
-    const tabs = ['suppliers','compare','arbitrage','map','analytics','strategy','favorites'];
+    const tabs = ['suppliers','compare','arbitrage','map','analytics','strategy','favorites','portal'];
     document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === t));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.getElementById('tab-' + t).classList.add('active');
     if (t === 'map') setTimeout(initMap, 50);
     if (t === 'favorites') dashboard.renderFavorites();
+    if (t === 'portal') dashboard.renderPortal();
     if (t === 'strategy') {
         renderVendorScorecards();
         renderSeasonalForecast();
@@ -2360,6 +2437,141 @@ Dashboard.prototype.clearFavorites = function() {
 // =========================================================================
 // INITIALIZATION
 // =========================================================================
+
+// =========================================================================
+// SUPPLIER PORTAL MANAGER
+// =========================================================================
+const VAULT_KEY = 'bloombox_vault_v1';
+const SCRAPER_KEY = 'bloombox_scraper_status_v1';
+function loadVault(){try{return JSON.parse(localStorage.getItem(VAULT_KEY)||'{}');}catch(e){return{};}}
+function saveVault(v){localStorage.setItem(VAULT_KEY,JSON.stringify(v));}
+function loadScraper(){try{return JSON.parse(localStorage.getItem(SCRAPER_KEY)||'{}');}catch(e){return{};}}
+function saveScraper(s){localStorage.setItem(SCRAPER_KEY,JSON.stringify(s));}
+
+// Merge ACCESS_META into supplier records at startup
+S.forEach(s => {
+    const m = ACCESS_META[s.id];
+    if (m) { s.access = m.t; s.signup = m.u; s.accessNote = m.n; }
+    else { s.access = 'quote'; s.signup = ''; s.accessNote = ''; }
+});
+
+Dashboard.prototype.portalFilter = 'all';
+Dashboard.prototype.filterPortal = function(f){this.portalFilter = f; this.renderPortal();};
+
+Dashboard.prototype.renderPortal = function(){
+    const vault = loadVault();
+    const scraper = loadScraper();
+    const counts = {public:0,login:0,pdf:0,quote:0,offline:0};
+    this.raw.forEach(s => { counts[s.access] = (counts[s.access]||0)+1; });
+    document.getElementById('portal-kpi-public').textContent = counts.public||0;
+    document.getElementById('portal-kpi-login').textContent = counts.login||0;
+    document.getElementById('portal-kpi-pdf').textContent = counts.pdf||0;
+    document.getElementById('portal-kpi-quote').textContent = counts.quote||0;
+    document.getElementById('portal-kpi-vault').textContent = Object.keys(vault).length;
+    ['public','login','pdf','quote'].forEach(k=>{
+        const el=document.getElementById('playbook-'+k+'-count'); if(el) el.textContent=counts[k]||0;
+    });
+
+    let rows = [...this.raw];
+    if (this.portalFilter !== 'all') rows = rows.filter(s => s.access === this.portalFilter);
+    // Order: login first (action items), then public, pdf, quote, offline
+    const order = {login:0,public:1,pdf:2,quote:3,offline:4};
+    rows.sort((a,b) => (order[a.access]-order[b.access]) || (b.score-a.score));
+
+    const accessBadge = t => '<span class="access-badge ab-'+t+'">'+t+'</span>';
+    const statusDot = (s) => {
+        const st = scraper[s.id] || (s.access==='public'?'ready':s.access==='login' && vault[s.id]?'ready':s.access==='offline'?'dead':'idle');
+        const labels={live:'LIVE',ready:'READY',idle:'IDLE',dead:'OFFLINE'};
+        return '<span class="scraper-dot sd-'+st+'"></span>'+labels[st];
+    };
+
+    let h = '<table class="data-table"><thead><tr>'+
+        '<th style="width:50px;">ID</th>'+
+        '<th>Supplier</th>'+
+        '<th>Access</th>'+
+        '<th>Scraper</th>'+
+        '<th>Notes</th>'+
+        '<th style="width:80px;">Vault</th>'+
+        '</tr></thead><tbody>';
+    rows.forEach(s => {
+        const hasCreds = !!vault[s.id];
+        const isExp = this.portalExpandedId === s.id;
+        h += '<tr class="supplier-row" onclick="dashboard.togglePortal('+s.id+')">'+
+            '<td style="font-size:11px;color:var(--text-secondary);">#'+s.id+'</td>'+
+            '<td><strong>'+s.n+'</strong><br><span style="font-size:10px;color:var(--text-secondary);">'+s.city+', '+s.st+' &middot; '+(s.web||'')+'</span></td>'+
+            '<td>'+accessBadge(s.access)+'</td>'+
+            '<td style="font-size:11px;">'+statusDot(s)+'</td>'+
+            '<td style="font-size:11px;max-width:280px;line-height:1.4;">'+(s.accessNote||'')+'</td>'+
+            '<td>'+(hasCreds?'<span style="color:var(--green-1);font-weight:700;">&#10003; Stored</span>':'<span style="color:var(--text-secondary);">&mdash;</span>')+'</td>'+
+            '</tr>';
+        if (isExp) {
+            const c = vault[s.id] || {};
+            h += '<tr class="detail-panel open"><td colspan="6"><div class="portal-detail">';
+            if (s.signup) h += '<div><strong>Signup / Info:</strong> <a class="signup-link" href="'+s.signup+'" target="_blank" rel="noopener">'+s.signup+'</a></div>';
+            if (s.access === 'login' || s.access === 'public') {
+                h += '<div class="cred-grid">'+
+                    '<div><label>Login URL</label><input id="cred-url-'+s.id+'" value="'+(c.url||s.signup||'')+'" placeholder="https://..."></div>'+
+                    '<div><label>Username / Email</label><input id="cred-user-'+s.id+'" value="'+(c.user||'')+'" placeholder="buyer@bloombox.com"></div>'+
+                    '<div><label>Password</label><input id="cred-pass-'+s.id+'" type="password" value="'+(c.pass||'')+'" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;"></div>'+
+                    '<div><label>Account #</label><input id="cred-acct-'+s.id+'" value="'+(c.acct||'')+'" placeholder="optional"></div>'+
+                    '</div>'+
+                    '<div class="cred-actions">'+
+                        '<button class="primary" onclick="event.stopPropagation();dashboard.saveCred('+s.id+')">Save Credentials</button>'+
+                        '<button onclick="event.stopPropagation();dashboard.markStatus('+s.id+',\'live\')">Mark Scraper Live</button>'+
+                        '<button onclick="event.stopPropagation();dashboard.markStatus('+s.id+',\'ready\')">Mark Ready</button>'+
+                        (hasCreds?'<button class="danger" onclick="event.stopPropagation();dashboard.deleteCred('+s.id+')">Delete</button>':'')+
+                    '</div>';
+            } else if (s.access === 'pdf') {
+                h += '<div style="margin-top:8px;font-size:12px;">PDF catalog supplier &mdash; schedule download + OCR pipeline.</div>';
+            } else if (s.access === 'quote') {
+                h += '<div style="margin-top:8px;font-size:12px;">Quote-only. Add to bi-monthly RFQ email batch.</div>';
+            } else if (s.access === 'offline') {
+                h += '<div style="margin-top:8px;font-size:12px;color:#991b1b;">No verified online presence. Consider removing or flagging as archived.</div>';
+            }
+            h += '</div></td></tr>';
+        }
+    });
+    h += '</tbody></table>';
+    document.getElementById('portal-table-container').innerHTML = h;
+};
+Dashboard.prototype.togglePortal = function(id){
+    this.portalExpandedId = this.portalExpandedId === id ? null : id;
+    this.renderPortal();
+};
+Dashboard.prototype.saveCred = function(id){
+    const v = loadVault();
+    v[id] = {
+        url: document.getElementById('cred-url-'+id).value,
+        user: document.getElementById('cred-user-'+id).value,
+        pass: document.getElementById('cred-pass-'+id).value,
+        acct: document.getElementById('cred-acct-'+id).value,
+        savedAt: new Date().toISOString()
+    };
+    saveVault(v);
+    const sc = loadScraper(); sc[id] = 'ready'; saveScraper(sc);
+    this.renderPortal();
+};
+Dashboard.prototype.deleteCred = function(id){
+    const v = loadVault(); delete v[id]; saveVault(v);
+    const sc = loadScraper(); delete sc[id]; saveScraper(sc);
+    this.renderPortal();
+};
+Dashboard.prototype.markStatus = function(id,st){
+    const sc = loadScraper(); sc[id] = st; saveScraper(sc); this.renderPortal();
+};
+Dashboard.prototype.exportLoginQueue = function(){
+    const rows = this.raw.filter(s => s.access === 'login');
+    const h = ['ID','Supplier','State','Website','Signup URL','Notes'];
+    const csv = h.join(',') + '\n' + rows.map(s => [s.id,'"'+s.n.replace(/"/g,'""')+'"',s.st,s.web,s.signup,'"'+(s.accessNote||'').replace(/"/g,'""')+'"'].join(',')).join('\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+    a.download = 'bloombox_login_queue_' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
+};
+Dashboard.prototype.exportVault = function(){
+    const v = loadVault();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(v,null,2)],{type:'application/json'}));
+    a.download = 'bloombox_vault_' + new Date().toISOString().slice(0,10) + '.json'; a.click();
+};
+
 const dashboard = new Dashboard(S);
 </script>
 </body>
