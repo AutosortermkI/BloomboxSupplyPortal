@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.env
+cache/sessions/*.json
+output/prices.json
+output/prices.js
+output/history/*.json
+output/run_summary.json
+vault/*.json
+logs/*.log
