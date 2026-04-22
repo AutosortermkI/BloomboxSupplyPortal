@@ -50,22 +50,29 @@ _PRICE_RE = re.compile(r"\$\s?(\d{1,4}(?:,\d{3})*(?:\.\d{1,2})?)")
 
 
 def parse_price(text: str) -> Optional[float]:
-    if not text:
+    """Extract a dollar price from text.
+
+    Requires a ``$`` sign to avoid false positives (e.g. "3 gal Container"
+    being read as $3.00).  price_parser is used only when a ``$`` is present.
+    """
+    if not text or "$" not in text:
         return None
+    # Regex first — most reliable since it anchors on $
+    m = _PRICE_RE.search(text)
+    if m:
+        try:
+            return float(m.group(1).replace(",", ""))
+        except Exception:
+            pass
+    # price_parser as fallback (but only when $ was already found)
     if Price is not None:
         try:
             p = Price.fromstring(text)
-            if p.amount is not None:
+            if p.amount is not None and p.currency == "$":
                 return float(p.amount)
         except Exception:
             pass
-    m = _PRICE_RE.search(text)
-    if not m:
-        return None
-    try:
-        return float(m.group(1).replace(",", ""))
-    except Exception:
-        return None
+    return None
 
 
 # -------------------------------------------------------------------------
@@ -145,13 +152,29 @@ def _extract_jsonld(soup: BeautifulSoup, page_url: str) -> list[ProductRow]:
 # Pass 2: HTML product cards
 # -------------------------------------------------------------------------
 _CARD_SELECTORS = [
+    # Standard e-commerce
     ".product-card", ".product-item", ".product", "li.product",
     ".woocommerce-LoopProduct-link", ".grid-product", ".product-grid-item",
     "article.product", "[data-product-id]",
+    # Wix / React (Schroeder Gardens, etc.)
+    "[data-hook='product-item-root']",
+    # Shopify
+    ".product-grid-item", ".grid__item",
+    # BigCommerce
+    ".productGrid .product", ".card",
 ]
-_NAME_SELECTORS = [".product-title", ".product-name", "h2", "h3", "a"]
-_PRICE_SELECTORS = [".price", ".product-price", ".money", ".amount",
-                    "span.price", ".price__regular", "[itemprop='price']"]
+_NAME_SELECTORS = [
+    ".product-title", ".product-name",
+    "[data-hook='product-item-product-details']",  # Wix
+    "h2.woocommerce-loop-product__title",          # WooCommerce
+    "h2", "h3", "a",
+]
+_PRICE_SELECTORS = [
+    ".price", ".product-price", ".money", ".amount",
+    "span.price", ".price__regular", "[itemprop='price']",
+    "[data-hook='sr-product-item-price-to-pay']",  # Wix
+    "span.woocommerce-Price-amount",               # WooCommerce
+]
 
 
 def _first_text(node, selectors: Iterable[str]) -> str:

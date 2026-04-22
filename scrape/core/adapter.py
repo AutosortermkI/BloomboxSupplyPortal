@@ -53,6 +53,7 @@ class Adapter:
 
     # Optional overrides
     prefer_tier: str | None = None       # 'curl_cffi' | 'playwright' | 'undetected'
+    wait_for: str | None = None          # CSS selector to wait for (Playwright only)
     max_pages: int = 20
     delay_between_pages: str = "page"     # stealth.human_delay kind
 
@@ -143,6 +144,7 @@ class Adapter:
             supplier_id=self.supplier_id,
             profile=self.profile,
             prefer=self.prefer_tier,
+            wait_for=self.wait_for,
         )
 
 

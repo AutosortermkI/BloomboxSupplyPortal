@@ -47,11 +47,9 @@ class BrowserProfile:
 
     @classmethod
     def random(cls) -> "BrowserProfile":
-        try:
-            from fake_useragent import UserAgent  # type: ignore
-            ua = UserAgent(browsers=["chrome", "safari"]).random
-        except Exception:
-            ua = random.choice(_DEFAULT_UAS)
+        # Use our hardcoded UA list — reliable and avoids fake-useragent's
+        # noisy fallback warnings that clutter logs on every invocation.
+        ua = random.choice(_DEFAULT_UAS)
         locale = random.choice(_LOCALES)
         return cls(
             user_agent=ua,

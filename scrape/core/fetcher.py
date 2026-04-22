@@ -27,10 +27,13 @@ from .stealth import BrowserProfile, get_proxy, human_delay, load_cookies, save_
 log = logging.getLogger("bloombox.fetcher")
 
 # Signals that a response is probably a block page even if status == 200.
+# Be specific to avoid false positives on normal pages that mention "access"
+# or "captcha" as regular text (e.g. Lucas Greenhouses availability page).
 _BLOCK_PATTERNS = [
-    re.compile(r"cf-browser-verification|checking your browser|just a moment", re.I),
-    re.compile(r"access denied|request blocked|unusual traffic", re.I),
-    re.compile(r"captcha|recaptcha|hcaptcha", re.I),
+    re.compile(r"cf-browser-verification|checking your browser|just a moment.*cloudflare", re.I),
+    re.compile(r"<title>\s*(access denied|403 forbidden|request blocked|blocked)\s*</title>", re.I),
+    re.compile(r"unusual traffic from your (computer|network)", re.I),
+    re.compile(r"recaptcha|hcaptcha|g-recaptcha|captcha.{0,30}(challenge|verify|solve|required)", re.I),
     re.compile(r"enable javascript and cookies to continue", re.I),
     re.compile(r"datadome|perimeterx|incapsula|imperva", re.I),
 ]
@@ -105,7 +108,7 @@ def _fetch_curl_cffi(url: str, profile: BrowserProfile, supplier_id: int | str |
 # Tier 2: Playwright + stealth
 # -------------------------------------------------------------------------
 def _fetch_playwright(url: str, profile: BrowserProfile, supplier_id: int | str | None,
-                     timeout: int = 45) -> FetchResult:
+                     timeout: int = 45, wait_for: str | None = None) -> FetchResult:
     try:
         from playwright.sync_api import sync_playwright  # type: ignore
     except Exception as e:
@@ -155,6 +158,15 @@ def _fetch_playwright(url: str, profile: BrowserProfile, supplier_id: int | str 
                 pass
 
             response = page.goto(url, timeout=timeout * 1000, wait_until="domcontentloaded")
+
+            # If a wait_for selector was given, wait for it to appear
+            # (critical for Wix/React sites that render client-side)
+            if wait_for:
+                try:
+                    page.wait_for_selector(wait_for, timeout=15_000)
+                except Exception:
+                    log.warning("wait_for selector %r not found, continuing", wait_for)
+
             # Let JS settle and pretend we're reading
             human_delay("read")
             try:
@@ -190,6 +202,34 @@ def _fetch_playwright(url: str, profile: BrowserProfile, supplier_id: int | str 
 # -------------------------------------------------------------------------
 # Tier 3: undetected-chromedriver
 # -------------------------------------------------------------------------
+def _detect_chrome_major() -> int | None:
+    """Auto-detect the installed Chrome/Chromium major version."""
+    import shutil, subprocess
+    for name in ("google-chrome", "google-chrome-stable", "chromium", "chromium-browser"):
+        path = shutil.which(name)
+        if path:
+            try:
+                out = subprocess.check_output([path, "--version"], timeout=5, text=True)
+                # e.g. "Google Chrome 146.0.7680.178"
+                m = re.search(r"(\d+)\.", out)
+                if m:
+                    return int(m.group(1))
+            except Exception:
+                continue
+    # macOS: Chrome lives in /Applications
+    mac_chrome = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+    if mac_chrome.exists():
+        try:
+            import subprocess
+            out = subprocess.check_output([str(mac_chrome), "--version"], timeout=5, text=True)
+            m = re.search(r"(\d+)\.", out)
+            if m:
+                return int(m.group(1))
+        except Exception:
+            pass
+    return None
+
+
 def _fetch_undetected(url: str, profile: BrowserProfile, supplier_id: int | str | None,
                      timeout: int = 60) -> FetchResult:
     try:
@@ -208,7 +248,14 @@ def _fetch_undetected(url: str, profile: BrowserProfile, supplier_id: int | str 
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
 
-        driver = uc.Chrome(options=options, use_subprocess=True)
+        # Auto-detect Chrome version to avoid chromedriver mismatch
+        chrome_major = _detect_chrome_major()
+        uc_kwargs: dict[str, Any] = {"options": options, "use_subprocess": True}
+        if chrome_major:
+            uc_kwargs["version_main"] = chrome_major
+            log.info("detected Chrome %d — pinning chromedriver", chrome_major)
+
+        driver = uc.Chrome(**uc_kwargs)
         driver.set_page_load_timeout(timeout)
         driver.get(url)
         human_delay("read")
@@ -253,10 +300,14 @@ def fetch(
     profile: BrowserProfile | None = None,
     prefer: str | None = None,
     max_tiers: int = 3,
+    wait_for: str | None = None,
 ) -> FetchResult:
     """Fetch a URL through the cascade, escalating on block.
 
     - If `prefer` is set, start at that tier (still escalates on failure).
+    - `wait_for`: CSS selector to wait for before grabbing HTML (Playwright
+      only — ignored by curl_cffi and undetected). Critical for Wix/React
+      sites that render product cards client-side.
     - Returns the first FetchResult where `ok` is True, or the last attempt.
     """
     profile = profile or BrowserProfile.random()
@@ -271,7 +322,11 @@ def fetch(
     last: FetchResult | None = None
     for tier in order:
         log.info("fetching %s via %s", url, tier)
-        result = TIERS[tier](url, profile, supplier_id)
+        # Pass wait_for to Playwright tier; other tiers ignore the kwarg
+        if tier == "playwright":
+            result = TIERS[tier](url, profile, supplier_id, wait_for=wait_for)
+        else:
+            result = TIERS[tier](url, profile, supplier_id)
         last = result
         if result.ok:
             return result
