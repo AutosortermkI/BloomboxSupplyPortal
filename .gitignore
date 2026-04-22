@@ -12,3 +12,9 @@ Thumbs.db
 # Build artifacts
 node_modules/
 *.log
+
+# Live scrape output (regenerated daily; see scrape/.gitignore for scrape/output/)
+/prices.js
+
+# Ad-hoc backups
+*.backup
