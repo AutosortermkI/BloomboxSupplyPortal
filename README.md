@@ -113,6 +113,22 @@ availability workbook. The supplier login page is protected by reCAPTCHA, so
 the adapter uses the official public workbook for availability and does not
 emit manufactured prices.
 
+To test a supplier account without automating CAPTCHA, capture a headed browser
+session after manually completing the login:
+
+```bash
+python3 -m scrape.credentials login-session \
+  --id 43 \
+  --success-text "Log out" \
+  --success-text "Account details"
+```
+
+The command opens Playwright, prefills the saved username/password from the
+local credential store, waits while the human completes CAPTCHA/login in the
+browser, and saves Playwright storage state only after a logged-in signal is
+detected. Future Playwright-tier requests for that supplier reuse the saved
+session state.
+
 ## Deployment Model
 
 The current defensible model is:
@@ -149,7 +165,7 @@ BloomboxSupplyPortal/
 ## Verification
 
 ```bash
-python3 -m unittest tests.test_american_native_plants_adapter tests.test_supplier_registry tests.test_run tests.test_vault tests.test_credentials_cli -v
+python3 -m unittest tests.test_american_native_plants_adapter tests.test_manual_login tests.test_supplier_registry tests.test_run tests.test_vault tests.test_credentials_cli -v
 node -e "const fs=require('fs'); const text=fs.readFileSync('index.html','utf8'); [...text.matchAll(/<script[^>]*>([\\s\\S]*?)<\\/script>/g)].forEach((m)=>new Function(m[1])); console.log('index scripts ok')"
 ```
 

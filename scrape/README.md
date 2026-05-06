@@ -134,6 +134,25 @@ Keychain-backed credential. The static dashboard cannot read macOS Keychain
 directly and may show zero browser metadata even when the scraper is fully
 credentialed.
 
+### Manual login session capture
+
+For suppliers with a CAPTCHA or other human approval step, do not automate the
+challenge. Use a headed Playwright handoff, complete the login manually in the
+opened browser, then let the scraper save reusable storage state:
+
+```bash
+python3 -m scrape.credentials login-session \
+  --id 43 \
+  --success-text "Log out" \
+  --success-text "Account details"
+```
+
+The helper prefills the saved username/password from the local credential
+store, never clicks CAPTCHA controls, and writes the authenticated Playwright
+storage state under `scrape/cache/sessions/`. That directory is ignored by git.
+Future Playwright-tier fetches for the supplier automatically load that state
+when it exists.
+
 Legacy plaintext dashboard vault exports are not auto-discovered anymore.
 They are accepted only when explicitly selected:
 

@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 from .core import vault
+from . import manual_login
 
 
 def _add_metadata_arg(parser: argparse.ArgumentParser) -> None:
@@ -69,6 +70,45 @@ def _delete(args: argparse.Namespace) -> int:
     return 0
 
 
+def _login_session(args: argparse.Namespace) -> int:
+    metadata = vault.load_metadata(args.metadata_path)
+    entry = metadata.get(args.id)
+    login_url = args.url or (entry or {}).get("url", "")
+    creds = vault.load_vault(
+        supplier_ids=[args.id],
+        metadata_path=args.metadata_path,
+    )
+    credential = creds.get(args.id)
+    if credential is None:
+        raise SystemExit(
+            f"no Keychain-backed credential found for supplier #{args.id}; "
+            "run `python3 -m scrape.credentials set ...` first"
+        )
+    if not login_url:
+        raise SystemExit(
+            f"no login URL found for supplier #{args.id}; pass --url or save metadata first"
+        )
+
+    result = manual_login.capture_manual_login_session(
+        supplier_id=args.id,
+        credential=credential,
+        login_url=login_url,
+        success_texts=args.success_text,
+        success_url_contains=args.success_url_contains,
+        timeout_seconds=args.timeout,
+        headed=not args.headless,
+    )
+    if result.success:
+        print(
+            f"saved Playwright storage state for supplier #{args.id} "
+            f"to {result.storage_state_path}"
+        )
+        print(f"success signals: {', '.join(result.reasons)}")
+        return 0
+    print(f"manual login session was not saved: {', '.join(result.reasons)}")
+    return 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Manage BloomBox scraper credentials in the local OS store.",
@@ -96,6 +136,37 @@ def build_parser() -> argparse.ArgumentParser:
     _add_metadata_arg(delete_parser)
     delete_parser.add_argument("--id", type=int, required=True)
     delete_parser.set_defaults(func=_delete)
+
+    session_parser = subparsers.add_parser(
+        "login-session",
+        help="open a headed browser for manual supplier login and save session state",
+    )
+    _add_metadata_arg(session_parser)
+    session_parser.add_argument("--id", type=int, required=True)
+    session_parser.add_argument(
+        "--url",
+        default="",
+        help="override login URL; defaults to saved credential metadata URL",
+    )
+    session_parser.add_argument(
+        "--success-text",
+        action="append",
+        default=[],
+        help="case-insensitive page text that indicates a successful login",
+    )
+    session_parser.add_argument(
+        "--success-url-contains",
+        action="append",
+        default=[],
+        help="case-insensitive URL substring that indicates a successful login",
+    )
+    session_parser.add_argument("--timeout", type=int, default=600)
+    session_parser.add_argument(
+        "--headless",
+        action="store_true",
+        help="run without showing the browser; not useful for CAPTCHA handoff",
+    )
+    session_parser.set_defaults(func=_login_session)
 
     return parser
 
