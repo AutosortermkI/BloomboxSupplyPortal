@@ -15,8 +15,9 @@ import re
 import tempfile
 from pathlib import Path
 from typing import Optional
+from urllib.parse import urljoin
 
-from ..core.adapter import Adapter, register
+from ..core.adapter import Adapter, ScrapeResult, register
 from ..core.extractor import sniff_container
 
 log = logging.getLogger("bloombox.pdf")
@@ -60,12 +61,14 @@ class PDFAdapter(Adapter):
         """
         return []
 
-    def run(self) -> list[dict]:
+    def run(self) -> ScrapeResult:
         """Download PDF(s) and extract product data."""
         if pdfplumber is None:
             log.error("pdfplumber not installed, cannot parse PDFs")
-            return []
+            self.result.errors.append("pdfplumber not installed")
+            return self.result
 
+        self.result.tier_used = "pdf"
         all_rows: list[dict] = []
         seen: set[tuple[str, float]] = set()
 
@@ -73,9 +76,13 @@ class PDFAdapter(Adapter):
             try:
                 pdf_bytes = self._download_pdf(url)
                 if not pdf_bytes:
+                    self.result.errors.append(f"download failed: {url}")
                     continue
+                self.result.pages_fetched += 1
                 rows = self._extract_from_pdf(pdf_bytes, url)
                 for r in rows:
+                    r.setdefault("supplier_id", self.supplier_id)
+                    r.setdefault("supplier_name", self.supplier_name)
                     key = (r["name"].lower(), r["price"])
                     if key not in seen:
                         seen.add(key)
@@ -85,8 +92,10 @@ class PDFAdapter(Adapter):
             except Exception as e:
                 log.error("%s: failed to process %s: %s",
                           self.supplier_name, url, e)
+                self.result.errors.append(f"failed to process {url}: {e}")
 
-        return all_rows
+        self.result.products = all_rows
+        return self.result
 
     def _download_pdf(self, url: str) -> Optional[bytes]:
         """Download PDF using urllib (no fetcher tier needed for direct links)."""
@@ -240,12 +249,14 @@ class ErnstBioengAdapter(PDFAdapter):
     _HEADERS = {"botanical name", "common name", "price", "species",
                 "description", "size", "type"}
 
-    def run(self) -> list[dict]:
+    def run(self) -> ScrapeResult:
         """Download PDF and extract species + forms with prices."""
         if pdfplumber is None:
             log.error("pdfplumber not installed, cannot parse PDFs")
-            return []
+            self.result.errors.append("pdfplumber not installed")
+            return self.result
 
+        self.result.tier_used = "pdf"
         all_rows: list[dict] = []
         seen: set[tuple[str, float]] = set()
 
@@ -253,11 +264,15 @@ class ErnstBioengAdapter(PDFAdapter):
             try:
                 pdf_bytes = self._download_pdf(url)
                 if not pdf_bytes:
+                    self.result.errors.append(f"download failed: {url}")
                     continue
+                self.result.pages_fetched += 1
 
                 # Extract species and form prices from PDF
                 rows = self._extract_bioeng_products(pdf_bytes, url)
                 for r in rows:
+                    r.setdefault("supplier_id", self.supplier_id)
+                    r.setdefault("supplier_name", self.supplier_name)
                     key = (r["name"].lower(), r["price"])
                     if key not in seen:
                         seen.add(key)
@@ -267,8 +282,10 @@ class ErnstBioengAdapter(PDFAdapter):
             except Exception as e:
                 log.error("%s: failed to process %s: %s",
                           self.supplier_name, url, e)
+                self.result.errors.append(f"failed to process {url}: {e}")
 
-        return all_rows
+        self.result.products = all_rows
+        return self.result
 
     def _extract_bioeng_products(self, pdf_bytes: bytes, source_url: str) -> list[dict]:
         """Extract species from table and form prices from text, combine them."""
@@ -452,13 +469,14 @@ class BlueSkyAvailAdapter(Adapter):
     def start_urls(self) -> list[str]:
         return [self.xlsx_url]
 
-    def run(self) -> list[dict]:
+    def run(self) -> ScrapeResult:
         """Download XLSX and extract availability data."""
         try:
             import openpyxl
         except ImportError:
             log.error("openpyxl not installed, cannot parse XLSX")
-            return []
+            self.result.errors.append("openpyxl not installed")
+            return self.result
 
         import urllib.request
 
@@ -474,8 +492,11 @@ class BlueSkyAvailAdapter(Adapter):
                 data = resp.read()
         except Exception as e:
             log.error("Failed to download Blue Sky XLSX: %s", e)
-            return []
+            self.result.errors.append(f"download failed: {e}")
+            return self.result
 
+        self.result.tier_used = "xlsx"
+        self.result.pages_fetched = 1
         rows: list[dict] = []
         seen: set[str] = set()
 
@@ -514,10 +535,150 @@ class BlueSkyAvailAdapter(Adapter):
                 "category": "Plants",
                 "raw_text": f"xlsx:avail={available}",
                 "extras": {"available_qty": available},
+                "supplier_id": self.supplier_id,
+                "supplier_name": self.supplier_name,
             })
 
         wb.close()
         log.info("Blue Sky: extracted %d products from XLSX", len(rows))
+        self.result.products = rows
+        return self.result
+
+
+@register
+class AmericanNativePlantsAdapter(Adapter):
+    """American Native Plants — public XLSX availability workbook.
+
+    The WooCommerce login has reCAPTCHA, but the catalog page publishes current
+    Product Availability XLSX/PDF links. The workbook exposes quantity and
+    category, not unit pricing.
+    """
+    supplier_id = 43
+    supplier_name = "American Native Plants"
+    requires_login = False
+    prefer_tier = "curl_cffi"
+
+    catalog_url = "https://www.americannativeplants.com/catalog/"
+    fallback_xlsx_url = (
+        "https://www.americannativeplants.com/wp-content/uploads/2026/04/"
+        "Availability-04-30-2026.xlsx"
+    )
+
+    def start_urls(self) -> list[str]:
+        return [self.catalog_url]
+
+    def find_availability_xlsx_url(self, catalog_html: str) -> str:
+        matches = re.findall(
+            r'https?://[^"\']+/wp-content/uploads/[^"\']+?Availability-[^"\']+?\.xlsx',
+            catalog_html,
+            flags=re.IGNORECASE,
+        )
+        if not matches:
+            matches = re.findall(
+                r'href=["\']([^"\']+?Availability-[^"\']+?\.xlsx)["\']',
+                catalog_html,
+                flags=re.IGNORECASE,
+            )
+        if not matches:
+            return self.fallback_xlsx_url
+        return urljoin(self.catalog_url, matches[-1])
+
+    def run(self) -> ScrapeResult:
+        try:
+            import urllib.request
+        except ImportError as exc:
+            self.result.errors.append(f"urllib unavailable: {exc}")
+            return self.result
+
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36"
+            ),
+        }
+        try:
+            catalog_req = urllib.request.Request(self.catalog_url, headers=headers)
+            with urllib.request.urlopen(catalog_req, timeout=60) as resp:
+                catalog_html = resp.read().decode("utf-8", errors="replace")
+            xlsx_url = self.find_availability_xlsx_url(catalog_html)
+            xlsx_req = urllib.request.Request(xlsx_url, headers=headers)
+            with urllib.request.urlopen(xlsx_req, timeout=60) as resp:
+                xlsx_data = resp.read()
+        except Exception as exc:
+            log.error("Failed to download American Native Plants availability: %s", exc)
+            self.result.errors.append(f"download failed: {exc}")
+            return self.result
+
+        try:
+            rows = self.parse_workbook(xlsx_data, xlsx_url)
+        except Exception as exc:
+            log.error("Failed to parse American Native Plants XLSX: %s", exc)
+            self.result.errors.append(f"parse failed: {exc}")
+            return self.result
+
+        self.result.tier_used = "xlsx"
+        self.result.pages_fetched = 2
+        self.result.products = rows
+        log.info("American Native Plants: extracted %d availability rows", len(rows))
+        return self.result
+
+    def parse_workbook(self, xlsx_data: bytes, source_url: str) -> list[dict]:
+        try:
+            import openpyxl
+        except ImportError:
+            self.result.errors.append("openpyxl not installed")
+            return []
+
+        wb = openpyxl.load_workbook(io.BytesIO(xlsx_data), read_only=True, data_only=True)
+        ws = wb["Availability Report + Pricing"] if "Availability Report + Pricing" in wb.sheetnames else wb.active
+        rows: list[dict] = []
+        seen: set[str] = set()
+        header_seen = False
+
+        for row in ws.iter_rows(values_only=True):
+            cells = [(cell if cell is not None else "") for cell in row[:4]]
+            species = str(cells[0]).strip()
+            common = str(cells[1]).strip()
+            quantity_value = cells[2]
+            category = str(cells[3]).strip()
+
+            if not header_seen:
+                header_seen = [species.lower(), common.lower(), str(quantity_value).lower(), category.lower()] == [
+                    "species",
+                    "common name",
+                    "quantity",
+                    "category",
+                ]
+                continue
+            if not species or not common or not category:
+                continue
+
+            try:
+                quantity = int(float(str(quantity_value).replace(",", "").strip()))
+            except (TypeError, ValueError):
+                continue
+
+            name = common if common == species else f"{common} ({species})"
+            key = f"{species}:{common}:{category}"
+            if key in seen:
+                continue
+            seen.add(key)
+
+            rows.append({
+                "name": name[:200],
+                "price": 0.0,
+                "sku": species,
+                "container": sniff_container(f"{species} {common}"),
+                "in_stock": quantity > 0,
+                "category": category,
+                "raw_text": f"xlsx:qty={quantity}",
+                "url": source_url,
+                "extras": {"available_qty": quantity},
+                "supplier_id": self.supplier_id,
+                "supplier_name": self.supplier_name,
+            })
+
+        wb.close()
         return rows
 
 
