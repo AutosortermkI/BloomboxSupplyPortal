@@ -1,0 +1,2 @@
+raw_row,legacy_id,supplier_name,website,normalized_domain,rejection_reason,evidence_checked_urls,canonical_supplier_id
+121,244,Blue Sky Nursery,blueskynursery.ca,blueskynursery.ca,Duplicate raw dashboard row already represented by canonical supplier BB-SUP-000010.,"[""https://blueskynursery.ca/orders/2025-catalogue/"",""https://blueskynursery.ca/our-products/""]",BB-SUP-000010

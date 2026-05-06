@@ -1,0 +1,513 @@
+[
+  {
+    "canonical_supplier_id": "BB-SUP-000001",
+    "legacy_ids": [
+      16
+    ],
+    "supplier_name": "Quality Greenhouses & Perennial Farm",
+    "legal_name": "",
+    "website": "https://www.qualitygreenhouses.net/",
+    "normalized_domain": "qualitygreenhouses.net",
+    "city": "Dillsburg",
+    "state_or_province": "PA",
+    "country": "US",
+    "supplier_type": "Wholesale Grower",
+    "product_categories": [
+      "Annuals",
+      "Perennials",
+      "Edibles",
+      "Succulents",
+      "Shrubs",
+      "Grasses",
+      "Indoor Foliage"
+    ],
+    "access_model": "login",
+    "wholesale_status": "Wholesale Only",
+    "phone": "717-432-8900",
+    "email": "",
+    "evidence_urls": [
+      "https://www.qualitygreenhouses.net/",
+      "https://www.qualitygreenhouses.net/what-we-grow/",
+      "https://www.qualitygreenhouses.net/customer-resources/",
+      "https://www.qualitygreenhouses.net/faqs/"
+    ],
+    "evidence_notes": "Official site confirms wholesale positioning, Dillsburg address, product categories, catalog/customer resources, and online ordering/availability workflow.",
+    "verification_status": "verified",
+    "verification_reason": "Official Quality Greenhouses pages confirm identity, location, wholesale model, product categories, and account/availability access.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.qualitygreenhouses",
+    "adapter_class": "QualityGreenhousesAdapter",
+    "adapter_status": "active_unverified",
+    "notes": "Adapter requires Playwright and still needs a fresh live run on this machine."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000002",
+    "legacy_ids": [
+      21,
+      389
+    ],
+    "supplier_name": "Ernst Conservation Seeds",
+    "legal_name": "",
+    "website": "https://www.ernstseed.com/",
+    "normalized_domain": "ernstseed.com",
+    "city": "Meadville",
+    "state_or_province": "PA",
+    "country": "US",
+    "supplier_type": "Seed Company",
+    "product_categories": [
+      "Natives",
+      "Seeds",
+      "Seed Mixes",
+      "Bioengineering Materials"
+    ],
+    "access_model": "pdf",
+    "wholesale_status": "Both",
+    "phone": "800-873-3321",
+    "email": "sales@ernstseed.com",
+    "evidence_urls": [
+      "https://www.ernstseed.com/price-list/"
+    ],
+    "evidence_notes": "Official price-list page confirms current downloadable seed and bioengineering price lists, ordering contact, and Meadville address.",
+    "verification_status": "verified",
+    "verification_reason": "Official Ernst page confirms identity, price-list access model, product/business model, and location.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "ErnstSeedsAdapter",
+    "adapter_status": "active_unverified",
+    "notes": "Legacy ID 389 is the dashboard duplicate/bioengineering entry and maps to the same canonical supplier."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000003",
+    "legacy_ids": [
+      110
+    ],
+    "supplier_name": "Walters Gardens",
+    "legal_name": "Walters Gardens, Inc.",
+    "website": "https://www.waltersgardens.com/",
+    "normalized_domain": "waltersgardens.com",
+    "city": "Zeeland",
+    "state_or_province": "MI",
+    "country": "US",
+    "supplier_type": "Wholesale Perennial Grower",
+    "product_categories": [
+      "Perennials"
+    ],
+    "access_model": "login",
+    "wholesale_status": "Wholesale Only",
+    "phone": "888-925-8377",
+    "email": "sales@waltersgardens.com",
+    "evidence_urls": [
+      "https://www.waltersgardens.com/ordering.php",
+      "https://www.waltersgardens.com/perennials.php"
+    ],
+    "evidence_notes": "Official ordering page confirms wholesale ordering, login-required pricing/order forms, weekly availability, and Zeeland mailing address.",
+    "verification_status": "verified",
+    "verification_reason": "Official Walters pages confirm supplier identity, wholesale ordering model, login-gated pricing, product category, and location.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.walters",
+    "adapter_class": "WaltersAdapter",
+    "adapter_status": "placeholder_registered",
+    "notes": "Registered adapter is a login scaffold with guessed selectors and needs approved credentials plus DOM verification."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000004",
+    "legacy_ids": [
+      111
+    ],
+    "supplier_name": "Hoffman Nursery",
+    "legal_name": "Hoffman Nursery, Inc.",
+    "website": "https://hoffmannursery.com/",
+    "normalized_domain": "hoffmannursery.com",
+    "city": "Rougemont",
+    "state_or_province": "NC",
+    "country": "US",
+    "supplier_type": "Wholesale Grower",
+    "product_categories": [
+      "Grasses",
+      "Sedges",
+      "Perennials",
+      "Natives"
+    ],
+    "access_model": "pdf",
+    "wholesale_status": "Wholesale Only",
+    "phone": "800-203-8590",
+    "email": "sales@hoffmannursery.com",
+    "evidence_urls": [
+      "https://hoffmannursery.com/"
+    ],
+    "evidence_notes": "Official homepage confirms wholesale-only status, ornamental/native grasses and perennials, availability/order form downloads, and Rougemont address.",
+    "verification_status": "verified",
+    "verification_reason": "Official Hoffman Nursery page confirms identity, location, wholesale model, product categories, and downloadable availability/pricing access.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "HoffmannNurseryAdapter",
+    "adapter_status": "placeholder_registered",
+    "notes": "Registered adapter has an empty pdf_urls list and remains a placeholder until current direct URLs are available."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000005",
+    "legacy_ids": [
+      121
+    ],
+    "supplier_name": "Mountain Spring Nursery",
+    "legal_name": "Mountain Spring Nursery, LLC",
+    "website": "https://mountainspringnursery.com/",
+    "normalized_domain": "mountainspringnursery.com",
+    "city": "Reinholds",
+    "state_or_province": "PA",
+    "country": "US",
+    "supplier_type": "Wholesale Grower",
+    "product_categories": [
+      "Shrubs",
+      "Perennials",
+      "Trees"
+    ],
+    "access_model": "login",
+    "wholesale_status": "Wholesale Only",
+    "phone": "717-336-0833",
+    "email": "",
+    "evidence_urls": [
+      "https://mountainspringnursery.com/catalogandavail",
+      "https://mountainspringnursery.com/products"
+    ],
+    "evidence_notes": "Official pages confirm wholesale catalog/availability with customer password, Reinholds address, and products including shrubs, perennials, and trees.",
+    "verification_status": "verified",
+    "verification_reason": "Official Mountain Spring pages confirm identity, location, wholesale catalog/access model, and product categories.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "MountainSpringNurseryAdapter",
+    "adapter_status": "placeholder_registered",
+    "notes": "Registered adapter has placeholder/empty PDF URLs and should stay quarantined from production scraping until direct documents are verified."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000006",
+    "legacy_ids": [
+      130
+    ],
+    "supplier_name": "Go Native Trees",
+    "legal_name": "",
+    "website": "https://www.gonativetrees.com/",
+    "normalized_domain": "gonativetrees.com",
+    "city": "Manheim",
+    "state_or_province": "PA",
+    "country": "US",
+    "supplier_type": "Native Specialist",
+    "product_categories": [
+      "Natives",
+      "Trees",
+      "Shrubs"
+    ],
+    "access_model": "pdf",
+    "wholesale_status": "Both",
+    "phone": "717-399-0195",
+    "email": "",
+    "evidence_urls": [
+      "https://www.gonativetrees.com/",
+      "https://www.gonativetrees.com/download/price-list/"
+    ],
+    "evidence_notes": "Official pages confirm Go Native Tree Farm identity, Manheim nursery address, wholesale/retail customers, current price list, and quote/order process.",
+    "verification_status": "verified",
+    "verification_reason": "Official Go Native Trees pages confirm identity, location, product focus, price-list access, and wholesale/retail model.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "GoNativeTreesAdapter",
+    "adapter_status": "placeholder_registered",
+    "notes": "Registered adapter has an empty PDF URL list despite the official price-list page; direct download URL still needs adapter verification."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000007",
+    "legacy_ids": [
+      201
+    ],
+    "supplier_name": "Nolt's Greenhouse Supplies",
+    "legal_name": "",
+    "website": "https://noltsgreenhousesupplies.com/",
+    "normalized_domain": "noltsgreenhousesupplies.com",
+    "city": "Ephrata",
+    "state_or_province": "PA",
+    "country": "US",
+    "supplier_type": "Supply/Hard Goods",
+    "product_categories": [
+      "Hard Goods",
+      "Greenhouse Supplies",
+      "Containers",
+      "Fertilizer",
+      "Irrigation"
+    ],
+    "access_model": "pdf",
+    "wholesale_status": "Commercial Growers Catalog",
+    "phone": "717-354-8376",
+    "email": "sales@noltsgreenhouse.com",
+    "evidence_urls": [
+      "https://noltsgreenhousesupplies.com/NGScatalog.pdf",
+      "https://www.lawnandgardendirectory.org/nolt-s-greenhouse-supplies.aspx"
+    ],
+    "evidence_notes": "Official PDF confirms Nolt's Greenhouse Supplies 2026 commercial growers catalog and phone; trade-directory listing supplies address and email because the public site has minimal contact text.",
+    "verification_status": "verified",
+    "verification_reason": "Official catalog verifies identity, commercial supplier model, product categories, and catalog access; directory evidence fills contact location.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "NoltsSuppliesAdapter",
+    "adapter_status": "active_unverified",
+    "notes": "Legacy ID 201 is duplicated by a Musser Forests raw row; this canonical supplier is matched by Nolt name/domain only."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000008",
+    "legacy_ids": [
+      207
+    ],
+    "supplier_name": "SiteOne Landscape Supply",
+    "legal_name": "SiteOne Landscape Supply, Inc.",
+    "website": "https://www.siteone.com/",
+    "normalized_domain": "siteone.com",
+    "city": "Roswell",
+    "state_or_province": "GA",
+    "country": "US",
+    "supplier_type": "Landscape Supply Distributor",
+    "product_categories": [
+      "Nursery",
+      "Landscape Supply",
+      "Irrigation",
+      "Hardscapes",
+      "Agronomic Maintenance"
+    ],
+    "access_model": "public",
+    "wholesale_status": "Account/Guest Ordering",
+    "phone": "1-800-748-3663",
+    "email": "customersupport@ec.siteone.com",
+    "evidence_urls": [
+      "https://www.siteone.com/en/",
+      "https://www.siteone.com/en/contactus"
+    ],
+    "evidence_notes": "Official pages confirm SiteOne identity, nursery/landscape supply categories, pricing/inventory branch workflow, account/guest access, and Roswell home office.",
+    "verification_status": "verified",
+    "verification_reason": "Official SiteOne pages confirm identity, product categories, access model, and home-office location.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.siteone",
+    "adapter_class": "SiteOneAdapter",
+    "adapter_status": "active_unverified",
+    "notes": "Adapter requires undetected browser dependencies and needs a fresh live run before production classification."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000009",
+    "legacy_ids": [
+      210
+    ],
+    "supplier_name": "ARBICO Organics",
+    "legal_name": "",
+    "website": "https://www.arbico-organics.com/",
+    "normalized_domain": "arbico-organics.com",
+    "city": "Oro Valley",
+    "state_or_province": "AZ",
+    "country": "US",
+    "supplier_type": "Organic Pest Control and Growing Supplies",
+    "product_categories": [
+      "Beneficial Insects",
+      "Pest Control",
+      "Growing Supplies",
+      "Fertilizers",
+      "Soil Amendments"
+    ],
+    "access_model": "public",
+    "wholesale_status": "Public Online Ordering",
+    "phone": "1-800-827-2847",
+    "email": "CustomerCare@arbico.com",
+    "evidence_urls": [
+      "https://www.arbico-organics.com/category/beneficial-insects-organisms",
+      "https://www.arbico-organics.com/category/contactus",
+      "https://www.arbico-organics.com/category/shipping-info"
+    ],
+    "evidence_notes": "Official pages confirm ARBICO Organics identity, Oro Valley retail/corporate office, online ordering, and beneficial insect/growing supply categories.",
+    "verification_status": "verified",
+    "verification_reason": "Official ARBICO pages confirm identity, location, product/business model, and public online ordering access.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.arbico",
+    "adapter_class": "ARBICOAdapter",
+    "adapter_status": "active_unverified",
+    "notes": "Legacy ID 210 is duplicated by an Adams County Greenhouse raw row; this canonical supplier is matched by ARBICO name/domain only."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000010",
+    "legacy_ids": [
+      244
+    ],
+    "supplier_name": "Blue Sky Nursery",
+    "legal_name": "",
+    "website": "https://blueskynursery.ca/",
+    "normalized_domain": "blueskynursery.ca",
+    "city": "Lincoln",
+    "state_or_province": "ON",
+    "country": "CA",
+    "supplier_type": "Wholesale Grower",
+    "product_categories": [
+      "Perennials",
+      "Broadleaf Evergreens",
+      "Flowering Shrubs & Trees",
+      "Ferns",
+      "Hostas",
+      "Hydrangeas",
+      "Ornamental Grasses"
+    ],
+    "access_model": "pdf",
+    "wholesale_status": "Wholesale Only",
+    "phone": "905-563-4245",
+    "email": "orders@blueskynursery.ca",
+    "evidence_urls": [
+      "https://blueskynursery.ca/orders/2025-catalogue/",
+      "https://blueskynursery.ca/our-products/"
+    ],
+    "evidence_notes": "Official pages confirm Lincoln ON location, wholesale-only status, online availability/catalog access, product categories, and contact details.",
+    "verification_status": "verified",
+    "verification_reason": "Official Blue Sky pages confirm identity, location, wholesale model, product categories, and catalog/availability access.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "BlueSkyAvailAdapter",
+    "adapter_status": "active_verified",
+    "notes": "Duplicate raw dashboard rows are merged to this one canonical supplier; prior local adapter audit recorded a successful live availability run."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000011",
+    "legacy_ids": [
+      312
+    ],
+    "supplier_name": "The Cactus King",
+    "legal_name": "",
+    "website": "https://thecactusking.com/",
+    "normalized_domain": "thecactusking.com",
+    "city": "Ganado",
+    "state_or_province": "TX",
+    "country": "US",
+    "supplier_type": "Succulent Farm and Nursery",
+    "product_categories": [
+      "Cactus",
+      "Succulents"
+    ],
+    "access_model": "public",
+    "wholesale_status": "Retail and Wholesale",
+    "phone": "281-591-8833",
+    "email": "",
+    "evidence_urls": [
+      "https://thecactusking.com/"
+    ],
+    "evidence_notes": "Official homepage confirms The Cactus King identity, retail/wholesale clientele, public product pricing, shipping, and current Ganado TX location notice.",
+    "verification_status": "verified",
+    "verification_reason": "Official Cactus King page confirms identity, product model, access model, and current location; raw dashboard Homestead FL/cactuskingfl.com values were not accepted.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.cactusking",
+    "adapter_class": "CactusKingAdapter",
+    "adapter_status": "active_unverified",
+    "notes": "Canonical website differs from raw dashboard website; adapter already targets the verified domain."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000012",
+    "legacy_ids": [
+      379
+    ],
+    "supplier_name": "Prairie Moon Nursery",
+    "legal_name": "",
+    "website": "https://www.prairiemoon.com/",
+    "normalized_domain": "prairiemoon.com",
+    "city": "Winona",
+    "state_or_province": "MN",
+    "country": "US",
+    "supplier_type": "Native Seed and Plant Supplier",
+    "product_categories": [
+      "Seeds",
+      "Native Plants",
+      "Seed Mixes"
+    ],
+    "access_model": "public",
+    "wholesale_status": "Online and Phone Orders",
+    "phone": "507-452-1362",
+    "email": "",
+    "evidence_urls": [
+      "https://www.prairiemoon.com/contact-us.html",
+      "https://www.prairiemoon.com/seeds/wildflowers/"
+    ],
+    "evidence_notes": "Official contact page confirms Prairie Moon Nursery identity, Winona MN location, online/phone-only ordering, quote requests, and seed/plant categories.",
+    "verification_status": "verified",
+    "verification_reason": "Official Prairie Moon pages confirm identity, location, product categories, public ordering model, and quote workflow.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.prairiemoon",
+    "adapter_class": "PrairieMoonAdapter",
+    "adapter_status": "active_unverified",
+    "notes": "Adapter requires Playwright and needs a fresh live run on this machine."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000013",
+    "legacy_ids": [
+      381
+    ],
+    "supplier_name": "American Meadows",
+    "legal_name": "",
+    "website": "https://www.americanmeadows.com/",
+    "normalized_domain": "americanmeadows.com",
+    "city": "",
+    "state_or_province": "VT",
+    "country": "US",
+    "supplier_type": "Commercial Seed, Bulb, and Plant Supplier",
+    "product_categories": [
+      "Wildflower Seeds",
+      "Clover & Grass Seeds",
+      "Perennials",
+      "Flower Bulbs"
+    ],
+    "access_model": "public",
+    "wholesale_status": "Commercial/Bulk Ordering",
+    "phone": "802-383-3850",
+    "email": "mike@americanmeadows.com",
+    "evidence_urls": [
+      "https://www.americanmeadows.com/pages/commercial",
+      "https://www.americanmeadows.com/pages/contact-us",
+      "https://www.americanmeadows.com/pages/about-us"
+    ],
+    "evidence_notes": "Official commercial and contact pages confirm American Meadows identity, bulk/commercial sales, product categories, and commercial contact; official pages confirm Vermont history but do not publish a current city in the checked sources.",
+    "verification_status": "verified",
+    "verification_reason": "Official American Meadows pages confirm identity, product categories, and commercial/bulk access; city is intentionally blank because the checked official pages did not publish one.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.shopify_json",
+    "adapter_class": "AmericanMeadowsAdapter",
+    "adapter_status": "active_unverified",
+    "notes": "Raw city was not promoted because it was not confirmed by the checked official evidence."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000014",
+    "legacy_ids": [
+      43
+    ],
+    "supplier_name": "American Native Plants",
+    "legal_name": "",
+    "website": "https://www.americannativeplants.com/",
+    "normalized_domain": "americannativeplants.com",
+    "city": "Middle River",
+    "state_or_province": "MD",
+    "country": "US",
+    "supplier_type": "Wholesale Native Plant Nursery",
+    "product_categories": [
+      "Natives",
+      "Trees",
+      "Shrubs",
+      "Perennials",
+      "Hardgoods"
+    ],
+    "access_model": "pdf",
+    "wholesale_status": "Wholesale Only",
+    "phone": "410-529-0552",
+    "email": "sales@americannativeplants.com",
+    "evidence_urls": [
+      "https://www.americannativeplants.com/contact-us/",
+      "https://www.americannativeplants.com/catalog/",
+      "https://www.americannativeplants.com/shipping/",
+      "https://www.americannativeplants.com/creating-a-customer-account/",
+      "https://www.americannativeplants.com/wp-content/uploads/2026/04/Availability-04-30-2026.xlsx"
+    ],
+    "evidence_notes": "Official pages confirm American Native Plants identity, Middle River MD location, wholesale native plant business model, downloadable availability files, and account-gated pricing/availability. A live adapter run on 2026-05-06 extracted 462 rows from the official April 30, 2026 availability XLSX.",
+    "verification_status": "verified",
+    "verification_reason": "Official American Native Plants pages and current availability workbook confirm identity, location, wholesale model, product categories, and downloadable availability access.",
+    "last_verified_at": "2026-05-06",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "AmericanNativePlantsAdapter",
+    "adapter_status": "active_verified",
+    "notes": "WooCommerce login page is protected by reCAPTCHA; current adapter uses the public official XLSX availability link and does not store or emit prices. Throwaway login credential is stored only in local Keychain/runtime metadata."
+  }
+]
