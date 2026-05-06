@@ -1,9 +1,9 @@
 """
-Walters Gardens (id=110) — example login-required adapter.
+Walters Gardens (id=110) — login-required adapter scaffold.
 
 Shows the pattern for a site that gates prices behind authentication:
 1. Force the Playwright tier because we need a stateful browser session.
-2. Override `login()` to fill in credentials from the vault.
+2. Override `login()` to fill in credentials from the local credential store.
 3. Override `start_urls()` + `discover_urls()` to walk the availability
    catalog after authenticating.
 

@@ -4,7 +4,7 @@ Adapter base class.
 Every supplier-specific scraper subclasses Adapter and implements at least
 `start_urls()` — the list of catalog/listing pages to crawl. Override any
 other hook to customize behavior. All of the heavy lifting (fetching,
-stealth, parsing, vault lookup) lives in the core and is reusable.
+stealth, parsing, credential loading) lives in the core and is reusable.
 """
 from __future__ import annotations
 
