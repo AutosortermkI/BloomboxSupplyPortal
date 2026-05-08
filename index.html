@@ -459,7 +459,7 @@
         </div>
     </div>
 
-    <footer class="dashboard-footer">BloomBox Supplier Command Center &mdash; Canonical registry updated May 6, 2026 &mdash; <span id="supplier-count-footer"></span> verified supplier records</footer>
+    <footer class="dashboard-footer">BloomBox Supplier Command Center &mdash; Canonical registry updated May 8, 2026 &mdash; <span id="supplier-count-footer"></span> verified supplier records</footer>
 </div>
 
 <script>
@@ -543,8 +543,8 @@ const CANONICAL_SUPPLIERS = [
     "last_verified_at": "2026-04-30",
     "adapter_module": "scrape.adapters.pdf_pricelists",
     "adapter_class": "ErnstSeedsAdapter",
-    "adapter_status": "active_unverified",
-    "notes": "Legacy ID 389 is the dashboard duplicate/bioengineering entry and maps to the same canonical supplier."
+    "adapter_status": "active_verified",
+    "notes": "Live runs on 2026-05-08 verified ErnstSeedsAdapter with 427 rows from the official 2026 Retail Price List PDF and ErnstBioengAdapter with 266 rows from the shrub/tree material price sheet. Legacy ID 389 maps to this same canonical supplier."
   },
   {
     "canonical_supplier_id": "BB-SUP-000003",
@@ -718,8 +718,8 @@ const CANONICAL_SUPPLIERS = [
     "last_verified_at": "2026-04-30",
     "adapter_module": "scrape.adapters.pdf_pricelists",
     "adapter_class": "NoltsSuppliesAdapter",
-    "adapter_status": "active_unverified",
-    "notes": "Legacy ID 201 is duplicated by a Musser Forests raw row; this canonical supplier is matched by Nolt name/domain only."
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified NoltsSuppliesAdapter with 995 rows from the official NGScatalog.pdf. Legacy ID 201 is duplicated by a Musser Forests raw row; this canonical supplier is matched by Nolt name/domain only."
   },
   {
     "canonical_supplier_id": "BB-SUP-000008",
@@ -794,7 +794,7 @@ const CANONICAL_SUPPLIERS = [
     "adapter_module": "scrape.adapters.arbico",
     "adapter_class": "ARBICOAdapter",
     "adapter_status": "active_unverified",
-    "notes": "Legacy ID 210 is duplicated by an Adams County Greenhouse raw row; this canonical supplier is matched by ARBICO name/domain only."
+    "notes": "Legacy ID 210 is duplicated by an Adams County Greenhouse raw row; this canonical supplier is matched by ARBICO name/domain only. 2026-05-08 smoke run produced only 1 priced row after mixed 403/browser escalation, so the adapter needs stable crawl tuning before production classification."
   },
   {
     "canonical_supplier_id": "BB-SUP-000010",
@@ -833,7 +833,7 @@ const CANONICAL_SUPPLIERS = [
     "adapter_module": "scrape.adapters.pdf_pricelists",
     "adapter_class": "BlueSkyAvailAdapter",
     "adapter_status": "active_verified",
-    "notes": "Duplicate raw dashboard rows are merged to this one canonical supplier; prior local adapter audit recorded a successful live availability run."
+    "notes": "Duplicate raw dashboard rows are merged to this one canonical supplier; live run on 2026-05-08 verified BlueSkyAvailAdapter with 2387 rows from the official XLSX availability file."
   },
   {
     "canonical_supplier_id": "BB-SUP-000011",
@@ -865,8 +865,8 @@ const CANONICAL_SUPPLIERS = [
     "last_verified_at": "2026-04-30",
     "adapter_module": "scrape.adapters.cactusking",
     "adapter_class": "CactusKingAdapter",
-    "adapter_status": "active_unverified",
-    "notes": "Canonical website differs from raw dashboard website; adapter already targets the verified domain."
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified CactusKingAdapter with 247 rows from the verified thecactusking.com public catalog. Canonical website differs from raw dashboard website; adapter targets the verified domain."
   },
   {
     "canonical_supplier_id": "BB-SUP-000012",
@@ -901,7 +901,7 @@ const CANONICAL_SUPPLIERS = [
     "adapter_module": "scrape.adapters.prairiemoon",
     "adapter_class": "PrairieMoonAdapter",
     "adapter_status": "active_unverified",
-    "notes": "Adapter requires Playwright and needs a fresh live run on this machine."
+    "notes": "Adapter requires Playwright. 2026-05-08 smoke run found configured start URLs returning 404, so adapter needs URL refresh before production verification."
   },
   {
     "canonical_supplier_id": "BB-SUP-000013",
@@ -937,8 +937,8 @@ const CANONICAL_SUPPLIERS = [
     "last_verified_at": "2026-04-30",
     "adapter_module": "scrape.adapters.shopify_json",
     "adapter_class": "AmericanMeadowsAdapter",
-    "adapter_status": "active_unverified",
-    "notes": "Raw city was not promoted because it was not confirmed by the checked official evidence."
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified AmericanMeadowsAdapter with 2877 rows from the public Shopify JSON catalog. Raw city was not promoted because it was not confirmed by the checked official evidence."
   },
   {
     "canonical_supplier_id": "BB-SUP-000014",
@@ -1128,7 +1128,7 @@ const S = [
     "accessNote": "Official Ernst page confirms identity, price-list access model, product/business model, and location.",
     "verificationStatus": "verified",
     "lastVerifiedAt": "2026-04-30",
-    "adapterStatus": "active_unverified",
+    "adapterStatus": "active_verified",
     "d": {
       "products": "Natives, Seeds, Seed Mixes, Bioengineering Materials",
       "minOrder": "",
@@ -1143,7 +1143,7 @@ const S = [
       "canonicalId": "BB-SUP-000002",
       "evidence": "https://www.ernstseed.com/price-list/",
       "lastVerifiedAt": "2026-04-30",
-      "adapterStatus": "active_unverified"
+      "adapterStatus": "active_verified"
     }
   },
   {
@@ -1339,7 +1339,7 @@ const S = [
     "accessNote": "Official catalog verifies identity, commercial supplier model, product categories, and catalog access; directory evidence fills contact location.",
     "verificationStatus": "verified",
     "lastVerifiedAt": "2026-04-30",
-    "adapterStatus": "active_unverified",
+    "adapterStatus": "active_verified",
     "d": {
       "products": "Hard Goods, Greenhouse Supplies, Containers, Fertilizer, Irrigation",
       "minOrder": "",
@@ -1354,7 +1354,7 @@ const S = [
       "canonicalId": "BB-SUP-000007",
       "evidence": "https://noltsgreenhousesupplies.com/NGScatalog.pdf | https://www.lawnandgardendirectory.org/nolt-s-greenhouse-supplies.aspx",
       "lastVerifiedAt": "2026-04-30",
-      "adapterStatus": "active_unverified"
+      "adapterStatus": "active_verified"
     }
   },
   {
@@ -1514,7 +1514,7 @@ const S = [
     "accessNote": "Official Cactus King page confirms identity, product model, access model, and current location; raw dashboard Homestead FL/cactuskingfl.com values were not accepted.",
     "verificationStatus": "verified",
     "lastVerifiedAt": "2026-04-30",
-    "adapterStatus": "active_unverified",
+    "adapterStatus": "active_verified",
     "d": {
       "products": "Cactus, Succulents",
       "minOrder": "",
@@ -1529,7 +1529,7 @@ const S = [
       "canonicalId": "BB-SUP-000011",
       "evidence": "https://thecactusking.com/",
       "lastVerifiedAt": "2026-04-30",
-      "adapterStatus": "active_unverified"
+      "adapterStatus": "active_verified"
     }
   },
   {
@@ -1599,7 +1599,7 @@ const S = [
     "accessNote": "Official American Meadows pages confirm identity, product categories, and commercial/bulk access; city is intentionally blank because the checked official pages did not publish one.",
     "verificationStatus": "verified",
     "lastVerifiedAt": "2026-04-30",
-    "adapterStatus": "active_unverified",
+    "adapterStatus": "active_verified",
     "d": {
       "products": "Wildflower Seeds, Clover & Grass Seeds, Perennials, Flower Bulbs",
       "minOrder": "",
@@ -1614,7 +1614,7 @@ const S = [
       "canonicalId": "BB-SUP-000013",
       "evidence": "https://www.americanmeadows.com/pages/commercial | https://www.americanmeadows.com/pages/contact-us | https://www.americanmeadows.com/pages/about-us",
       "lastVerifiedAt": "2026-04-30",
-      "adapterStatus": "active_unverified"
+      "adapterStatus": "active_verified"
     }
   },
   {

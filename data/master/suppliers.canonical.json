@@ -73,8 +73,8 @@
     "last_verified_at": "2026-04-30",
     "adapter_module": "scrape.adapters.pdf_pricelists",
     "adapter_class": "ErnstSeedsAdapter",
-    "adapter_status": "active_unverified",
-    "notes": "Legacy ID 389 is the dashboard duplicate/bioengineering entry and maps to the same canonical supplier."
+    "adapter_status": "active_verified",
+    "notes": "Live runs on 2026-05-08 verified ErnstSeedsAdapter with 427 rows from the official 2026 Retail Price List PDF and ErnstBioengAdapter with 266 rows from the shrub/tree material price sheet. Legacy ID 389 maps to this same canonical supplier."
   },
   {
     "canonical_supplier_id": "BB-SUP-000003",
@@ -248,8 +248,8 @@
     "last_verified_at": "2026-04-30",
     "adapter_module": "scrape.adapters.pdf_pricelists",
     "adapter_class": "NoltsSuppliesAdapter",
-    "adapter_status": "active_unverified",
-    "notes": "Legacy ID 201 is duplicated by a Musser Forests raw row; this canonical supplier is matched by Nolt name/domain only."
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified NoltsSuppliesAdapter with 995 rows from the official NGScatalog.pdf. Legacy ID 201 is duplicated by a Musser Forests raw row; this canonical supplier is matched by Nolt name/domain only."
   },
   {
     "canonical_supplier_id": "BB-SUP-000008",
@@ -324,7 +324,7 @@
     "adapter_module": "scrape.adapters.arbico",
     "adapter_class": "ARBICOAdapter",
     "adapter_status": "active_unverified",
-    "notes": "Legacy ID 210 is duplicated by an Adams County Greenhouse raw row; this canonical supplier is matched by ARBICO name/domain only."
+    "notes": "Legacy ID 210 is duplicated by an Adams County Greenhouse raw row; this canonical supplier is matched by ARBICO name/domain only. 2026-05-08 smoke run produced only 1 priced row after mixed 403/browser escalation, so the adapter needs stable crawl tuning before production classification."
   },
   {
     "canonical_supplier_id": "BB-SUP-000010",
@@ -363,7 +363,7 @@
     "adapter_module": "scrape.adapters.pdf_pricelists",
     "adapter_class": "BlueSkyAvailAdapter",
     "adapter_status": "active_verified",
-    "notes": "Duplicate raw dashboard rows are merged to this one canonical supplier; prior local adapter audit recorded a successful live availability run."
+    "notes": "Duplicate raw dashboard rows are merged to this one canonical supplier; live run on 2026-05-08 verified BlueSkyAvailAdapter with 2387 rows from the official XLSX availability file."
   },
   {
     "canonical_supplier_id": "BB-SUP-000011",
@@ -395,8 +395,8 @@
     "last_verified_at": "2026-04-30",
     "adapter_module": "scrape.adapters.cactusking",
     "adapter_class": "CactusKingAdapter",
-    "adapter_status": "active_unverified",
-    "notes": "Canonical website differs from raw dashboard website; adapter already targets the verified domain."
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified CactusKingAdapter with 247 rows from the verified thecactusking.com public catalog. Canonical website differs from raw dashboard website; adapter targets the verified domain."
   },
   {
     "canonical_supplier_id": "BB-SUP-000012",
@@ -431,7 +431,7 @@
     "adapter_module": "scrape.adapters.prairiemoon",
     "adapter_class": "PrairieMoonAdapter",
     "adapter_status": "active_unverified",
-    "notes": "Adapter requires Playwright and needs a fresh live run on this machine."
+    "notes": "Adapter requires Playwright. 2026-05-08 smoke run found configured start URLs returning 404, so adapter needs URL refresh before production verification."
   },
   {
     "canonical_supplier_id": "BB-SUP-000013",
@@ -467,8 +467,8 @@
     "last_verified_at": "2026-04-30",
     "adapter_module": "scrape.adapters.shopify_json",
     "adapter_class": "AmericanMeadowsAdapter",
-    "adapter_status": "active_unverified",
-    "notes": "Raw city was not promoted because it was not confirmed by the checked official evidence."
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified AmericanMeadowsAdapter with 2877 rows from the public Shopify JSON catalog. Raw city was not promoted because it was not confirmed by the checked official evidence."
   },
   {
     "canonical_supplier_id": "BB-SUP-000014",
