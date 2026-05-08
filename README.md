@@ -108,10 +108,11 @@ American Native Plants is configured locally and verified through the runner:
 python3 -m scrape.run --id 43 --concurrency 1 -v
 ```
 
-The May 6, 2026 live run extracted 462 rows from the official April 30, 2026
-availability workbook. The supplier login page is protected by reCAPTCHA, so
-the adapter uses the official public workbook for availability and does not
-emit manufactured prices.
+The May 8, 2026 live run extracted 522 rows from the official May 6, 2026
+availability workbook. A manual Playwright login session was captured and the
+checked logged-in account/download/catalog pages did not expose account-gated
+prices, so the adapter uses the official public workbook for availability and
+does not emit manufactured prices.
 
 To test a supplier account without automating CAPTCHA, capture a headed browser
 session after manually completing the login:

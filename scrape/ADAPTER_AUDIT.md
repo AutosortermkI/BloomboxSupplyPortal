@@ -1,6 +1,6 @@
 # Adapter Quality Audit
 
-Status as of May 6, 2026.
+Status as of May 8, 2026.
 
 This audit is now tied to the canonical supplier registry in
 `data/master/suppliers.canonical.json` and the machine-readable adapter map in
@@ -31,7 +31,7 @@ An adapter should not be treated as production-grade until it has all of:
 
 | Adapter ID | Canonical ID | Supplier | Evidence | Current classification |
 | --- | --- | --- | --- | --- |
-| 43 | BB-SUP-000014 | American Native Plants | `python3 -m scrape.run --id 43 --concurrency 1 -v` on May 6, 2026 extracted 462 rows from the official April 30, 2026 XLSX availability workbook. | Keep enabled, availability-only feed, no prices. Login page has reCAPTCHA. Runtime credential is present in the local Keychain, but this adapter uses the public official workbook because browser login is reCAPTCHA-gated. |
+| 43 | BB-SUP-000014 | American Native Plants | `python3 -m scrape.run --id 43 --concurrency 1 -v` on May 8, 2026 extracted 522 rows from the official May 6, 2026 XLSX availability workbook. | Keep enabled, availability-only feed, no prices. Runtime credential and manual Playwright session are present locally; checked logged-in account/download/catalog pages did not expose account-gated prices. |
 | 244 | BB-SUP-000010 | Blue Sky Nursery | Prior local audit recorded `python3 -m scrape.run --id 244 --concurrency 1 -v` returning 2387 XLSX availability rows; official evidence is in the canonical registry. | Keep enabled, availability-only feed, no prices. |
 
 ## Active But Needs Fresh Live Verification

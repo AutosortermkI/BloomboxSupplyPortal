@@ -24,7 +24,7 @@ class AmericanNativePlantsAdapterTests(unittest.TestCase):
         workbook.close()
 
         adapter = AmericanNativePlantsAdapter()
-        rows = adapter.parse_workbook(buffer.getvalue(), "https://www.americannativeplants.com/wp-content/uploads/2026/04/Availability-04-30-2026.xlsx")
+        rows = adapter.parse_workbook(buffer.getvalue(), "https://www.americannativeplants.com/wp-content/uploads/2026/05/Availability-05-06-2026.xlsx")
 
         self.assertEqual(2, len(rows))
         self.assertEqual("2' Rainbow Defender Shelter", rows[0]["name"])

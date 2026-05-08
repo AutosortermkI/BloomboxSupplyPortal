@@ -40,7 +40,8 @@ _BLOCK_PATTERNS = [
     re.compile(r"cf-browser-verification|checking your browser|just a moment.*cloudflare", re.I),
     re.compile(r"<title>\s*(access denied|403 forbidden|request blocked|blocked)\s*</title>", re.I),
     re.compile(r"unusual traffic from your (computer|network)", re.I),
-    re.compile(r"recaptcha|hcaptcha|g-recaptcha|captcha.{0,30}(challenge|verify|solve|required)", re.I),
+    re.compile(r"hcaptcha|g-recaptcha", re.I),
+    re.compile(r"(recaptcha|captcha).{0,40}(challenge|verify|solve|required)", re.I),
     re.compile(r"enable javascript and cookies to continue", re.I),
     re.compile(r"datadome|perimeterx|incapsula|imperva", re.I),
 ]

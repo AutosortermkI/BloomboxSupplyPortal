@@ -499,15 +499,15 @@
       "https://www.americannativeplants.com/catalog/",
       "https://www.americannativeplants.com/shipping/",
       "https://www.americannativeplants.com/creating-a-customer-account/",
-      "https://www.americannativeplants.com/wp-content/uploads/2026/04/Availability-04-30-2026.xlsx"
+      "https://www.americannativeplants.com/wp-content/uploads/2026/05/Availability-05-06-2026.xlsx"
     ],
-    "evidence_notes": "Official pages confirm American Native Plants identity, Middle River MD location, wholesale native plant business model, downloadable availability files, and account-gated pricing/availability. A live adapter run on 2026-05-06 extracted 462 rows from the official April 30, 2026 availability XLSX.",
+    "evidence_notes": "Official pages confirm American Native Plants identity, Middle River MD location, wholesale native plant business model, downloadable availability files, and account-gated pricing/availability. A live adapter run on 2026-05-08 extracted 522 rows from the official May 6, 2026 availability XLSX.",
     "verification_status": "verified",
     "verification_reason": "Official American Native Plants pages and current availability workbook confirm identity, location, wholesale model, product categories, and downloadable availability access.",
-    "last_verified_at": "2026-05-06",
+    "last_verified_at": "2026-05-08",
     "adapter_module": "scrape.adapters.pdf_pricelists",
     "adapter_class": "AmericanNativePlantsAdapter",
     "adapter_status": "active_verified",
-    "notes": "WooCommerce login page is protected by reCAPTCHA; current adapter uses the public official XLSX availability link and does not store or emit prices. Throwaway login credential is stored only in local Keychain/runtime metadata."
+    "notes": "WooCommerce login page is protected by reCAPTCHA. A manual Playwright session was captured on 2026-05-08; checked logged-in account/download/catalog pages did not expose account-gated prices. Current adapter uses the public official XLSX availability link and does not store or emit prices."
   }
 ]

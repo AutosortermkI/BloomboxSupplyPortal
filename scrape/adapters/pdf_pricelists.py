@@ -560,8 +560,8 @@ class AmericanNativePlantsAdapter(Adapter):
 
     catalog_url = "https://www.americannativeplants.com/catalog/"
     fallback_xlsx_url = (
-        "https://www.americannativeplants.com/wp-content/uploads/2026/04/"
-        "Availability-04-30-2026.xlsx"
+        "https://www.americannativeplants.com/wp-content/uploads/2026/05/"
+        "Availability-05-06-2026.xlsx"
     )
 
     def start_urls(self) -> list[str]:
