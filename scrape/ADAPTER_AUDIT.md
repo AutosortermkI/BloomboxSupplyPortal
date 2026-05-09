@@ -12,8 +12,8 @@ canonical evidence.
 - Registered adapters: 17
 - Adapters mapped to verified canonical suppliers: 15
 - Adapters quarantined pending supplier review: 2
-- `active_verified`: 7
-- `active_unverified`: 4
+- `active_verified`: 10
+- `active_unverified`: 1
 - `placeholder_registered`: 6
 
 ## Production Bar
@@ -31,30 +31,30 @@ An adapter should not be treated as production-grade until it has all of:
 
 | Adapter ID | Canonical ID | Supplier | Evidence | Current classification |
 | --- | --- | --- | --- | --- |
-| 21 | BB-SUP-000002 | Ernst Conservation Seeds | `python3 -m scrape.run --id 21 389 201 312 381 43 244 --concurrency 1` on May 8, 2026 extracted 427 rows from the official 2026 Retail Price List PDF. | Keep enabled. PDF price-list parser returned normalized rows with `supplier_id` and `supplier_name`. |
+| 16 | BB-SUP-000001 | Quality Greenhouses & Perennial Farm | `python3 -m scrape.run --id 16 21 389 201 207 312 379 381 43 244 --concurrency 1` on May 8, 2026 extracted 81 rows from the public ePIcas Crop Status Availability iframe. | Keep enabled, availability-only feed, no prices. Requires Playwright. |
+| 21 | BB-SUP-000002 | Ernst Conservation Seeds | `python3 -m scrape.run --id 16 21 389 201 207 312 379 381 43 244 --concurrency 1` on May 8, 2026 extracted 427 rows from the official 2026 Retail Price List PDF. | Keep enabled. PDF price-list parser returned normalized rows with `supplier_id` and `supplier_name`. |
 | 43 | BB-SUP-000014 | American Native Plants | `python3 -m scrape.run --id 43 --concurrency 1` on May 8, 2026 extracted 522 rows from the official May 6, 2026 XLSX availability workbook. | Keep enabled, availability-only feed, no prices. Runtime credential and manual Playwright session are present locally; checked logged-in account/download/catalog pages did not expose account-gated prices. |
-| 201 | BB-SUP-000007 | Nolt's Greenhouse Supplies | `python3 -m scrape.run --id 21 389 201 312 381 43 244 --concurrency 1` on May 8, 2026 extracted 995 rows from official `NGScatalog.pdf`. | Keep enabled. Legacy ID is duplicated in raw data; mapping is by verified Nolt name/domain. |
-| 244 | BB-SUP-000010 | Blue Sky Nursery | `python3 -m scrape.run --id 21 389 201 312 381 43 244 --concurrency 1` on May 8, 2026 extracted 2387 XLSX availability rows. | Keep enabled, availability-only feed, no prices. |
-| 312 | BB-SUP-000011 | The Cactus King | `python3 -m scrape.run --id 21 389 201 312 381 43 244 --concurrency 1` on May 8, 2026 extracted 247 rows from the verified `thecactusking.com` public catalog. | Keep enabled. Canonical domain differs from the rejected raw dashboard domain. |
-| 381 | BB-SUP-000013 | American Meadows | `python3 -m scrape.run --id 21 389 201 312 381 43 244 --concurrency 1` on May 8, 2026 extracted 2877 rows from the public Shopify JSON catalog. | Keep enabled. City remains blank in canonical data because checked official evidence did not publish one. |
-| 389 | BB-SUP-000002 | Ernst Conservation Seeds | `python3 -m scrape.run --id 21 389 201 312 381 43 244 --concurrency 1` on May 8, 2026 extracted 266 rows from the official shrub/tree material price sheet. | Keep enabled. Maps to the same canonical Ernst supplier as ID 21. |
+| 201 | BB-SUP-000007 | Nolt's Greenhouse Supplies | `python3 -m scrape.run --id 16 21 389 201 207 312 379 381 43 244 --concurrency 1` on May 8, 2026 extracted 995 rows from official `NGScatalog.pdf`. | Keep enabled. Legacy ID is duplicated in raw data; mapping is by verified Nolt name/domain. |
+| 207 | BB-SUP-000008 | SiteOne Landscape Supply | `python3 -m scrape.run --id 16 21 389 201 207 312 379 381 43 244 --concurrency 1` on May 8, 2026 extracted 18 search-result rows after local `undetected_chromedriver` and `selenium` installation. | Keep enabled. Raw ID also appears on Eppley Nursery, so mapping is by verified SiteOne name/domain. |
+| 244 | BB-SUP-000010 | Blue Sky Nursery | `python3 -m scrape.run --id 16 21 389 201 207 312 379 381 43 244 --concurrency 1` on May 8, 2026 extracted 2387 XLSX availability rows. | Keep enabled, availability-only feed, no prices. |
+| 312 | BB-SUP-000011 | The Cactus King | `python3 -m scrape.run --id 16 21 389 201 207 312 379 381 43 244 --concurrency 1` on May 8, 2026 extracted 247 rows from the verified `thecactusking.com` public catalog. | Keep enabled. Canonical domain differs from the rejected raw dashboard domain. |
+| 379 | BB-SUP-000012 | Prairie Moon Nursery | `python3 -m scrape.run --id 16 21 389 201 207 312 379 381 43 244 --concurrency 1` on May 8, 2026 extracted 65 rows from current official seeds, plants, and seed-mixes category pages. | Keep enabled. Requires Playwright. |
+| 381 | BB-SUP-000013 | American Meadows | `python3 -m scrape.run --id 16 21 389 201 207 312 379 381 43 244 --concurrency 1` on May 8, 2026 extracted 2877 rows from the public Shopify JSON catalog. | Keep enabled. City remains blank in canonical data because checked official evidence did not publish one. |
+| 389 | BB-SUP-000002 | Ernst Conservation Seeds | `python3 -m scrape.run --id 16 21 389 201 207 312 379 381 43 244 --concurrency 1` on May 8, 2026 extracted 266 rows from the official shrub/tree material price sheet. | Keep enabled. Maps to the same canonical Ernst supplier as ID 21. |
 
-Latest combined verified-adapter run: `python3 -m scrape.run --id 21 389 201
-312 381 43 244 --concurrency 1` published 7721 rows from 7 suppliers with 0
-adapter errors at `2026-05-08T18:06:04+00:00`.
+Latest combined verified-adapter run: `python3 -m scrape.run --id 16 21 389
+201 207 312 379 381 43 244 --concurrency 1` published 7885 rows from 10
+suppliers with 0 adapter errors at `2026-05-09T01:33:01+00:00`.
 
 ## Active But Needs Fresh Live Verification
 
-These adapters map to verified canonical suppliers but should not be called
+This adapter maps to a verified canonical supplier but should not be called
 production-grade until the listed blocker is resolved and a fresh live run is
 captured on this machine.
 
 | Adapter ID | Canonical ID | Supplier | Adapter | Notes |
 | --- | --- | --- | --- | --- |
-| 16 | BB-SUP-000001 | Quality Greenhouses & Perennial Farm | `QualityGreenhousesAdapter` | Requires Playwright. |
-| 207 | BB-SUP-000008 | SiteOne Landscape Supply | `SiteOneAdapter` | Requires undetected browser dependencies. Raw ID also appears on Eppley Nursery. |
-| 210 | BB-SUP-000009 | ARBICO Organics | `ARBICOAdapter` | May 8, 2026 smoke run produced only 1 priced row after mixed 403/browser escalation; crawl needs tuning before promotion. Raw ID also appears on Adams County Greenhouse & Nursery. |
-| 379 | BB-SUP-000012 | Prairie Moon Nursery | `PrairieMoonAdapter` | May 8, 2026 smoke run returned 404 for configured start URLs; refresh URLs before promotion. |
+| 210 | BB-SUP-000009 | ARBICO Organics | `ARBICOAdapter` | May 8, 2026 smoke runs still produced only 1 stable priced row after Playwright product-detail crawling; deeper crawl tuning is required before promotion. Raw ID also appears on Adams County Greenhouse & Nursery. |
 
 ## Registered Placeholders Or Scaffolds
 
@@ -86,7 +86,7 @@ additional verification or credentials.
 
 ## Next Adapter Cleanup Steps
 
-1. Run `python3 -m scrape.run --preflight --id ...` for mapped adapters and separate missing browser dependencies from adapter defects.
+1. Fix ARBICO crawling until it returns a stable, representative public product feed or a documented no-feed result.
 2. Disable or finish registered placeholders before exposing them in production views.
 3. Resolve quarantined IDs `129` and `367` with supplier-level review before changing scraper behavior.
 4. Keep future adapter status changes in `data/master/adapter_supplier_map.csv` first, then update this audit.

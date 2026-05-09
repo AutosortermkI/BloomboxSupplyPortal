@@ -21,8 +21,8 @@ Plants procurement research.
   as untrusted raw inventory only. Do not use it as identity proof.
 - `data/master/adapter_supplier_map.csv` is the adapter source of truth:
   17 registered adapters are either mapped to one canonical supplier or
-  quarantined with a reason. Seven adapters currently have fresh live-run
-  evidence and four mapped adapters remain active but unverified.
+  quarantined with a reason. Ten adapters currently have fresh live-run
+  evidence and one mapped adapter remains active but unverified.
 
 ## Local Use
 
@@ -41,10 +41,10 @@ python3 -m scrape.run --preflight
 Run the current live-verified adapter set:
 
 ```bash
-python3 -m scrape.run --id 21 389 201 312 381 43 244 --concurrency 1
+python3 -m scrape.run --id 16 21 389 201 207 312 379 381 43 244 --concurrency 1
 ```
 
-The May 8, 2026 run of that set published 7721 rows from 7 suppliers with 0
+The May 8, 2026 run of that set published 7885 rows from 10 suppliers with 0
 adapter errors. It includes real price rows where the supplier exposes prices
 and availability-only rows where the official source does not expose pricing.
 

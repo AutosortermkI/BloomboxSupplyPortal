@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import html as html_module
 import re
-from urllib.parse import urljoin
+from urllib.parse import urldefrag, urljoin
 
 from bs4 import BeautifulSoup  # type: ignore
 
@@ -111,8 +111,8 @@ class ARBICOAdapter(Adapter):
     supplier_id = 210
     supplier_name = "ARBICO Organics"
     requires_login = False
-    prefer_tier = "curl_cffi"
-    max_pages = 40  # Generous limit for many categories
+    prefer_tier = "playwright"
+    max_pages = 25
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -132,8 +132,41 @@ class ARBICOAdapter(Adapter):
         return urls
 
     def parse_page(self, html: str, url: str) -> list[dict]:
-        """Parse category pages for embedded gtag product data."""
-        return _extract_gtag_products(html, url)
+        """Parse category or product pages for embedded product data."""
+        if "/product/" in url:
+            row = self._extract_product_detail(html, url)
+            return [row] if row else []
+        return []
+
+    def _extract_product_detail(self, html: str, url: str) -> dict | None:
+        """Extract the main product from a detail page, excluding related items."""
+        soup = BeautifulSoup(html, "lxml")
+        title_el = soup.find("h1")
+        title = title_el.get_text(" ", strip=True) if title_el else ""
+        rows = _extract_gtag_products(html, url)
+        if title and rows:
+            normalized_title = _normalize_name(title)
+            for row in rows:
+                normalized_row = _normalize_name(row.get("name", ""))
+                if normalized_title and (
+                    normalized_title in normalized_row
+                    or normalized_row in normalized_title
+                ):
+                    return row
+
+        price_match = re.search(r"\bvar\s+price\s*=\s*(\d+(?:\.\d{1,2})?)\s*;", html)
+        if title and price_match:
+            price = float(price_match.group(1))
+            if 0 < price < 10_000:
+                return {
+                    "name": title[:200],
+                    "price": price,
+                    "sku": "",
+                    "url": url,
+                    "container": sniff_container(title),
+                    "raw_text": f"detail_var_price:{price}",
+                }
+        return None
 
     def discover_urls(self, html: str, url: str) -> list[str]:
         """Discover subcategory links from category pages.
@@ -144,17 +177,40 @@ class ARBICOAdapter(Adapter):
         soup = BeautifulSoup(html, "lxml")
         found: list[str] = []
 
-        # Look for links that match /category/...
+        if "/product/" in url:
+            return found
+
         for a in soup.find_all("a", href=True):
             href = a["href"]
-            # Only follow category pages (not product pages)
-            if href.startswith("/category/") and "-G" not in href:
-                full_url = urljoin("https://www.arbico-organics.com", href)
-                # Check against global visited set to prevent cycles
-                if full_url not in self._visited_urls:
-                    # Also check we're not exceeding page limit
-                    if len(self._visited_urls) < self.max_pages:
-                        self._visited_urls.add(full_url)
-                        found.append(full_url)
+            if "/product/" not in href:
+                continue
+            full_url = urldefrag(urljoin("https://www.arbico-organics.com", href))[0]
+            if full_url not in self._visited_urls and len(self._visited_urls) < self.max_pages:
+                self._visited_urls.add(full_url)
+                found.append(full_url)
+
+        for a in soup.find_all("a", href=True):
+            href = a["href"]
+            if not href.startswith("/category/") or "-G" in href:
+                continue
+            full_url = urldefrag(urljoin("https://www.arbico-organics.com", href))[0]
+            if not _is_relevant_category_url(full_url):
+                continue
+            if full_url not in self._visited_urls and len(self._visited_urls) < self.max_pages:
+                self._visited_urls.add(full_url)
+                found.append(full_url)
 
         return found
+
+
+def _normalize_name(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "", html_module.unescape(value).lower())
+
+
+def _is_relevant_category_url(url: str) -> bool:
+    slug = url.rsplit("/category/", 1)[-1].lower()
+    keywords = (
+        "beneficial", "insect", "organism", "fly", "organic-pest", "pest",
+        "fertilizer", "soil", "amendment", "seed", "plant", "control",
+    )
+    return any(keyword in slug for keyword in keywords)

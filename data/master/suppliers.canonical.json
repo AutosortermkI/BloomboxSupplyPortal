@@ -37,8 +37,8 @@
     "last_verified_at": "2026-04-30",
     "adapter_module": "scrape.adapters.qualitygreenhouses",
     "adapter_class": "QualityGreenhousesAdapter",
-    "adapter_status": "active_unverified",
-    "notes": "Adapter requires Playwright and still needs a fresh live run on this machine."
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified QualityGreenhousesAdapter with 81 rows from the public ePIcas Crop Status Availability iframe. Rows are availability-only and do not include pricing."
   },
   {
     "canonical_supplier_id": "BB-SUP-000002",
@@ -285,8 +285,8 @@
     "last_verified_at": "2026-04-30",
     "adapter_module": "scrape.adapters.siteone",
     "adapter_class": "SiteOneAdapter",
-    "adapter_status": "active_unverified",
-    "notes": "Adapter requires undetected browser dependencies and needs a fresh live run before production classification."
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified SiteOneAdapter with 18 rows from SiteOne search results after installing the local undetected browser dependencies. Raw ID 207 is duplicated by Eppley Nursery; this canonical supplier is matched by SiteOne name/domain only."
   },
   {
     "canonical_supplier_id": "BB-SUP-000009",
@@ -324,7 +324,7 @@
     "adapter_module": "scrape.adapters.arbico",
     "adapter_class": "ARBICOAdapter",
     "adapter_status": "active_unverified",
-    "notes": "Legacy ID 210 is duplicated by an Adams County Greenhouse raw row; this canonical supplier is matched by ARBICO name/domain only. 2026-05-08 smoke run produced only 1 priced row after mixed 403/browser escalation, so the adapter needs stable crawl tuning before production classification."
+    "notes": "Legacy ID 210 is duplicated by an Adams County Greenhouse raw row; this canonical supplier is matched by ARBICO name/domain only. 2026-05-08 smoke runs still produced only 1 stable priced row after Playwright product-detail crawling, so the adapter needs deeper crawl tuning before production classification."
   },
   {
     "canonical_supplier_id": "BB-SUP-000010",
@@ -430,8 +430,8 @@
     "last_verified_at": "2026-04-30",
     "adapter_module": "scrape.adapters.prairiemoon",
     "adapter_class": "PrairieMoonAdapter",
-    "adapter_status": "active_unverified",
-    "notes": "Adapter requires Playwright. 2026-05-08 smoke run found configured start URLs returning 404, so adapter needs URL refresh before production verification."
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified PrairieMoonAdapter with 65 rows from current official seeds, plants, and seed-mixes category pages."
   },
   {
     "canonical_supplier_id": "BB-SUP-000013",
