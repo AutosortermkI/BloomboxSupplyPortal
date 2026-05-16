@@ -140,9 +140,9 @@ def _crawling(sid: int, name: str, urls: list[str], *,
 #          "https://hc-companies.com/products/"],
 #         tier="curl_cffi")
 
-# ---- LOGIN-GATED (queued for vault integration, no public prices) ----
-# These suppliers require an account to see pricing. They'll be enabled
-# once Joe gets credentials entered into the vault.
+# ---- LOGIN-GATED (queued for credential-store integration, no public prices) ----
+# These suppliers require an account to see pricing. They'll be enabled once
+# approved credentials are present in the local scraper credential store.
 #
 # _simple(61,  "DV Flora",         [...], login=True)
 # _simple(27,  "Miller Plant Farm", [...], login=True)

@@ -22,7 +22,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Optional
 
-from .stealth import BrowserProfile, get_proxy, human_delay, load_cookies, save_cookies
+from .stealth import (
+    BrowserProfile,
+    get_proxy,
+    human_delay,
+    load_cookies,
+    save_cookies,
+    storage_state_path,
+)
 
 log = logging.getLogger("bloombox.fetcher")
 
@@ -33,7 +40,8 @@ _BLOCK_PATTERNS = [
     re.compile(r"cf-browser-verification|checking your browser|just a moment.*cloudflare", re.I),
     re.compile(r"<title>\s*(access denied|403 forbidden|request blocked|blocked)\s*</title>", re.I),
     re.compile(r"unusual traffic from your (computer|network)", re.I),
-    re.compile(r"recaptcha|hcaptcha|g-recaptcha|captcha.{0,30}(challenge|verify|solve|required)", re.I),
+    re.compile(r"hcaptcha|g-recaptcha", re.I),
+    re.compile(r"(recaptcha|captcha).{0,40}(challenge|verify|solve|required)", re.I),
     re.compile(r"enable javascript and cookies to continue", re.I),
     re.compile(r"datadome|perimeterx|incapsula|imperva", re.I),
 ]
@@ -107,6 +115,24 @@ def _fetch_curl_cffi(url: str, profile: BrowserProfile, supplier_id: int | str |
 # -------------------------------------------------------------------------
 # Tier 2: Playwright + stealth
 # -------------------------------------------------------------------------
+def build_playwright_context_options(
+    profile: BrowserProfile,
+    supplier_id: int | str | None,
+) -> dict[str, Any]:
+    options: dict[str, Any] = {
+        "user_agent": profile.user_agent,
+        "viewport": {"width": profile.viewport[0], "height": profile.viewport[1]},
+        "locale": profile.locale,
+        "timezone_id": profile.timezone,
+        "extra_http_headers": {"Accept-Language": profile.accept_language},
+    }
+    if supplier_id is not None:
+        state_path = storage_state_path(supplier_id)
+        if state_path.exists():
+            options["storage_state"] = str(state_path)
+    return options
+
+
 def _fetch_playwright(url: str, profile: BrowserProfile, supplier_id: int | str | None,
                      timeout: int = 45, wait_for: str | None = None) -> FetchResult:
     try:
@@ -126,11 +152,7 @@ def _fetch_playwright(url: str, profile: BrowserProfile, supplier_id: int | str 
                 ],
             )
             context = browser.new_context(
-                user_agent=profile.user_agent,
-                viewport={"width": profile.viewport[0], "height": profile.viewport[1]},
-                locale=profile.locale,
-                timezone_id=profile.timezone,
-                extra_http_headers={"Accept-Language": profile.accept_language},
+                **build_playwright_context_options(profile, supplier_id)
             )
             # Strip the webdriver flag that most bot detectors check
             context.add_init_script(

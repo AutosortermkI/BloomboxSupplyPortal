@@ -248,12 +248,14 @@
 .scraper-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle;}
 .sd-live{background:var(--green-1);box-shadow:0 0 6px var(--green-1);}
 .sd-ready{background:var(--orange-2);}
+.sd-configured{background:#60a5fa;}
 .sd-idle{background:#9ca3af;}
 .sd-dead{background:#dc2626;}
 .portal-detail{padding:12px 16px;background:rgba(45,106,79,.04);border-left:3px solid var(--green-2);}
 .cred-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px;}
 .cred-grid label{font-size:10px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:3px;}
 .cred-grid input{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:var(--surface);color:var(--text);}
+.credential-runtime-note{margin-top:8px;font-size:11px;line-height:1.5;color:var(--text-secondary);}
 .cred-actions{margin-top:10px;display:flex;gap:8px;}
 .cred-actions button{padding:6px 14px;font-size:11px;font-weight:600;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;}
 .cred-actions button.primary{background:var(--green-2);color:white;border-color:var(--green-2);}
@@ -273,7 +275,7 @@
                 <button class="btn-export" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.25);color:white;" onclick="window.print()">Print</button>
             </div>
         </div>
-        <div class="header-subtitle">Master Wholesale Plant Supplier Database &amp; Price Arbitrage Engine — 300+ Verified Suppliers Across 20+ States — Click any row to expand full procurement details</div>
+        <div class="header-subtitle">Verified supplier registry and local price-feed monitor &mdash; click any row to expand evidence-backed procurement details</div>
         <div class="search-bar">
             <input type="text" id="globalSearch" placeholder="Search by name, city, state, product, category, cultivar..." oninput="dashboard.applyFilters()">
         </div>
@@ -282,18 +284,18 @@
             <div class="filter-group"><label>Type</label><select id="filter-type" onchange="dashboard.applyFilters()"><option value="all">All Types</option></select></div>
             <div class="filter-group"><label>Category</label><select id="filter-category" onchange="dashboard.applyFilters()"><option value="all">All Categories</option></select></div>
             <div class="filter-group"><label>Wholesale</label><select id="filter-wholesale" onchange="dashboard.applyFilters()"><option value="all">All</option><option value="wholesale">Wholesale Only</option><option value="both">Wholesale + Retail</option></select></div>
-            <div class="filter-group range-slider"><label>Min Score</label><input type="range" id="filter-score" min="70" max="95" value="70" oninput="document.getElementById('score-val').textContent=this.value;dashboard.applyFilters()"><span id="score-val">70</span></div>
+            
             <button class="btn-reset" onclick="dashboard.resetFilters()">Reset All</button>
         </div>
     </header>
 
     <section class="kpi-row">
-        <div class="kpi-card"><div class="kpi-label">Total Suppliers</div><div class="kpi-value" id="kpi-total">0</div><div class="kpi-sub">verified wholesale sources</div></div>
+        <div class="kpi-card"><div class="kpi-label">Verified Suppliers</div><div class="kpi-value" id="kpi-total">0</div><div class="kpi-sub">canonical records</div></div>
         <div class="kpi-card"><div class="kpi-label">States + Provinces</div><div class="kpi-value" id="kpi-states">0</div><div class="kpi-sub">geographic coverage</div></div>
         <div class="kpi-card"><div class="kpi-label">Wholesale Only</div><div class="kpi-value" id="kpi-wholesale">0</div><div class="kpi-sub">trade-only suppliers</div></div>
         <div class="kpi-card"><div class="kpi-label">Native Specialists</div><div class="kpi-value" id="kpi-native">0</div><div class="kpi-sub">native plant focus</div></div>
         <div class="kpi-card"><div class="kpi-label">Plug/Liner Sources</div><div class="kpi-value" id="kpi-plugs">0</div><div class="kpi-sub">propagation nurseries</div></div>
-        <div class="kpi-card"><div class="kpi-label">Tropical/Houseplant</div><div class="kpi-value" id="kpi-tropical">0</div><div class="kpi-sub">FL &amp; Canadian growers</div></div>
+        <div class="kpi-card"><div class="kpi-label">Tropical/Houseplant</div><div class="kpi-value" id="kpi-tropical">0</div><div class="kpi-sub">foliage and specialty</div></div>
         <div class="kpi-card"><div class="kpi-label">Supply/Hard Goods</div><div class="kpi-value" id="kpi-supply">0</div><div class="kpi-sub">media, pots, chemicals</div></div>
         <div class="kpi-card"><div class="kpi-label">Filtered Results</div><div class="kpi-value" id="kpi-filtered">0</div><div class="kpi-sub">matching criteria</div></div>
     </section>
@@ -320,7 +322,7 @@
     <div class="tab-content" id="tab-compare">
         <div class="table-section">
             <h3 style="margin-bottom:12px;">Side-by-Side Price Comparison</h3>
-            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Select a product category to compare pricing. Prices are representative wholesale ranges from supplier catalogs and trade data.</p>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">No static price ranges are embedded. This view only populates after verified live price records are generated by the scraper feed.</p>
             <div class="category-pills" id="compare-pills"></div>
             <div class="price-grid" id="price-grid"></div>
         </div>
@@ -329,7 +331,7 @@
     <div class="tab-content" id="tab-arbitrage">
         <div class="table-section">
             <h3 style="margin-bottom:8px;">Arbitrage Opportunity Finder</h3>
-            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Price spreads between suppliers sorted by savings percentage. Top 60 opportunities shown.</p>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Price spreads appear only when verified supplier price records exist in the live feed.</p>
             <div id="arbitrage-table-container"></div>
         </div>
     </div>
@@ -359,10 +361,10 @@
     <div class="tab-content" id="tab-strategy">
         <div class="margin-calc">
             <h3>Margin Calculator</h3>
-            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Enter your retail price and see profit margins across suppliers. Accounts for freight and shrinkage.</p>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Margin calculations require verified supplier cost records. The canonical registry stores identity, access, and evidence only.</p>
             <div class="margin-inputs">
                 <div class="margin-input"><label>Product Category</label><select id="margin-cat" onchange="calcMargins()"><option value="">Select category...</option></select></div>
-                <div class="margin-input"><label>Your Retail Price ($)</label><input type="number" id="margin-retail" step="0.01" placeholder="e.g. 12.99" oninput="calcMargins()"></div>
+                <div class="margin-input"><label>Your Retail Price ($)</label><input type="number" id="margin-retail" step="0.01" oninput="calcMargins()"></div>
                 <div class="margin-input"><label>Freight per Unit ($)</label><input type="number" id="margin-freight" step="0.01" value="0.50" oninput="calcMargins()"></div>
                 <div class="margin-input"><label>Shrinkage %</label><input type="number" id="margin-shrink" step="0.5" value="5" oninput="calcMargins()"></div>
             </div>
@@ -370,12 +372,12 @@
         </div>
         <div class="table-section">
             <h3 style="margin-bottom:8px;">Vendor Scorecards</h3>
-            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Risk assessment and reliability ratings for key suppliers based on multiple factors.</p>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Scorecards are disabled until real supplier performance metrics exist.</p>
             <div id="vendor-scorecards"></div>
         </div>
         <div class="table-section">
             <h3 style="margin-bottom:8px;">Seasonal Demand Forecast</h3>
-            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Projected demand by category for the upcoming quarters based on seasonal patterns.</p>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Demand forecasting is disabled until actual sales or procurement history is connected.</p>
             <div id="seasonal-forecast"></div>
         </div>
         <div class="table-section">
@@ -412,8 +414,8 @@
             <div class="kpi-card"><div class="kpi-label">Login Required</div><div class="kpi-value" id="portal-kpi-login" style="color:var(--orange-2);">0</div><div class="kpi-sub">request account</div></div>
             <div class="kpi-card"><div class="kpi-label">PDF Catalogs</div><div class="kpi-value" id="portal-kpi-pdf">0</div><div class="kpi-sub">downloadable</div></div>
             <div class="kpi-card"><div class="kpi-label">Quote Only</div><div class="kpi-value" id="portal-kpi-quote">0</div><div class="kpi-sub">contact supplier</div></div>
-            <div class="kpi-card"><div class="kpi-label">Vault Entries</div><div class="kpi-value" id="portal-kpi-vault" style="color:var(--green-2);">0</div><div class="kpi-sub">credentials stored</div></div>
-            <div class="kpi-card"><div class="kpi-label">Scraper Status</div><div class="kpi-value" style="color:var(--text-secondary);font-size:16px;">IDLE</div><div class="kpi-sub">awaiting credentials</div></div>
+            <div class="kpi-card"><div class="kpi-label">Browser Metadata</div><div class="kpi-value" id="portal-kpi-vault" style="color:var(--green-2);">0</div><div class="kpi-sub">Keychain checked by CLI</div></div>
+            <div class="kpi-card"><div class="kpi-label">Scraper Status</div><div class="kpi-value" style="color:var(--text-secondary);font-size:16px;">LOCAL</div><div class="kpi-sub">runner writes prices.js</div></div>
         </section>
 
         <div class="table-section">
@@ -427,10 +429,10 @@
                     <button class="btn-export" onclick="dashboard.filterPortal('quote')">Quote</button>
                     <button class="btn-export" onclick="dashboard.filterPortal('offline')">Offline</button>
                     <button class="btn-export" onclick="dashboard.exportLoginQueue()" style="background:var(--green-2);color:white;">Export Login Queue CSV</button>
-                    <button class="btn-export" onclick="dashboard.exportVault()">Export Vault JSON</button>
+                    <button class="btn-export" onclick="dashboard.exportCredentialMetadata()">Export Metadata JSON</button>
                 </div>
             </div>
-            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">Credential vault stored locally in this browser (localStorage). Click any row to expand signup link, notes, and credential fields.</p>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">This static dashboard can only display browser-saved, non-secret metadata. The scraper uses the local runtime credential store instead: run <code>python3 -m scrape.credentials list</code> to confirm Keychain-backed supplier credentials, then <code>python3 -m scrape.run --id 43 -v</code> for American Native Plants.</p>
             <div id="portal-table-container"></div>
         </div>
 
@@ -439,380 +441,1278 @@
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;font-size:12px;">
                 <div style="padding:12px;background:rgba(45,106,79,0.08);border-left:3px solid var(--green-1);border-radius:4px;">
                     <strong style="color:var(--green-1);">STEP 1 &mdash; Public scrape</strong>
-                    <p style="margin-top:6px;line-height:1.5;">Run headless scrape nightly against <code id="playbook-public-count">0</code> public suppliers. Cache to <code>public_prices.json</code>. Feed results into the Price Comparison tab automatically.</p>
+                    <p style="margin-top:6px;line-height:1.5;">Run the local scraper against <code id="playbook-public-count">0</code> public suppliers. Successful runs publish <code>prices.js</code> for the Supplier Portal live-feed banner.</p>
                 </div>
                 <div style="padding:12px;background:rgba(234,179,8,0.08);border-left:3px solid var(--orange-2);border-radius:4px;">
                     <strong style="color:var(--orange-2);">STEP 2 &mdash; Login queue</strong>
-                    <p style="margin-top:6px;line-height:1.5;">Export CSV, apply for <code id="playbook-login-count">0</code> accounts ("I work for BloomBox"). Store credentials here as approvals come in. Scraper auto-activates when creds present.</p>
+                    <p style="margin-top:6px;line-height:1.5;">Export CSV, apply for <code id="playbook-login-count">0</code> accounts, and store passwords in the local OS credential store. Browser metadata is optional workflow context, not the scraper credential source.</p>
                 </div>
                 <div style="padding:12px;background:rgba(147,197,253,0.08);border-left:3px solid #60a5fa;border-radius:4px;">
                     <strong style="color:#60a5fa;">STEP 3 &mdash; PDF pipeline</strong>
-                    <p style="margin-top:6px;line-height:1.5;">Download and OCR <code id="playbook-pdf-count">0</code> catalog PDFs weekly. Parse with pdfplumber + regex. Human review for layout changes.</p>
+                    <p style="margin-top:6px;line-height:1.5;">Download <code id="playbook-pdf-count">0</code> catalog PDFs. Parse with pdfplumber and supplier-specific extraction rules. Human review is still required when layouts change.</p>
                 </div>
                 <div style="padding:12px;background:rgba(156,163,175,0.08);border-left:3px solid #9ca3af;border-radius:4px;">
                     <strong style="color:var(--text-secondary);">STEP 4 &mdash; Quote suppliers</strong>
-                    <p style="margin-top:6px;line-height:1.5;">Bi-monthly RFQ emails to <code id="playbook-quote-count">0</code> quote-only suppliers. Ingest replies through the buyer inbox.</p>
+                    <p style="margin-top:6px;line-height:1.5;">Use RFQ outreach for <code id="playbook-quote-count">0</code> quote-only suppliers. These are not live-scrape sources unless an adapter is added later.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="dashboard-footer">BloomBox Supplier Command Center V3 — Data compiled April 2026 — 12 Second Chance Plants locations (PA &amp; Northern MD) — <span id="supplier-count-footer"></span> suppliers in database</footer>
+    <footer class="dashboard-footer">BloomBox Supplier Command Center &mdash; Canonical registry updated May 8, 2026 &mdash; <span id="supplier-count-footer"></span> verified supplier records</footer>
 </div>
 
 <script>
 // =========================================================================
-// MASTER DATABASE — 316 VERIFIED WHOLESALE PLANT SUPPLIERS
+// CANONICAL SUPPLIER REGISTRY -- generated from data/master/suppliers.canonical.json
 // =========================================================================
-const ACCESS_META = {"1":{"t":"login","u":"https://www.northcreeknurseries.com/page/How-To-Order","n":"Apply for wholesale account; $500 min first order"},"2":{"t":"login","u":"https://www.octoraro.com/","n":"Contact for wholesale account; mid-Atlantic natives"},"3":{"t":"public","u":"","n":"Online pricing visible; 3-tree minimum"},"4":{"t":"quote","u":"","n":"No visible pricing; call 610-942-8733 or email"},"5":{"t":"quote","u":"","n":"Trade only; contact sales@feeneyswholesale.com"},"6":{"t":"login","u":"https://colesnurseries.com/product-catalog/","n":"Product catalog password-protected"},"7":{"t":"login","u":"https://www.peacetreefarm.com/how-to-work-with-us-wholesale/","n":"Weekly availability via email signup"},"8":{"t":"quote","u":"","n":"site offline/blocking"},"9":{"t":"public","u":"","n":"Availability shown online"},"10":{"t":"quote","u":"https://ginosnursery.com/wholesale/","n":"Contact for sheet; 267-750-9042"},"11":{"t":"public","u":"https://gronsell.com/availability-guide","n":"Availability guide accessible"},"12":{"t":"quote","u":"","n":"Call 610-327-4328"},"13":{"t":"login","u":"https://archewild.com/native-plant-nurseries/","n":"Email sales@archewild.com"},"14":{"t":"login","u":"https://www.heartwoodnursery.net/wholesale-form","n":"Wholesale form on site"},"15":{"t":"public","u":"","n":"Retail nursery; 300+ natives listed"},"16":{"t":"public","u":"https://epicas.qualitygreenhouses.net","n":"ePIcas guest access, no login needed"},"17":{"t":"login","u":"https://musselmangreenhouses.com/retail-info/","n":"Password required for availability"},"18":{"t":"quote","u":"","n":"No online pricing"},"21":{"t":"pdf","u":"https://www.ernstseed.com/price-list/","n":"Price lists downloadable; 800-873-3321"},"23":{"t":"public","u":"https://www.creekhillnursery.com/index.php/availability","n":"Availability PDFs/Excel online"},"27":{"t":"public","u":"https://millerplantfarm.com/wholesale","n":"Wholesale section visible"},"29":{"t":"login","u":"https://www.babikow.com/page/Apply-for-Commercial-Account","n":"Commercial account application online"},"30":{"t":"quote","u":"","n":"Field-grown; contact for quotes"},"31":{"t":"quote","u":"","n":"Call 410-823-1335"},"32":{"t":"quote","u":"","n":"Call 410-775-7833"},"33":{"t":"login","u":"","n":"Wholesale only; mobile availability system"},"34":{"t":"quote","u":"","n":"Call 301-482-2009"},"36":{"t":"public","u":"https://www.clearridgenursery.com/products/wholesale/","n":"Wholesale availability visible"},"38":{"t":"login","u":"","n":"Email Sales@DelmarvaNativePlants.com"},"39":{"t":"quote","u":"","n":"Eastern Shore family-run"},"43":{"t":"quote","u":"https://www.americannativeplants.com/contact-us/","n":"Call 410-529-0552"},"48":{"t":"quote","u":"","n":"Wholesale to garden centers only"},"49":{"t":"login","u":"https://newmoonnursery.com/ordering-shipping/","n":"$250 min; email Sales@NewMoonNursery.com"},"50":{"t":"quote","u":"","n":"Family-owned stockyard"},"52":{"t":"login","u":"https://www.riggins-nursery.com/complete-availability-prices","n":"password-protected"},"53":{"t":"login","u":"https://www.pinelandsnursery.com/all-products","n":"Business verification required"},"59":{"t":"public","u":"https://www.lucasgreenhouses.com/page/Availability-Price-List","n":"Availability and price lists online"},"60":{"t":"quote","u":"","n":"Orders via brokers (Milikowski, Ball Seed, etc.)"},"61":{"t":"public","u":"https://dvflora.com/","n":"Online gallery/ordering; 1-800-676-1212"},"65":{"t":"quote","u":"","n":"VA progressive perennial grower"},"69":{"t":"login","u":"https://www.colesvillenursery.com/Wholesale-Center","n":"Wholesale center login; 804-798-5472"},"70":{"t":"quote","u":"","n":"Call 757-787-4732; 150+ fruit tree varieties"},"80":{"t":"login","u":"https://costafarms.com/pages/retailers","n":"Email wholesale@costafarms.com"},"81":{"t":"quote","u":"","n":"Call 407-886-1188"},"82":{"t":"quote","u":"","n":"Call 305-242-1133"},"83":{"t":"quote","u":"","n":"Wholesale B2B"},"93":{"t":"quote","u":"","n":"Wholesale via listed brokers"},"98":{"t":"quote","u":"","n":"Call 305-266-0188"},"103":{"t":"quote","u":"","n":"Canada; email enquiries@agl.ca"},"105":{"t":"quote","u":"","n":"Canada; email mail@nvknurseries.com"},"160":{"t":"quote","u":"","n":"Wholesale tropical foliage"},"161":{"t":"quote","u":"","n":"Email info@wekiwagardens.com"},"162":{"t":"login","u":"https://biostok.com/pages/wholesale-ordering-process","n":"Registration for availability"},"163":{"t":"quote","u":"","n":"Call 305-248-5109"},"164":{"t":"quote","u":"","n":"Call 305-257-1010"},"165":{"t":"public","u":"","n":"Catalog visible; 305-968-2427"},"166":{"t":"login","u":"https://www.plantlifefarms.com/Sign-In","n":"Online ordering with account"},"167":{"t":"quote","u":"","n":"Call 1-800-288-PALM"},"168":{"t":"quote","u":"","n":"Call 305-247-4499"},"169":{"t":"quote","u":"","n":"Email chris@midfloridanurseries.com"},"306":{"t":"public","u":"","n":"Vegetable transplants catalog; 408-842-3030"},"312":{"t":"public","u":"","n":"Wholesale tab at thecactusking.com"},"109":{"t":"quote","u":"https://springmeadownursery.com/pages/catalog-request/","n":"PDF catalog; contact account manager"},"110":{"t":"login","u":"https://www.waltersgardens.com/ordering.php","n":"Credit app + sales tax form; 1-800-WALTERS"},"111":{"t":"pdf","u":"https://hoffmannursery.com/","n":"Availability PDF online; 10-tray min first"},"114":{"t":"quote","u":"https://www.sungro.com/","n":"Call 1-800-732-8667 (Fafard)"},"120":{"t":"quote","u":"","n":"Call 717-872-9045"},"121":{"t":"pdf","u":"https://mountainspringnursery.com/catalogandavail","n":"Wholesale catalog with pricing"},"122":{"t":"quote","u":"","n":"Retail-focused; wholesale by inquiry"},"123":{"t":"quote","u":"","n":"Email wholesale@musserforest.com"},"124":{"t":"quote","u":"","n":"Wholesale evergreens"},"125":{"t":"quote","u":"","n":"Call 1-888-384-8733; 25-tree min"},"126":{"t":"quote","u":"https://acnursery.com/pricing/","n":"Commercial pricing by contact"},"127":{"t":"quote","u":"","n":"Garden center/retail focus"},"128":{"t":"quote","u":"","n":"No online pricing"},"129":{"t":"login","u":"https://www.schroedergardens.com/shop","n":"password-protected"},"130":{"t":"pdf","u":"https://www.gonativetrees.com/download/price-list/","n":"Downloadable price list"},"131":{"t":"quote","u":"","n":"SSL cert errors"},"132":{"t":"quote","u":"","n":"Mum farm; contact for pricing"},"133":{"t":"quote","u":"","n":"No online pricing"},"134":{"t":"quote","u":"","n":"Farm-to-retail; no wholesale online"},"135":{"t":"quote","u":"","n":"403 Forbidden"},"136":{"t":"login","u":"","n":"Availability/ordering requires account"},"175":{"t":"quote","u":"","n":"Commercial greenhouse; quote basis"},"176":{"t":"login","u":"https://www.acornfarms.com/responsive/velocity/15AFlogin.html","n":"Pre-approval required"},"177":{"t":"quote","u":"","n":"Garden center; wholesale supplies"},"178":{"t":"public","u":"https://www.vanengelen.com/","n":"Wholesale bulbs with volume discounts"},"179":{"t":"login","u":"https://www.colorblends.com/","n":"custom React storefront; JS rendering + auth"},"180":{"t":"login","u":"https://kgsplants.com/availability/","n":"Requires FEIN/Retail License"},"200":{"t":"quote","u":"https://www.griffins.com/about-us","n":"Contact sales team"},"201":{"t":"pdf","u":"https://noltsgreenhousesupplies.com/NGScatalog.pdf","n":"Downloadable catalog + web order form"},"202":{"t":"quote","u":"https://hc-companies.com/plant-pots/","n":"B2B catalog with no public prices"},"203":{"t":"quote","u":"","n":"Fertilizer wholesaler"},"204":{"t":"quote","u":"","n":"Find distributor tool"},"205":{"t":"quote","u":"https://mastertag.com/contact/","n":"Online ordering; quote pricing"},"206":{"t":"login","u":"https://www.bwicompanies.com/login","n":"Login required for store/pricing"},"207":{"t":"public","u":"https://www.siteone.com/en/","n":"Public online pricing; 477 locations"},"208":{"t":"quote","u":"","n":"Landscape/irrigation supplies"},"209":{"t":"quote","u":"","n":"site offline"},"210":{"t":"public","u":"https://www.arbico-organics.com/","n":"Organic pest control; online orders"},"211":{"t":"login","u":"https://organicmechanicsoil.com/","n":"password-protected"},"244":{"t":"pdf","u":"https://blueskynursery.ca/orders/2025-catalogue/","n":"2025 catalogue download"},"140":{"t":"quote","u":"","n":"No public pricing"},"141":{"t":"quote","u":"","n":"20% surcharge on small orders"},"142":{"t":"quote","u":"","n":"Availability list with some prices"},"143":{"t":"quote","u":"","n":"Email with wish list; 48hr quote"},"144":{"t":"quote","u":"","n":"Contact by phone/email"},"145":{"t":"quote","u":"","n":"Large grower; contact for quotes"},"146":{"t":"quote","u":"","n":"Aquatic; contact for account"},"147":{"t":"login","u":"https://www.patuxentnursery.com/contractor-application","n":"Contractor login with pricing"},"367":{"t":"public","u":"","n":"Hydroponics; growellshop.com"},"379":{"t":"public","u":"","n":"Native seed pricing online; 507-452-1362"},"381":{"t":"public","u":"","n":"Wildflower pricing online"},"389":{"t":"public","u":"","n":"Native seed pricing; 800-873-3321 (duplicate of 21)"}};
-const S = [
-{id:1,n:"North Creek Nurseries",city:"Landenberg",st:"PA",type:"Plug/Liner Producer",cat:["Perennials","Grasses","Ferns","Natives"],ws:"Wholesale Only",web:"northcreeknurseries.com",ph:"610-255-0100",
-"d":{}},
-{id:2,n:"Octoraro Native Plant Nursery",city:"Kirkwood",st:"PA",type:"Native Specialist",cat:["Natives","Trees","Shrubs"],ws:"Wholesale Only",web:"octoraro.com",ph:"717-529-3160",
-"d":{}},
-{id:3,n:"Brandywine Trees",city:"Paoli",st:"PA",type:"Wholesale Grower",cat:["Trees"],ws:"Wholesale Only",web:"brandywinetrees.com",ph:"610-888-8422",
-"d":{}},
-{id:4,n:"Wm. F. Hammell Nurseries",city:"Honey Brook",st:"PA",type:"Wholesale Grower",cat:["Trees"],ws:"Wholesale Only",web:"hammellnurseries.com",ph:"",
-"d":{}},
-{id:5,n:"Feeney's Wholesale Nursery",city:"Lahaska",st:"PA",type:"Wholesale Grower",cat:["Trees","Shrubs","Perennials","Annuals"],ws:"Wholesale Only",web:"feeneyswholesale.com",ph:"",
-"d":{}},
-{id:6,n:"Coles Nurseries",city:"Lahaska",st:"PA",type:"Wholesale Grower",cat:["Trees","Shrubs"],ws:"Wholesale Only",web:"colesnurseries.com",ph:"215-794-8863",
-"d":{}},
-{id:7,n:"Peace Tree Farm",city:"Kintnersville",st:"PA",type:"Wholesale Grower",cat:["Herbs","Edibles","Annuals","Perennials"],ws:"Wholesale Only",web:"peacetreefarm.com",ph:"610-847-8152",
-"d":{}},
-{id:8,n:"Highland Hill Farm",city:"Fountainville",st:"PA",type:"Wholesale Grower",cat:["Trees"],ws:"Both",web:"digatree.com",ph:"215-768-9229",
-"d":{}},
-{id:9,n:"Clearview Nursery",city:"Souderton",st:"PA",type:"Wholesale Grower",cat:["Perennials","Annuals","Shrubs","Natives"],ws:"Wholesale Only",web:"clearviewplants.com",ph:"215-723-6444",
-"d":{}},
-{id:10,n:"Gino's Nursery",city:"Newtown",st:"PA",type:"Wholesale Grower",cat:["Natives","Perennials"],ws:"Both",web:"ginosnursery.com",ph:"267-750-9042",
-"d":{}},
-{id:11,n:"Gro 'n Sell",city:"Chalfont",st:"PA",type:"Plug/Liner Producer",cat:["Annuals","Perennials","Herbs","Edibles"],ws:"Wholesale Only",web:"gronsell.com",ph:"215-822-1276",
-"d":{}},
-{id:12,n:"Groth Nurseries",city:"Douglassville",st:"PA",type:"Wholesale Grower",cat:["Trees","Shrubs","Perennials"],ws:"Wholesale Only",web:"grothnurseries.com",ph:"610-970-5500",
-"d":{}},
-{id:13,n:"ArcheWild",city:"Quakertown",st:"PA",type:"Native Specialist",cat:["Natives","Grasses","Shrubs","Trees"],ws:"Both",web:"archewild.com",ph:"855-752-6862",
-"d":{}},
-{id:14,n:"Heartwood Nursery",city:"Felton",st:"PA",type:"Native Specialist",cat:["Natives","Trees","Shrubs","Perennials","Ferns"],ws:"Both",web:"heartwoodnursery.net",ph:"717-993-5230",
-"d":{}},
-{id:15,n:"Edge of the Woods Native Plant Nursery",city:"Orefield",st:"PA",type:"Native Specialist",cat:["Natives"],ws:"Both",web:"edgeofthewoodsnursery.com",ph:"610-395-2570",
-"d":{}},
-{id:16,n:"Quality Greenhouses & Perennial Farm",city:"Dillsburg",st:"PA",type:"Wholesale Grower",cat:["Annuals","Perennials","Shrubs","Houseplants","Holiday"],ws:"Wholesale Only",web:"qualitygreenhouses.net",ph:"717-432-8900",
-"d":{}},
-{id:17,n:"Musselman Greenhouses",city:"Orrtanna",st:"PA",type:"Wholesale Grower",cat:["Annuals","Perennials","Herbs","Holiday","Houseplants"],ws:"Both",web:"musselmangreenhouses.com",ph:"717-334-1187",
-"d":{}},
-{id:18,n:"Huber Nurseries",city:"Manheim",st:"PA",type:"Wholesale Grower",cat:["Trees","Shrubs","Perennials"],ws:"Both",web:"hubernurseries.net",ph:"",
-"d":{}},
-{id:27,n:"Miller Plant Farm",city:"York",st:"PA",type:"Wholesale Grower",cat:["Edibles","Herbs","Annuals"],ws:"Both",web:"millerplantfarm.com",ph:"717-792-4651",
-"d":{}},
-{id:21,n:"Ernst Conservation Seeds",city:"Meadville",st:"PA",type:"Seed Company",cat:["Natives","Seeds"],ws:"Both",web:"ernstseed.com",ph:"800-873-3321",
-"d":{}},
-{id:23,n:"Creek Hill Nursery",city:"Leola",st:"PA",type:"Plug/Liner Producer",cat:["Perennials","Grasses","Annuals"],ws:"Wholesale Only",web:"creekhillnursery.com",ph:"888-565-0050",
-"d":{}},
-{id:31,n:"Wicklein's Water Gardens & Nursery",city:"Baltimore",st:"MD",type:"Native Specialist",cat:["Natives","Aquatics","Perennials"],ws:"Both",web:"wickleinswatergardens.com",ph:"410-823-1335",
-"d":{}},
-{id:32,n:"Catoctin Mountain Growers",city:"Detour",st:"MD",type:"Wholesale Grower",cat:["Annuals","Perennials","Edibles"],ws:"Wholesale Only",web:"catoctinmountaingrowers.com",ph:"301-898-3033",
-"d":{}},
-{id:29,n:"Babikow Greenhouses",city:"Rosedale",st:"MD",type:"Wholesale Grower",cat:["Perennials","Annuals","Grasses","Natives"],ws:"Wholesale Only",web:"babikow.com",ph:"410-391-4200",
-"d":{}},
-{id:30,n:"Waverly Farm",city:"Adamstown",st:"MD",type:"Wholesale Grower",cat:["Trees","Shrubs"],ws:"Wholesale Only",web:"waverlyfarm.com",ph:"301-874-8300",
-"d":{}},
-{id:33,n:"Tidal Creek Growers",city:"Earleville",st:"MD",type:"Wholesale Grower",cat:["Annuals","Perennials","Edibles"],ws:"Wholesale Only",web:"tidalcreekgrowers.com",ph:"410-275-9370",
-"d":{}},
-{id:34,n:"Ruppert Nurseries",city:"Laytonsville",st:"MD",type:"Wholesale Grower",cat:["Trees"],ws:"Wholesale Only",web:"ruppertnurseries.com",ph:"301-482-2009",
-"d":{}},
-{id:38,n:"Delmarva Native Plants",city:"Quantico",st:"MD",type:"Native Specialist",cat:["Natives","Aquatics","Grasses"],ws:"Wholesale Only",web:"delmarvanativeplants.com",ph:"410-742-0745",
-"d":{}},
-{id:39,n:"Tideland Gardens",city:"Queenstown",st:"MD",type:"Wholesale Grower",cat:["Trees","Shrubs","Perennials"],ws:"Wholesale Only",web:"tidelandgardens.com",ph:"410-827-7333",
-"d":{}},
-{id:36,n:"Clear Ridge Nursery",city:"Union Bridge",st:"MD",type:"Native Specialist",cat:["Natives","Trees","Shrubs"],ws:"Wholesale Only",web:"clearridgenursery.com",ph:"410-775-7700",
-"d":{}},
-{id:43,n:"American Native Plants",city:"Middle River",st:"MD",type:"Native Specialist",cat:["Natives","Trees","Shrubs","Perennials"],ws:"Wholesale Only",web:"americannativeplants.com",ph:"410-529-0552",
-"d":{}},
-{id:59,n:"Lucas Greenhouse",city:"Monroeville",st:"NJ",type:"Wholesale Grower",cat:["Annuals","Perennials","Edibles"],ws:"Wholesale Only",web:"lucasgreenhouse.com",ph:"856-358-8585",
-"d":{}},
-{id:60,n:"Lennon Farm Greenhouses",city:"Tabernacle",st:"NJ",type:"Wholesale Grower",cat:["Annuals","Perennials"],ws:"Wholesale Only",web:"lennonfarm.com",ph:"609-268-0426",
-"d":{}},
-{id:48,n:"Overdevest Nurseries",city:"Bridgeton",st:"NJ",type:"Wholesale Grower",cat:["Shrubs","Trees","Perennials","Annuals"],ws:"Wholesale Only",web:"grownbyoverdevest.com",ph:"856-451-3179",
-"d":{}},
-{id:49,n:"New Moon Nursery",city:"Bridgeton",st:"NJ",type:"Native Specialist",cat:["Natives","Perennials","Grasses","Shrubs"],ws:"Wholesale Only",web:"newmoonnursery.com",ph:"856-455-4125",
-"d":{}},
-{id:53,n:"Pinelands Nursery & Supply",city:"Columbus",st:"NJ",type:"Native Specialist",cat:["Natives","Seeds"],ws:"Wholesale Only",web:"pinelandsnursery.com",ph:"609-291-9486",
-"d":{}},
-{id:52,n:"Riggins Nursery",city:"Bridgeton",st:"NJ",type:"Wholesale Grower",cat:["Shrubs","Trees","Perennials","Annuals"],ws:"Wholesale Only",web:"riggins-nursery.com",ph:"856-455-2459",
-"d":{}},
-{id:50,n:"County Line Nurseries",city:"Bridgeton",st:"NJ",type:"Wholesale Grower",cat:["Trees","Shrubs","Perennials"],ws:"Wholesale Only",web:"countylinenurseries.com",ph:"856-453-1773",
-"d":{}},
-{id:61,n:"DVFlora",city:"Sewell",st:"NJ",type:"Broker/Distributor",cat:["Annuals","Perennials","Houseplants"],ws:"Wholesale Only",web:"dvflora.com",ph:"856-468-7000",
-"d":{}},
-{id:65,n:"Riverbend Nursery",city:"Riner",st:"VA",type:"Wholesale Grower",cat:["Perennials","Herbs","Grasses"],ws:"Wholesale Only",web:"riverbendnursery.com",ph:"540-763-3362",
-"d":{}},
-{id:69,n:"Colesville Nursery",city:"Ashland",st:"VA",type:"Wholesale Grower",cat:["Trees","Shrubs","Perennials","Annuals"],ws:"Wholesale Only",web:"colesvillenursery.com",ph:"804-798-5472",
-"d":{}},
-{id:70,n:"Eastern Shore Nursery of Virginia",city:"Keller",st:"VA",type:"Wholesale Grower",cat:["Trees","Edibles"],ws:"Wholesale Only",web:"esnursery.com",ph:"757-578-7732",
-"d":{}},
-{id:80,n:"Costa Farms",city:"Miami",st:"FL",type:"Wholesale Grower",cat:["Houseplants","Tropicals","Succulents"],ws:"Wholesale Only",web:"costafarms.com",ph:"",
-"d":{}},
-{id:81,n:"Dewar Nurseries",city:"Apopka",st:"FL",type:"Wholesale Grower",cat:["Tropicals","Annuals","Houseplants"],ws:"Wholesale Only",web:"dewar.com",ph:"407-886-1188",
-"d":{}},
-{id:82,n:"Emerald Forest Tropicals",city:"Homestead",st:"FL",type:"Wholesale Grower",cat:["Tropicals","Houseplants"],ws:"Wholesale Only",web:"emeraldforesttropicals.com",ph:"",
-"d":{}},
-{id:83,n:"Holt Nurseries",city:"Apopka",st:"FL",type:"Wholesale Grower",cat:["Succulents","Tropicals","Houseplants"],ws:"Wholesale Only",web:"holtnurseries.com",ph:"",
-"d":{}},
-{id:93,n:"Knox Horticulture",city:"Winter Garden",st:"FL",type:"Plug/Liner Producer",cat:["Annuals","Perennials","Holiday"],ws:"Wholesale Only",web:"knoxhort.com",ph:"",
-"d":{}},
-{id:98,n:"Morning Dew Tropical Plants",city:"Delray Beach",st:"FL",type:"Broker/Distributor",cat:["Tropicals","Houseplants"],ws:"Wholesale Only",web:"morningdewtropical.com",ph:"",
-"d":{}},
-{id:103,n:"Aldershot Greenhouses",city:"Burlington",st:"ON",type:"Wholesale Grower",cat:["Annuals","Holiday","Houseplants"],ws:"Wholesale Only",web:"agl.ca",ph:"",
-"d":{}},
-{id:105,n:"NVK Nurseries",city:"West Flamborough",st:"ON",type:"Wholesale Grower",cat:["Trees","Shrubs","Perennials"],ws:"Wholesale Only",web:"nvknurseries.com",ph:"",
-"d":{}},
-{id:109,n:"Spring Meadow Nursery",city:"Grand Haven",st:"MI",type:"Plug/Liner Producer",cat:["Shrubs"],ws:"Wholesale Only",web:"springmeadownursery.com",ph:"",
-"d":{}},
-{id:110,n:"Walters Gardens",city:"Zeeland",st:"MI",type:"Plug/Liner Producer",cat:["Perennials"],ws:"Wholesale Only",web:"waltersgardens.com",ph:"",
-"d":{}},
-{id:111,n:"Hoffman Nursery",city:"Rougemont",st:"NC",type:"Wholesale Grower",cat:["Grasses","Natives"],ws:"Wholesale Only",web:"hoffmannursery.com",ph:"",
-"d":{}},
-{id:114,n:"Sun Gro Horticulture (Fafard)",city:"Multiple",st:"Regional",type:"Supply Company",cat:["Soil/Media"],ws:"Wholesale Only",web:"sungro.com",ph:"800-732-8667",
-"d":{}},
-{id:120,n:"Minders Nursery",city:"Lancaster",st:"PA",type:"Wholesale Grower",cat:["Shrubs","Perennials"],ws:"Wholesale Only",web:"mindersgroundcover.com",ph:"717-872-9045",
-"d":{}},
-{id:121,n:"Mountain Spring Nursery",city:"Reinholds",st:"PA",type:"Wholesale Grower",cat:["Trees","Shrubs","Perennials","Grasses"],ws:"Wholesale Only",web:"mountainspringnursery.com",ph:"717-354-7789",
-"d":{}},
-{id:122,n:"Rosedale Growers",city:"Quakertown",st:"PA",type:"Wholesale Grower",cat:["Annuals","Perennials","Succulents","Houseplants","Ferns","Grasses"],ws:"Both",web:"rosedalegrowers.com",ph:"215-536-4827",
-"d":{}},
-{id:123,n:"Musser Forests",city:"Indiana",st:"PA",type:"Plug/Liner Producer",cat:["Trees","Shrubs","Perennials","Grasses","Edibles"],ws:"Wholesale Only",web:"musserforests.com",ph:"724-465-5686",
-"d":{}},
-{id:124,n:"Kline's Tree Farm",city:"Carrolltown",st:"PA",type:"Wholesale Grower",cat:["Trees"],ws:"Wholesale Only",web:"klinestreefarm.com",ph:"814-344-9945",
-"d":{}},
-{id:125,n:"Brown's Tree Farm",city:"Muncy",st:"PA",type:"Wholesale Grower",cat:["Trees"],ws:"Wholesale Only",web:"brownstreefarm.com",ph:"570-546-3800",
-"d":{}},
-{id:126,n:"Adams County Nursery",city:"Aspers",st:"PA",type:"Wholesale Grower",cat:["Trees","Edibles"],ws:"Wholesale Only",web:"acnursery.com",ph:"717-677-8105",
-"d":{}},
-{id:127,n:"Boyer Nurseries & Orchards",city:"Biglerville",st:"PA",type:"Wholesale Grower",cat:["Trees","Shrubs","Edibles"],ws:"Both",web:"boyernurseries.com",ph:"717-677-8558",
-"d":{}},
-{id:128,n:"Frysville Farms",city:"Ephrata",st:"PA",type:"Wholesale Grower",cat:["Holiday","Trees","Annuals"],ws:"Both",web:"frysvillefarms.com",ph:"717-354-4501",
-"d":{}},
-{id:129,n:"Schroeder Gardens",city:"Millersville",st:"PA",type:"Wholesale Grower",cat:["Natives","Trees","Shrubs","Perennials"],ws:"Both",web:"schroedergardens.com",ph:"717-872-4522",
-"d":{}},
-{id:130,n:"Go Native Trees",city:"Manheim",st:"PA",type:"Native Specialist",cat:["Natives","Trees","Shrubs"],ws:"Wholesale Only",web:"gonativetrees.com",ph:"717-399-0195",
-"d":{}},
-{id:131,n:"Esbenshade's Greenhouses",city:"Lititz",st:"PA",type:"Wholesale Grower",cat:["Holiday","Annuals","Perennials"],ws:"Wholesale Only",web:"esbenshades.com",ph:"717-626-7007",
-"d":{}},
-{id:132,n:"Moyers Mum Farm",city:"Jonestown",st:"PA",type:"Wholesale Grower",cat:["Holiday","Annuals"],ws:"Wholesale Only",web:"moyersmumfarm.squarespace.com",ph:"",
-"d":{}},
-{id:133,n:"Holly Hill Farms",city:"Earleville",st:"MD",type:"Wholesale Grower",cat:["Shrubs","Perennials"],ws:"Wholesale Only",web:"hollyhillfarms.net",ph:"610-287-8610",
-"d":{}},
-{id:134,n:"New Blooms Greenhouse",city:"Duncannon",st:"PA",type:"Wholesale Grower",cat:["Annuals","Perennials","Herbs","Holiday"],ws:"Both",web:"newbloomsgreenhouse.com",ph:"717-834-5333",
-"d":{}},
-{id:135,n:"Holly Days Nursery",city:"Lower Gwynedd",st:"PA",type:"Wholesale Grower",cat:["Perennials","Annuals","Tropicals","Aquatics"],ws:"Both",web:"hollydaysnursery.com",ph:"215-699-0833",
-"d":{}},
-{id:136,n:"Splash Plants",city:"York",st:"PA",type:"Wholesale Grower",cat:["Aquatics"],ws:"Wholesale Only",web:"splashplants.com",ph:"",
-"d":{}},
-{id:140,n:"Raemelton Farm",city:"Adamstown",st:"MD",type:"Wholesale Grower",cat:["Trees"],ws:"Wholesale Only",web:"raemelton.com",ph:"301-831-8130",
-"d":{}},
-{id:141,n:"Cavano's Perennials",city:"Kingsville",st:"MD",type:"Wholesale Grower",cat:["Perennials","Natives","Ferns","Grasses","Herbs"],ws:"Wholesale Only",web:"cavanos.com",ph:"410-665-0500",
-"d":{}},
-{id:142,n:"Ecotone Native Nursery",city:"Baldwin",st:"MD",type:"Native Specialist",cat:["Natives","Trees","Shrubs"],ws:"Wholesale Only",web:"ecotoneinc.com",ph:"410-420-2600",
-"d":{}},
-{id:143,n:"Sun Nurseries",city:"Woodbine",st:"MD",type:"Wholesale Grower",cat:["Trees","Shrubs","Edibles","Herbs","Annuals"],ws:"Both",web:"sunnurseries.com",ph:"410-442-2090",
-"d":{}},
-{id:144,n:"Kollar Nursery",city:"Pylesville",st:"MD",type:"Native Specialist",cat:["Natives","Trees","Shrubs"],ws:"Wholesale Only",web:"kollarnursery.com",ph:"410-836-0500",
-"d":{}},
-{id:145,n:"Bell Nursery",city:"Burtonsville",st:"MD",type:"Wholesale Grower",cat:["Annuals","Perennials","Succulents","Houseplants","Tropicals","Trees","Shrubs"],ws:"Wholesale Only",web:"bellnursery.com",ph:"301-421-1500",
-"d":{}},
-{id:146,n:"Maryland Aquatic Nurseries",city:"Jarrettsville",st:"MD",type:"Wholesale Grower",cat:["Aquatics","Natives"],ws:"Wholesale Only",web:"marylandaquatic.com",ph:"877-736-1807",
-"d":{}},
-{id:147,n:"Patuxent Nursery",city:"Bowie",st:"MD",type:"Wholesale Grower",cat:["Trees","Shrubs","Edibles","Herbs","Holiday"],ws:"Both",web:"patuxentnursery.com",ph:"301-218-1800",
-"d":{}},
-{id:160,n:"Bruce Jensen Nurseries",city:"Apopka",st:"FL",type:"Wholesale Grower",cat:["Tropicals","Houseplants"],ws:"Wholesale Only",web:"bjnplants.com",ph:"407-889-3500",
-"d":{}},
-{id:161,n:"Wekiwa Gardens",city:"Apopka",st:"FL",type:"Wholesale Grower",cat:["Tropicals","Houseplants","Annuals"],ws:"Wholesale Only",web:"wekiwagardens.com",ph:"407-889-3000",
-"d":{}},
-{id:162,n:"Biostok Foliage",city:"Apopka",st:"FL",type:"Wholesale Grower",cat:["Tropicals","Houseplants","Succulents","Ferns"],ws:"Wholesale Only",web:"biostok.com",ph:"407-371-9913",
-"d":{}},
-{id:163,n:"Redland Nursery",city:"Homestead",st:"FL",type:"Wholesale Grower",cat:["Tropicals","Trees","Shrubs","Succulents","Ferns"],ws:"Wholesale Only",web:"redlandnursery.com",ph:"305-248-5109",
-"d":{}},
-{id:164,n:"Sunshine Tropical Foliage",city:"Homestead",st:"FL",type:"Wholesale Grower",cat:["Tropicals","Houseplants","Succulents"],ws:"Wholesale Only",web:"sunshinetropical.com",ph:"305-257-1010",
-"d":{}},
-{id:165,n:"TreeWorld Wholesale",city:"Homestead",st:"FL",type:"Wholesale Grower",cat:["Trees","Tropicals","Shrubs","Natives"],ws:"Wholesale Only",web:"treeworldwholesale.com",ph:"305-245-6886",
-"d":{}},
-{id:166,n:"Plant Life Farms",city:"Homestead",st:"FL",type:"Wholesale Grower",cat:["Tropicals","Trees","Shrubs","Houseplants"],ws:"Wholesale Only",web:"plantlifefarms.com",ph:"305-278-9192",
-"d":{}},
-{id:167,n:"Bernecker's Nursery",city:"Miami",st:"FL",type:"Wholesale Grower",cat:["Tropicals","Houseplants","Annuals"],ws:"Wholesale Only",web:"berneckers.com",ph:"305-247-8577",
-"d":{}},
-{id:168,n:"Native Tree Nursery",city:"Homestead",st:"FL",type:"Native Specialist",cat:["Natives","Tropicals","Trees"],ws:"Wholesale Only",web:"nativetreenursery.com",ph:"305-247-4499",
-"d":{}},
-{id:169,n:"Mid Florida Nurseries",city:"Plant City",st:"FL",type:"Wholesale Grower",cat:["Trees","Shrubs","Tropicals","Perennials"],ws:"Wholesale Only",web:"midfloridanurseries.com",ph:"813-707-5555",
-"d":{}},
-{id:175,n:"Rockwell Farms",city:"Rockwell",st:"NC",type:"Wholesale Grower",cat:["Holiday","Annuals","Perennials","Houseplants"],ws:"Wholesale Only",web:"rockwellfarms.com",ph:"704-279-5589",
-"d":{}},
-{id:176,n:"Acorn Farms",city:"Galena",st:"OH",type:"Wholesale Grower",cat:["Holiday","Shrubs","Perennials","Annuals","Succulents"],ws:"Wholesale Only",web:"acornfarms.com",ph:"614-891-9348",
-"d":{}},
-{id:177,n:"Dickman Farms",city:"Auburn",st:"NY",type:"Wholesale Grower",cat:["Holiday","Annuals"],ws:"Wholesale Only",web:"dickmanfarms.com",ph:"315-253-3030",
-"d":{}},
-{id:178,n:"Van Engelen Inc",city:"Bantam",st:"CT",type:"Wholesale Grower",cat:["Holiday","Annuals"],ws:"Wholesale Only",web:"vanengelen.com",ph:"",
-"d":{}},
-{id:179,n:"Colorblends Wholesale Flower Bulbs",city:"Bridgeport",st:"CT",type:"Wholesale Grower",cat:["Holiday","Annuals"],ws:"Wholesale Only",web:"colorblends.com",ph:"",
-"d":{}},
-{id:180,n:"KGS Plants",city:"Shelby",st:"NC",type:"Wholesale Grower",cat:["Holiday","Annuals","Perennials"],ws:"Wholesale Only",web:"kgsplants.com",ph:"",
-"d":{}},
-{id:200,n:"Griffin Greenhouse Supplies",city:"Tewksbury",st:"MA",type:"Supply Company",cat:["Soil/Media"],ws:"Wholesale Only",web:"griffins.com",ph:"800-888-0054",
-"d":{}},
-{id:201,n:"Nolt's Greenhouse Supplies",city:"Ephrata",st:"PA",type:"Supply Company",cat:["Soil/Media"],ws:"Both",web:"noltsgreenhousesupplies.com",ph:"717-354-8376",
-"d":{}},
-{id:202,n:"HC Companies",city:"Twinsburg",st:"OH",type:"Supply Company",cat:["Soil/Media"],ws:"Wholesale Only",web:"hc-companies.com",ph:"800-328-8456",
-"d":{}},
-{id:203,n:"Kirby Agri",city:"Lancaster",st:"PA",type:"Supply Company",cat:["Soil/Media"],ws:"Wholesale Only",web:"kirbyagri.com",ph:"717-786-8191",
-"d":{}},
-{id:204,n:"Plant Food Company",city:"Cranbury",st:"NJ",type:"Supply Company",cat:["Soil/Media"],ws:"Wholesale Only",web:"plantfoodco.com",ph:"800-562-1291",
-"d":{}},
-{id:205,n:"MasterTag",city:"Montague",st:"MI",type:"Supply Company",cat:["Soil/Media"],ws:"Wholesale Only",web:"mastertag.com",ph:"800-253-0439",
-"d":{}},
-{id:206,n:"BWI Companies",city:"Multiple",st:"Regional",type:"Supply Company",cat:["Soil/Media"],ws:"Wholesale Only",web:"bwicompanies.com",ph:"",
-"d":{}},
-{id:207,n:"SiteOne Landscape Supply",city:"Multiple",st:"Regional",type:"Supply Company",cat:["Soil/Media"],ws:"Both",web:"siteone.com",ph:"800-748-3663",
-"d":{}},
-{id:208,n:"Aquarius Supply",city:"Norristown",st:"PA",type:"Supply Company",cat:["Soil/Media"],ws:"Wholesale Only",web:"aquariussupply.com",ph:"610-277-9764",
-"d":{}},
-{id:209,n:"Beneficial Insectary",city:"Redding",st:"CA",type:"Supply Company",cat:["Soil/Media"],ws:"Wholesale Only",web:"insectary.com",ph:"800-477-3715",
-"d":{}},
-{id:210,n:"ARBICO Organics",city:"Oro Valley",st:"AZ",type:"Supply Company",cat:["Soil/Media"],ws:"Both",web:"arbico-organics.com",ph:"800-827-2847",
-"d":{}},
-{id:211,n:"Organic Mechanics Soil",city:"Modena",st:"PA",type:"Supply Company",cat:["Soil/Media"],ws:"Both",web:"organicmechanicsoil.com",ph:"610-380-4598",
-"d":{}},
-{id:244,n:"Blue Sky Nursery",city:"Lincoln",st:"ON",type:"Wholesale Grower",cat:["Trees","Shrubs","Perennials"],ws:"Wholesale Only",web:"blueskynursery.ca",ph:"905-563-4245",
-"d":{}},
-{"id":200,"n":"Floral King Wholesale Nursery","city":"Lititz","st":"PA","type":"Wholesale Grower","cat":["Perennials","Annuals","Houseplants"],"ws":"Wholesale Only","web":"floralkingnursery.com","ph":"717-627-1588","d":{}},
-{"id":201,"n":"Musser Forests Inc","city":"Indiana","st":"PA","type":"Wholesale Grower","cat":["Trees","Shrubs","Seedlings"],"ws":"Wholesale Only","web":"musserforests.com","ph":"724-465-5611","d":{}},
-{"id":202,"n":"Colebrook Nursery","city":"Ephrata","st":"PA","type":"Plug/Liner Producer","cat":["Perennials","Annuals","Vegetable"],"ws":"Wholesale Only","web":"colebrooknursery.com","ph":"717-733-5002","d":{}},
-{"id":203,"n":"Meadowview Wholesale Nursery","city":"West Chester","st":"PA","type":"Wholesale Grower","cat":["Perennials","Shrubs","Natives"],"ws":"Wholesale Only","web":"meadowviewnursery.com","ph":"610-692-0851","d":{}},
-{"id":204,"n":"Sunnyslope Nurseries","city":"Lansdale","st":"PA","type":"Wholesale Grower","cat":["Annuals","Perennials","Seasonal"],"ws":"Wholesale Only","web":"sunnyslope-nurseries.com","ph":"215-855-5211","d":{}},
-{"id":205,"n":"York Nursery & Garden Center Supply","city":"York","st":"PA","type":"Wholesale Broker","cat":["Perennials","Annuals","Hard Goods"],"ws":"Wholesale + Retail","web":"yorknursery.com","ph":"717-843-4121","d":{}},
-{"id":206,"n":"Lebanon Ornamental Nursery","city":"Lebanon","st":"PA","type":"Wholesale Grower","cat":["Ornamentals","Shrubs","Trees"],"ws":"Wholesale Only","web":"lebanonnursery.com","ph":"717-272-8855","d":{}},
-{"id":207,"n":"Eppley Nursery","city":"Denver","st":"PA","type":"Wholesale Grower","cat":["Perennials","Annuals","Vegetables"],"ws":"Wholesale Only","web":"eppley-nursery.com","ph":"717-336-2112","d":{}},
-{"id":208,"n":"Herr's Nursery & Garden Center","city":"Akron","st":"PA","type":"Wholesale Grower","cat":["Annuals","Perennials","Houseplants"],"ws":"Wholesale + Retail","web":"herrsnursery.com","ph":"717-859-1133","d":{}},
-{"id":209,"n":"Meadow Fresh Perennials","city":"Coatesville","st":"PA","type":"Wholesale Grower","cat":["Perennials","Grasses","Natives"],"ws":"Wholesale Only","web":"meadowfreshperennials.com","ph":"610-383-0122","d":{}},
-{"id":210,"n":"Adams County Greenhouse & Nursery","city":"Gettysburg","st":"PA","type":"Wholesale Grower","cat":["Annuals","Perennials","Seasonal"],"ws":"Wholesale Only","web":"adamscountygreenhouse.com","ph":"717-334-4871","d":{}},
-{"id":211,"n":"Sunrise Nursery Supply","city":"Hatfield","st":"PA","type":"Wholesale Grower","cat":["Annuals","Perennials","Tropicals"],"ws":"Wholesale Only","web":"sunrisenurserysupply.com","ph":"215-721-0833","d":{}},
-{"id":244,"n":"Blue Sky Nursery","city":"Lincoln","st":"ON","type":"Wholesale Grower","cat":["Annuals","Perennials","Trees","Shrubs"],"ws":"Wholesale Only","web":"blueskynursery.ca","ph":"905-563-4245","d":{}},
-{id:306,n:"HeadStart Nursery",city:"Apopka",st:"FL",type:"Plug/Liner Producer",cat:["Annuals","Perennials","Herbs"],ws:"Wholesale + Retail",web:"headstartnursery.com",ph:"407-886-0990","d":{}},
-{id:312,n:"Cactus King",city:"Homestead",st:"FL",type:"Wholesale Grower",cat:["Succulents","Specialty"],ws:"Wholesale + Retail",web:"cactuskingfl.com",ph:"305-248-1234","d":{}},
-{id:367,n:"Growella",city:"Jacksonville",st:"FL",type:"Supply/Hard Goods",cat:["Hard Goods","Soil/Media"],ws:"Wholesale Only",web:"growella.com",ph:"904-354-8765","d":{}},
-{id:379,n:"Prairie Moon Nursery",city:"Winona",st:"MN",type:"Seed Producer",cat:["Seeds","Natives"],ws:"Wholesale + Retail",web:"prairiemoon.com",ph:"507-452-1362","d":{}},
-{id:381,n:"American Meadows",city:"Middlebury",st:"VT",type:"Seed Producer",cat:["Seeds","Natives","Wildflowers"],ws:"Wholesale + Retail",web:"americanmeadows.com",ph:"802-463-2345","d":{}},
-{id:389,n:"Ernst Conservation Seeds",city:"Meadville",st:"PA",type:"Seed Producer",cat:["Seeds","Natives","Wildflowers"],ws:"Wholesale Only",web:"ernstseeds.com",ph:"814-336-2404",size:"35","d":{}}
+const SUPPLIER_REGISTRY_SOURCE = 'data/master/suppliers.canonical.json';
+const SUPPLIER_REGISTRY_GENERATED_AT = '2026-05-08';
+const CANONICAL_SUPPLIERS = [
+  {
+    "canonical_supplier_id": "BB-SUP-000001",
+    "legacy_ids": [
+      16
+    ],
+    "supplier_name": "Quality Greenhouses & Perennial Farm",
+    "legal_name": "",
+    "website": "https://www.qualitygreenhouses.net/",
+    "normalized_domain": "qualitygreenhouses.net",
+    "city": "Dillsburg",
+    "state_or_province": "PA",
+    "country": "US",
+    "supplier_type": "Wholesale Grower",
+    "product_categories": [
+      "Annuals",
+      "Perennials",
+      "Edibles",
+      "Succulents",
+      "Shrubs",
+      "Grasses",
+      "Indoor Foliage"
+    ],
+    "access_model": "login",
+    "wholesale_status": "Wholesale Only",
+    "phone": "717-432-8900",
+    "email": "",
+    "evidence_urls": [
+      "https://www.qualitygreenhouses.net/",
+      "https://www.qualitygreenhouses.net/what-we-grow/",
+      "https://www.qualitygreenhouses.net/customer-resources/",
+      "https://www.qualitygreenhouses.net/faqs/"
+    ],
+    "evidence_notes": "Official site confirms wholesale positioning, Dillsburg address, product categories, catalog/customer resources, and online ordering/availability workflow.",
+    "verification_status": "verified",
+    "verification_reason": "Official Quality Greenhouses pages confirm identity, location, wholesale model, product categories, and account/availability access.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.qualitygreenhouses",
+    "adapter_class": "QualityGreenhousesAdapter",
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified QualityGreenhousesAdapter with 81 rows from the public ePIcas Crop Status Availability iframe. Rows are availability-only and do not include pricing."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000002",
+    "legacy_ids": [
+      21,
+      389
+    ],
+    "supplier_name": "Ernst Conservation Seeds",
+    "legal_name": "",
+    "website": "https://www.ernstseed.com/",
+    "normalized_domain": "ernstseed.com",
+    "city": "Meadville",
+    "state_or_province": "PA",
+    "country": "US",
+    "supplier_type": "Seed Company",
+    "product_categories": [
+      "Natives",
+      "Seeds",
+      "Seed Mixes",
+      "Bioengineering Materials"
+    ],
+    "access_model": "pdf",
+    "wholesale_status": "Both",
+    "phone": "800-873-3321",
+    "email": "sales@ernstseed.com",
+    "evidence_urls": [
+      "https://www.ernstseed.com/price-list/"
+    ],
+    "evidence_notes": "Official price-list page confirms current downloadable seed and bioengineering price lists, ordering contact, and Meadville address.",
+    "verification_status": "verified",
+    "verification_reason": "Official Ernst page confirms identity, price-list access model, product/business model, and location.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "ErnstSeedsAdapter",
+    "adapter_status": "active_verified",
+    "notes": "Live runs on 2026-05-08 verified ErnstSeedsAdapter with 427 rows from the official 2026 Retail Price List PDF and ErnstBioengAdapter with 266 rows from the shrub/tree material price sheet. Legacy ID 389 maps to this same canonical supplier."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000003",
+    "legacy_ids": [
+      110
+    ],
+    "supplier_name": "Walters Gardens",
+    "legal_name": "Walters Gardens, Inc.",
+    "website": "https://www.waltersgardens.com/",
+    "normalized_domain": "waltersgardens.com",
+    "city": "Zeeland",
+    "state_or_province": "MI",
+    "country": "US",
+    "supplier_type": "Wholesale Perennial Grower",
+    "product_categories": [
+      "Perennials"
+    ],
+    "access_model": "login",
+    "wholesale_status": "Wholesale Only",
+    "phone": "888-925-8377",
+    "email": "sales@waltersgardens.com",
+    "evidence_urls": [
+      "https://www.waltersgardens.com/ordering.php",
+      "https://www.waltersgardens.com/perennials.php"
+    ],
+    "evidence_notes": "Official ordering page confirms wholesale ordering, login-required pricing/order forms, weekly availability, and Zeeland mailing address.",
+    "verification_status": "verified",
+    "verification_reason": "Official Walters pages confirm supplier identity, wholesale ordering model, login-gated pricing, product category, and location.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.walters",
+    "adapter_class": "WaltersAdapter",
+    "adapter_status": "placeholder_registered",
+    "notes": "Registered adapter is a login scaffold with guessed selectors and needs approved credentials plus DOM verification."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000004",
+    "legacy_ids": [
+      111
+    ],
+    "supplier_name": "Hoffman Nursery",
+    "legal_name": "Hoffman Nursery, Inc.",
+    "website": "https://hoffmannursery.com/",
+    "normalized_domain": "hoffmannursery.com",
+    "city": "Rougemont",
+    "state_or_province": "NC",
+    "country": "US",
+    "supplier_type": "Wholesale Grower",
+    "product_categories": [
+      "Grasses",
+      "Sedges",
+      "Perennials",
+      "Natives"
+    ],
+    "access_model": "pdf",
+    "wholesale_status": "Wholesale Only",
+    "phone": "800-203-8590",
+    "email": "sales@hoffmannursery.com",
+    "evidence_urls": [
+      "https://hoffmannursery.com/"
+    ],
+    "evidence_notes": "Official homepage confirms wholesale-only status, ornamental/native grasses and perennials, availability/order form downloads, and Rougemont address.",
+    "verification_status": "verified",
+    "verification_reason": "Official Hoffman Nursery page confirms identity, location, wholesale model, product categories, and downloadable availability/pricing access.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "HoffmannNurseryAdapter",
+    "adapter_status": "placeholder_registered",
+    "notes": "Registered adapter has an empty pdf_urls list and remains a placeholder until current direct URLs are available."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000005",
+    "legacy_ids": [
+      121
+    ],
+    "supplier_name": "Mountain Spring Nursery",
+    "legal_name": "Mountain Spring Nursery, LLC",
+    "website": "https://mountainspringnursery.com/",
+    "normalized_domain": "mountainspringnursery.com",
+    "city": "Reinholds",
+    "state_or_province": "PA",
+    "country": "US",
+    "supplier_type": "Wholesale Grower",
+    "product_categories": [
+      "Shrubs",
+      "Perennials",
+      "Trees"
+    ],
+    "access_model": "login",
+    "wholesale_status": "Wholesale Only",
+    "phone": "717-336-0833",
+    "email": "",
+    "evidence_urls": [
+      "https://mountainspringnursery.com/catalogandavail",
+      "https://mountainspringnursery.com/products"
+    ],
+    "evidence_notes": "Official pages confirm wholesale catalog/availability with customer password, Reinholds address, and products including shrubs, perennials, and trees.",
+    "verification_status": "verified",
+    "verification_reason": "Official Mountain Spring pages confirm identity, location, wholesale catalog/access model, and product categories.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "MountainSpringNurseryAdapter",
+    "adapter_status": "placeholder_registered",
+    "notes": "Registered adapter has placeholder/empty PDF URLs and should stay quarantined from production scraping until direct documents are verified."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000006",
+    "legacy_ids": [
+      130
+    ],
+    "supplier_name": "Go Native Trees",
+    "legal_name": "",
+    "website": "https://www.gonativetrees.com/",
+    "normalized_domain": "gonativetrees.com",
+    "city": "Manheim",
+    "state_or_province": "PA",
+    "country": "US",
+    "supplier_type": "Native Specialist",
+    "product_categories": [
+      "Natives",
+      "Trees",
+      "Shrubs"
+    ],
+    "access_model": "pdf",
+    "wholesale_status": "Both",
+    "phone": "717-399-0195",
+    "email": "",
+    "evidence_urls": [
+      "https://www.gonativetrees.com/",
+      "https://www.gonativetrees.com/download/price-list/"
+    ],
+    "evidence_notes": "Official pages confirm Go Native Tree Farm identity, Manheim nursery address, wholesale/retail customers, current price list, and quote/order process.",
+    "verification_status": "verified",
+    "verification_reason": "Official Go Native Trees pages confirm identity, location, product focus, price-list access, and wholesale/retail model.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "GoNativeTreesAdapter",
+    "adapter_status": "placeholder_registered",
+    "notes": "Registered adapter has an empty PDF URL list despite the official price-list page; direct download URL still needs adapter verification."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000007",
+    "legacy_ids": [
+      201
+    ],
+    "supplier_name": "Nolt's Greenhouse Supplies",
+    "legal_name": "",
+    "website": "https://noltsgreenhousesupplies.com/",
+    "normalized_domain": "noltsgreenhousesupplies.com",
+    "city": "Ephrata",
+    "state_or_province": "PA",
+    "country": "US",
+    "supplier_type": "Supply/Hard Goods",
+    "product_categories": [
+      "Hard Goods",
+      "Greenhouse Supplies",
+      "Containers",
+      "Fertilizer",
+      "Irrigation"
+    ],
+    "access_model": "pdf",
+    "wholesale_status": "Commercial Growers Catalog",
+    "phone": "717-354-8376",
+    "email": "sales@noltsgreenhouse.com",
+    "evidence_urls": [
+      "https://noltsgreenhousesupplies.com/NGScatalog.pdf",
+      "https://www.lawnandgardendirectory.org/nolt-s-greenhouse-supplies.aspx"
+    ],
+    "evidence_notes": "Official PDF confirms Nolt's Greenhouse Supplies 2026 commercial growers catalog and phone; trade-directory listing supplies address and email because the public site has minimal contact text.",
+    "verification_status": "verified",
+    "verification_reason": "Official catalog verifies identity, commercial supplier model, product categories, and catalog access; directory evidence fills contact location.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "NoltsSuppliesAdapter",
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified NoltsSuppliesAdapter with 995 rows from the official NGScatalog.pdf. Legacy ID 201 is duplicated by a Musser Forests raw row; this canonical supplier is matched by Nolt name/domain only."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000008",
+    "legacy_ids": [
+      207
+    ],
+    "supplier_name": "SiteOne Landscape Supply",
+    "legal_name": "SiteOne Landscape Supply, Inc.",
+    "website": "https://www.siteone.com/",
+    "normalized_domain": "siteone.com",
+    "city": "Roswell",
+    "state_or_province": "GA",
+    "country": "US",
+    "supplier_type": "Landscape Supply Distributor",
+    "product_categories": [
+      "Nursery",
+      "Landscape Supply",
+      "Irrigation",
+      "Hardscapes",
+      "Agronomic Maintenance"
+    ],
+    "access_model": "public",
+    "wholesale_status": "Account/Guest Ordering",
+    "phone": "1-800-748-3663",
+    "email": "customersupport@ec.siteone.com",
+    "evidence_urls": [
+      "https://www.siteone.com/en/",
+      "https://www.siteone.com/en/contactus"
+    ],
+    "evidence_notes": "Official pages confirm SiteOne identity, nursery/landscape supply categories, pricing/inventory branch workflow, account/guest access, and Roswell home office.",
+    "verification_status": "verified",
+    "verification_reason": "Official SiteOne pages confirm identity, product categories, access model, and home-office location.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.siteone",
+    "adapter_class": "SiteOneAdapter",
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified SiteOneAdapter with 18 rows from SiteOne search results after installing the local undetected browser dependencies. Raw ID 207 is duplicated by Eppley Nursery; this canonical supplier is matched by SiteOne name/domain only."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000009",
+    "legacy_ids": [
+      210
+    ],
+    "supplier_name": "ARBICO Organics",
+    "legal_name": "",
+    "website": "https://www.arbico-organics.com/",
+    "normalized_domain": "arbico-organics.com",
+    "city": "Oro Valley",
+    "state_or_province": "AZ",
+    "country": "US",
+    "supplier_type": "Organic Pest Control and Growing Supplies",
+    "product_categories": [
+      "Beneficial Insects",
+      "Pest Control",
+      "Growing Supplies",
+      "Fertilizers",
+      "Soil Amendments"
+    ],
+    "access_model": "public",
+    "wholesale_status": "Public Online Ordering",
+    "phone": "1-800-827-2847",
+    "email": "CustomerCare@arbico.com",
+    "evidence_urls": [
+      "https://www.arbico-organics.com/category/beneficial-insects-organisms",
+      "https://www.arbico-organics.com/category/contactus",
+      "https://www.arbico-organics.com/category/shipping-info"
+    ],
+    "evidence_notes": "Official pages confirm ARBICO Organics identity, Oro Valley retail/corporate office, online ordering, and beneficial insect/growing supply categories.",
+    "verification_status": "verified",
+    "verification_reason": "Official ARBICO pages confirm identity, location, product/business model, and public online ordering access.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.arbico",
+    "adapter_class": "ARBICOAdapter",
+    "adapter_status": "active_unverified",
+    "notes": "Legacy ID 210 is duplicated by an Adams County Greenhouse raw row; this canonical supplier is matched by ARBICO name/domain only. 2026-05-08 smoke runs still produced only 1 stable priced row after Playwright product-detail crawling, so the adapter needs deeper crawl tuning before production classification."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000010",
+    "legacy_ids": [
+      244
+    ],
+    "supplier_name": "Blue Sky Nursery",
+    "legal_name": "",
+    "website": "https://blueskynursery.ca/",
+    "normalized_domain": "blueskynursery.ca",
+    "city": "Lincoln",
+    "state_or_province": "ON",
+    "country": "CA",
+    "supplier_type": "Wholesale Grower",
+    "product_categories": [
+      "Perennials",
+      "Broadleaf Evergreens",
+      "Flowering Shrubs & Trees",
+      "Ferns",
+      "Hostas",
+      "Hydrangeas",
+      "Ornamental Grasses"
+    ],
+    "access_model": "pdf",
+    "wholesale_status": "Wholesale Only",
+    "phone": "905-563-4245",
+    "email": "orders@blueskynursery.ca",
+    "evidence_urls": [
+      "https://blueskynursery.ca/orders/2025-catalogue/",
+      "https://blueskynursery.ca/our-products/"
+    ],
+    "evidence_notes": "Official pages confirm Lincoln ON location, wholesale-only status, online availability/catalog access, product categories, and contact details.",
+    "verification_status": "verified",
+    "verification_reason": "Official Blue Sky pages confirm identity, location, wholesale model, product categories, and catalog/availability access.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "BlueSkyAvailAdapter",
+    "adapter_status": "active_verified",
+    "notes": "Duplicate raw dashboard rows are merged to this one canonical supplier; live run on 2026-05-08 verified BlueSkyAvailAdapter with 2387 rows from the official XLSX availability file."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000011",
+    "legacy_ids": [
+      312
+    ],
+    "supplier_name": "The Cactus King",
+    "legal_name": "",
+    "website": "https://thecactusking.com/",
+    "normalized_domain": "thecactusking.com",
+    "city": "Ganado",
+    "state_or_province": "TX",
+    "country": "US",
+    "supplier_type": "Succulent Farm and Nursery",
+    "product_categories": [
+      "Cactus",
+      "Succulents"
+    ],
+    "access_model": "public",
+    "wholesale_status": "Retail and Wholesale",
+    "phone": "281-591-8833",
+    "email": "",
+    "evidence_urls": [
+      "https://thecactusking.com/"
+    ],
+    "evidence_notes": "Official homepage confirms The Cactus King identity, retail/wholesale clientele, public product pricing, shipping, and current Ganado TX location notice.",
+    "verification_status": "verified",
+    "verification_reason": "Official Cactus King page confirms identity, product model, access model, and current location; raw dashboard Homestead FL/cactuskingfl.com values were not accepted.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.cactusking",
+    "adapter_class": "CactusKingAdapter",
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified CactusKingAdapter with 247 rows from the verified thecactusking.com public catalog. Canonical website differs from raw dashboard website; adapter targets the verified domain."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000012",
+    "legacy_ids": [
+      379
+    ],
+    "supplier_name": "Prairie Moon Nursery",
+    "legal_name": "",
+    "website": "https://www.prairiemoon.com/",
+    "normalized_domain": "prairiemoon.com",
+    "city": "Winona",
+    "state_or_province": "MN",
+    "country": "US",
+    "supplier_type": "Native Seed and Plant Supplier",
+    "product_categories": [
+      "Seeds",
+      "Native Plants",
+      "Seed Mixes"
+    ],
+    "access_model": "public",
+    "wholesale_status": "Online and Phone Orders",
+    "phone": "507-452-1362",
+    "email": "",
+    "evidence_urls": [
+      "https://www.prairiemoon.com/contact-us.html",
+      "https://www.prairiemoon.com/seeds/wildflowers/"
+    ],
+    "evidence_notes": "Official contact page confirms Prairie Moon Nursery identity, Winona MN location, online/phone-only ordering, quote requests, and seed/plant categories.",
+    "verification_status": "verified",
+    "verification_reason": "Official Prairie Moon pages confirm identity, location, product categories, public ordering model, and quote workflow.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.prairiemoon",
+    "adapter_class": "PrairieMoonAdapter",
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified PrairieMoonAdapter with 65 rows from current official seeds, plants, and seed-mixes category pages."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000013",
+    "legacy_ids": [
+      381
+    ],
+    "supplier_name": "American Meadows",
+    "legal_name": "",
+    "website": "https://www.americanmeadows.com/",
+    "normalized_domain": "americanmeadows.com",
+    "city": "",
+    "state_or_province": "VT",
+    "country": "US",
+    "supplier_type": "Commercial Seed, Bulb, and Plant Supplier",
+    "product_categories": [
+      "Wildflower Seeds",
+      "Clover & Grass Seeds",
+      "Perennials",
+      "Flower Bulbs"
+    ],
+    "access_model": "public",
+    "wholesale_status": "Commercial/Bulk Ordering",
+    "phone": "802-383-3850",
+    "email": "mike@americanmeadows.com",
+    "evidence_urls": [
+      "https://www.americanmeadows.com/pages/commercial",
+      "https://www.americanmeadows.com/pages/contact-us",
+      "https://www.americanmeadows.com/pages/about-us"
+    ],
+    "evidence_notes": "Official commercial and contact pages confirm American Meadows identity, bulk/commercial sales, product categories, and commercial contact; official pages confirm Vermont history but do not publish a current city in the checked sources.",
+    "verification_status": "verified",
+    "verification_reason": "Official American Meadows pages confirm identity, product categories, and commercial/bulk access; city is intentionally blank because the checked official pages did not publish one.",
+    "last_verified_at": "2026-04-30",
+    "adapter_module": "scrape.adapters.shopify_json",
+    "adapter_class": "AmericanMeadowsAdapter",
+    "adapter_status": "active_verified",
+    "notes": "Live run on 2026-05-08 verified AmericanMeadowsAdapter with 2877 rows from the public Shopify JSON catalog. Raw city was not promoted because it was not confirmed by the checked official evidence."
+  },
+  {
+    "canonical_supplier_id": "BB-SUP-000014",
+    "legacy_ids": [
+      43
+    ],
+    "supplier_name": "American Native Plants",
+    "legal_name": "",
+    "website": "https://www.americannativeplants.com/",
+    "normalized_domain": "americannativeplants.com",
+    "city": "Middle River",
+    "state_or_province": "MD",
+    "country": "US",
+    "supplier_type": "Wholesale Native Plant Nursery",
+    "product_categories": [
+      "Natives",
+      "Trees",
+      "Shrubs",
+      "Perennials",
+      "Hardgoods"
+    ],
+    "access_model": "pdf",
+    "wholesale_status": "Wholesale Only",
+    "phone": "410-529-0552",
+    "email": "sales@americannativeplants.com",
+    "evidence_urls": [
+      "https://www.americannativeplants.com/contact-us/",
+      "https://www.americannativeplants.com/catalog/",
+      "https://www.americannativeplants.com/shipping/",
+      "https://www.americannativeplants.com/creating-a-customer-account/",
+      "https://www.americannativeplants.com/wp-content/uploads/2026/05/Availability-05-06-2026.xlsx"
+    ],
+    "evidence_notes": "Official pages confirm American Native Plants identity, Middle River MD location, wholesale native plant business model, downloadable availability files, and account-gated pricing/availability. A live adapter run on 2026-05-08 extracted 522 rows from the official May 6, 2026 availability XLSX.",
+    "verification_status": "verified",
+    "verification_reason": "Official American Native Plants pages and current availability workbook confirm identity, location, wholesale model, product categories, and downloadable availability access.",
+    "last_verified_at": "2026-05-08",
+    "adapter_module": "scrape.adapters.pdf_pricelists",
+    "adapter_class": "AmericanNativePlantsAdapter",
+    "adapter_status": "active_verified",
+    "notes": "WooCommerce login page is protected by reCAPTCHA. A manual Playwright session was captured on 2026-05-08; checked logged-in account/download/catalog pages did not expose account-gated prices. Current adapter uses the public official XLSX availability link and does not store or emit prices."
+  }
 ];
 
-// =========================================================================
-// PRICE COMPARISON DATA
-// =========================================================================
-const PRICE_CATEGORIES = [
-    {key:"annuals_flats",label:"Annual Flats (4.5\" / 1 Qt)"},
-    {key:"perennials_1gal",label:"Perennials (1 Gallon)"},
-    {key:"shrubs_3gal",label:"Shrubs (3 Gallon)"},
-    {key:"trees_bb",label:"Trees (1.5-2\" B&B)"},
-    {key:"plugs_72ct",label:"Plugs (72-count tray)"},
-    {key:"houseplants_4in",label:"Houseplants (4\" pot)"},
-    {key:"succulents_2in",label:"Succulents (2\" pot)"},
-    {key:"native_plugs",label:"Native Plugs (DP50/72)"},
+const ACCESS_META = {
+  "16": {
+    "t": "login",
+    "u": "https://www.qualitygreenhouses.net/",
+    "n": "Official Quality Greenhouses pages confirm identity, location, wholesale model, product categories, and account/availability access."
+  },
+  "21": {
+    "t": "pdf",
+    "u": "https://www.ernstseed.com/price-list/",
+    "n": "Official Ernst page confirms identity, price-list access model, product/business model, and location."
+  },
+  "110": {
+    "t": "login",
+    "u": "https://www.waltersgardens.com/",
+    "n": "Official Walters pages confirm supplier identity, wholesale ordering model, login-gated pricing, product category, and location."
+  },
+  "111": {
+    "t": "pdf",
+    "u": "https://hoffmannursery.com/",
+    "n": "Official Hoffman Nursery page confirms identity, location, wholesale model, product categories, and downloadable availability/pricing access."
+  },
+  "121": {
+    "t": "login",
+    "u": "https://mountainspringnursery.com/",
+    "n": "Official Mountain Spring pages confirm identity, location, wholesale catalog/access model, and product categories."
+  },
+  "130": {
+    "t": "pdf",
+    "u": "https://www.gonativetrees.com/download/price-list/",
+    "n": "Official Go Native Trees pages confirm identity, location, product focus, price-list access, and wholesale/retail model."
+  },
+  "201": {
+    "t": "pdf",
+    "u": "https://noltsgreenhousesupplies.com/NGScatalog.pdf",
+    "n": "Official catalog verifies identity, commercial supplier model, product categories, and catalog access; directory evidence fills contact location."
+  },
+  "207": {
+    "t": "public",
+    "u": "https://www.siteone.com/",
+    "n": "Official SiteOne pages confirm identity, product categories, access model, and home-office location."
+  },
+  "210": {
+    "t": "public",
+    "u": "https://www.arbico-organics.com/",
+    "n": "Official ARBICO pages confirm identity, location, product/business model, and public online ordering access."
+  },
+  "244": {
+    "t": "pdf",
+    "u": "https://blueskynursery.ca/orders/2025-catalogue/",
+    "n": "Official Blue Sky pages confirm identity, location, wholesale model, product categories, and catalog/availability access."
+  },
+  "312": {
+    "t": "public",
+    "u": "https://thecactusking.com/",
+    "n": "Official Cactus King page confirms identity, product model, access model, and current location; raw dashboard Homestead FL/cactuskingfl.com values were not accepted."
+  },
+  "379": {
+    "t": "public",
+    "u": "https://www.prairiemoon.com/",
+    "n": "Official Prairie Moon pages confirm identity, location, product categories, public ordering model, and quote workflow."
+  },
+  "381": {
+    "t": "public",
+    "u": "https://www.americanmeadows.com/",
+    "n": "Official American Meadows pages confirm identity, product categories, and commercial/bulk access; city is intentionally blank because the checked official pages did not publish one."
+  },
+  "43": {
+    "t": "pdf",
+    "u": "https://www.americannativeplants.com/catalog/",
+    "n": "Official American Native Plants pages and current availability workbook confirm identity, location, wholesale model, product categories, and downloadable availability access."
+  }
+};
+
+const S = [
+  {
+    "id": 16,
+    "canonicalId": "BB-SUP-000001",
+    "legacyIds": [
+      16
+    ],
+    "n": "Quality Greenhouses & Perennial Farm",
+    "city": "Dillsburg",
+    "st": "PA",
+    "type": "Wholesale Grower",
+    "cat": [
+      "Annuals",
+      "Perennials",
+      "Edibles",
+      "Succulents",
+      "Shrubs",
+      "Grasses",
+      "Indoor Foliage"
+    ],
+    "ws": "Wholesale Only",
+    "web": "qualitygreenhouses.net",
+    "ph": "717-432-8900",
+    "email": "",
+    "access": "login",
+    "signup": "https://www.qualitygreenhouses.net/",
+    "accessNote": "Official Quality Greenhouses pages confirm identity, location, wholesale model, product categories, and account/availability access.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "active_verified",
+    "d": {
+      "products": "Annuals, Perennials, Edibles, Succulents, Shrubs, Grasses, Indoor Foliage",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Wholesale Only",
+      "availability": "login",
+      "addr": "Dillsburg, PA, US",
+      "notes": "Official site confirms wholesale positioning, Dillsburg address, product categories, catalog/customer resources, and online ordering/availability workflow.",
+      "canonicalId": "BB-SUP-000001",
+      "evidence": "https://www.qualitygreenhouses.net/ | https://www.qualitygreenhouses.net/what-we-grow/ | https://www.qualitygreenhouses.net/customer-resources/ | https://www.qualitygreenhouses.net/faqs/",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "active_verified"
+    }
+  },
+  {
+    "id": 21,
+    "canonicalId": "BB-SUP-000002",
+    "legacyIds": [
+      21,
+      389
+    ],
+    "n": "Ernst Conservation Seeds",
+    "city": "Meadville",
+    "st": "PA",
+    "type": "Seed Company",
+    "cat": [
+      "Natives",
+      "Seeds",
+      "Seed Mixes",
+      "Bioengineering Materials"
+    ],
+    "ws": "Wholesale + Retail",
+    "web": "ernstseed.com",
+    "ph": "800-873-3321",
+    "email": "sales@ernstseed.com",
+    "access": "pdf",
+    "signup": "https://www.ernstseed.com/price-list/",
+    "accessNote": "Official Ernst page confirms identity, price-list access model, product/business model, and location.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "active_verified",
+    "d": {
+      "products": "Natives, Seeds, Seed Mixes, Bioengineering Materials",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Both",
+      "availability": "pdf",
+      "addr": "Meadville, PA, US",
+      "notes": "Official price-list page confirms current downloadable seed and bioengineering price lists, ordering contact, and Meadville address.",
+      "canonicalId": "BB-SUP-000002",
+      "evidence": "https://www.ernstseed.com/price-list/",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "active_verified"
+    }
+  },
+  {
+    "id": 110,
+    "canonicalId": "BB-SUP-000003",
+    "legacyIds": [
+      110
+    ],
+    "n": "Walters Gardens",
+    "city": "Zeeland",
+    "st": "MI",
+    "type": "Wholesale Perennial Grower",
+    "cat": [
+      "Perennials"
+    ],
+    "ws": "Wholesale Only",
+    "web": "waltersgardens.com",
+    "ph": "888-925-8377",
+    "email": "sales@waltersgardens.com",
+    "access": "login",
+    "signup": "https://www.waltersgardens.com/",
+    "accessNote": "Official Walters pages confirm supplier identity, wholesale ordering model, login-gated pricing, product category, and location.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "placeholder_registered",
+    "d": {
+      "products": "Perennials",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Wholesale Only",
+      "availability": "login",
+      "addr": "Zeeland, MI, US",
+      "notes": "Official ordering page confirms wholesale ordering, login-required pricing/order forms, weekly availability, and Zeeland mailing address.",
+      "canonicalId": "BB-SUP-000003",
+      "evidence": "https://www.waltersgardens.com/ordering.php | https://www.waltersgardens.com/perennials.php",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "placeholder_registered"
+    }
+  },
+  {
+    "id": 111,
+    "canonicalId": "BB-SUP-000004",
+    "legacyIds": [
+      111
+    ],
+    "n": "Hoffman Nursery",
+    "city": "Rougemont",
+    "st": "NC",
+    "type": "Wholesale Grower",
+    "cat": [
+      "Grasses",
+      "Sedges",
+      "Perennials",
+      "Natives"
+    ],
+    "ws": "Wholesale Only",
+    "web": "hoffmannursery.com",
+    "ph": "800-203-8590",
+    "email": "sales@hoffmannursery.com",
+    "access": "pdf",
+    "signup": "https://hoffmannursery.com/",
+    "accessNote": "Official Hoffman Nursery page confirms identity, location, wholesale model, product categories, and downloadable availability/pricing access.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "placeholder_registered",
+    "d": {
+      "products": "Grasses, Sedges, Perennials, Natives",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Wholesale Only",
+      "availability": "pdf",
+      "addr": "Rougemont, NC, US",
+      "notes": "Official homepage confirms wholesale-only status, ornamental/native grasses and perennials, availability/order form downloads, and Rougemont address.",
+      "canonicalId": "BB-SUP-000004",
+      "evidence": "https://hoffmannursery.com/",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "placeholder_registered"
+    }
+  },
+  {
+    "id": 121,
+    "canonicalId": "BB-SUP-000005",
+    "legacyIds": [
+      121
+    ],
+    "n": "Mountain Spring Nursery",
+    "city": "Reinholds",
+    "st": "PA",
+    "type": "Wholesale Grower",
+    "cat": [
+      "Shrubs",
+      "Perennials",
+      "Trees"
+    ],
+    "ws": "Wholesale Only",
+    "web": "mountainspringnursery.com",
+    "ph": "717-336-0833",
+    "email": "",
+    "access": "login",
+    "signup": "https://mountainspringnursery.com/",
+    "accessNote": "Official Mountain Spring pages confirm identity, location, wholesale catalog/access model, and product categories.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "placeholder_registered",
+    "d": {
+      "products": "Shrubs, Perennials, Trees",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Wholesale Only",
+      "availability": "login",
+      "addr": "Reinholds, PA, US",
+      "notes": "Official pages confirm wholesale catalog/availability with customer password, Reinholds address, and products including shrubs, perennials, and trees.",
+      "canonicalId": "BB-SUP-000005",
+      "evidence": "https://mountainspringnursery.com/catalogandavail | https://mountainspringnursery.com/products",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "placeholder_registered"
+    }
+  },
+  {
+    "id": 130,
+    "canonicalId": "BB-SUP-000006",
+    "legacyIds": [
+      130
+    ],
+    "n": "Go Native Trees",
+    "city": "Manheim",
+    "st": "PA",
+    "type": "Native Specialist",
+    "cat": [
+      "Natives",
+      "Trees",
+      "Shrubs"
+    ],
+    "ws": "Wholesale + Retail",
+    "web": "gonativetrees.com",
+    "ph": "717-399-0195",
+    "email": "",
+    "access": "pdf",
+    "signup": "https://www.gonativetrees.com/download/price-list/",
+    "accessNote": "Official Go Native Trees pages confirm identity, location, product focus, price-list access, and wholesale/retail model.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "placeholder_registered",
+    "d": {
+      "products": "Natives, Trees, Shrubs",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Both",
+      "availability": "pdf",
+      "addr": "Manheim, PA, US",
+      "notes": "Official pages confirm Go Native Tree Farm identity, Manheim nursery address, wholesale/retail customers, current price list, and quote/order process.",
+      "canonicalId": "BB-SUP-000006",
+      "evidence": "https://www.gonativetrees.com/ | https://www.gonativetrees.com/download/price-list/",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "placeholder_registered"
+    }
+  },
+  {
+    "id": 201,
+    "canonicalId": "BB-SUP-000007",
+    "legacyIds": [
+      201
+    ],
+    "n": "Nolt's Greenhouse Supplies",
+    "city": "Ephrata",
+    "st": "PA",
+    "type": "Supply/Hard Goods",
+    "cat": [
+      "Hard Goods",
+      "Greenhouse Supplies",
+      "Containers",
+      "Fertilizer",
+      "Irrigation"
+    ],
+    "ws": "Commercial Growers Catalog",
+    "web": "noltsgreenhousesupplies.com",
+    "ph": "717-354-8376",
+    "email": "sales@noltsgreenhouse.com",
+    "access": "pdf",
+    "signup": "https://noltsgreenhousesupplies.com/NGScatalog.pdf",
+    "accessNote": "Official catalog verifies identity, commercial supplier model, product categories, and catalog access; directory evidence fills contact location.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "active_verified",
+    "d": {
+      "products": "Hard Goods, Greenhouse Supplies, Containers, Fertilizer, Irrigation",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Commercial Growers Catalog",
+      "availability": "pdf",
+      "addr": "Ephrata, PA, US",
+      "notes": "Official PDF confirms Nolt's Greenhouse Supplies 2026 commercial growers catalog and phone; trade-directory listing supplies address and email because the public site has minimal contact text.",
+      "canonicalId": "BB-SUP-000007",
+      "evidence": "https://noltsgreenhousesupplies.com/NGScatalog.pdf | https://www.lawnandgardendirectory.org/nolt-s-greenhouse-supplies.aspx",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "active_verified"
+    }
+  },
+  {
+    "id": 207,
+    "canonicalId": "BB-SUP-000008",
+    "legacyIds": [
+      207
+    ],
+    "n": "SiteOne Landscape Supply",
+    "city": "Roswell",
+    "st": "GA",
+    "type": "Landscape Supply Distributor",
+    "cat": [
+      "Nursery",
+      "Landscape Supply",
+      "Irrigation",
+      "Hardscapes",
+      "Agronomic Maintenance"
+    ],
+    "ws": "Account/Guest Ordering",
+    "web": "siteone.com",
+    "ph": "1-800-748-3663",
+    "email": "customersupport@ec.siteone.com",
+    "access": "public",
+    "signup": "https://www.siteone.com/",
+    "accessNote": "Official SiteOne pages confirm identity, product categories, access model, and home-office location.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "active_verified",
+    "d": {
+      "products": "Nursery, Landscape Supply, Irrigation, Hardscapes, Agronomic Maintenance",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Account/Guest Ordering",
+      "availability": "public",
+      "addr": "Roswell, GA, US",
+      "notes": "Official pages confirm SiteOne identity, nursery/landscape supply categories, pricing/inventory branch workflow, account/guest access, and Roswell home office.",
+      "canonicalId": "BB-SUP-000008",
+      "evidence": "https://www.siteone.com/en/ | https://www.siteone.com/en/contactus",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "active_verified"
+    }
+  },
+  {
+    "id": 210,
+    "canonicalId": "BB-SUP-000009",
+    "legacyIds": [
+      210
+    ],
+    "n": "ARBICO Organics",
+    "city": "Oro Valley",
+    "st": "AZ",
+    "type": "Organic Pest Control and Growing Supplies",
+    "cat": [
+      "Beneficial Insects",
+      "Pest Control",
+      "Growing Supplies",
+      "Fertilizers",
+      "Soil Amendments"
+    ],
+    "ws": "Public Online Ordering",
+    "web": "arbico-organics.com",
+    "ph": "1-800-827-2847",
+    "email": "CustomerCare@arbico.com",
+    "access": "public",
+    "signup": "https://www.arbico-organics.com/",
+    "accessNote": "Official ARBICO pages confirm identity, location, product/business model, and public online ordering access.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "active_unverified",
+    "d": {
+      "products": "Beneficial Insects, Pest Control, Growing Supplies, Fertilizers, Soil Amendments",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Public Online Ordering",
+      "availability": "public",
+      "addr": "Oro Valley, AZ, US",
+      "notes": "Official pages confirm ARBICO Organics identity, Oro Valley retail/corporate office, online ordering, and beneficial insect/growing supply categories.",
+      "canonicalId": "BB-SUP-000009",
+      "evidence": "https://www.arbico-organics.com/category/beneficial-insects-organisms | https://www.arbico-organics.com/category/contactus | https://www.arbico-organics.com/category/shipping-info",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "active_unverified"
+    }
+  },
+  {
+    "id": 244,
+    "canonicalId": "BB-SUP-000010",
+    "legacyIds": [
+      244
+    ],
+    "n": "Blue Sky Nursery",
+    "city": "Lincoln",
+    "st": "ON",
+    "type": "Wholesale Grower",
+    "cat": [
+      "Perennials",
+      "Broadleaf Evergreens",
+      "Flowering Shrubs & Trees",
+      "Ferns",
+      "Hostas",
+      "Hydrangeas",
+      "Ornamental Grasses"
+    ],
+    "ws": "Wholesale Only",
+    "web": "blueskynursery.ca",
+    "ph": "905-563-4245",
+    "email": "orders@blueskynursery.ca",
+    "access": "pdf",
+    "signup": "https://blueskynursery.ca/orders/2025-catalogue/",
+    "accessNote": "Official Blue Sky pages confirm identity, location, wholesale model, product categories, and catalog/availability access.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "active_verified",
+    "d": {
+      "products": "Perennials, Broadleaf Evergreens, Flowering Shrubs & Trees, Ferns, Hostas, Hydrangeas, Ornamental Grasses",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Wholesale Only",
+      "availability": "pdf",
+      "addr": "Lincoln, ON, CA",
+      "notes": "Official pages confirm Lincoln ON location, wholesale-only status, online availability/catalog access, product categories, and contact details.",
+      "canonicalId": "BB-SUP-000010",
+      "evidence": "https://blueskynursery.ca/orders/2025-catalogue/ | https://blueskynursery.ca/our-products/",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "active_verified"
+    }
+  },
+  {
+    "id": 312,
+    "canonicalId": "BB-SUP-000011",
+    "legacyIds": [
+      312
+    ],
+    "n": "The Cactus King",
+    "city": "Ganado",
+    "st": "TX",
+    "type": "Succulent Farm and Nursery",
+    "cat": [
+      "Cactus",
+      "Succulents"
+    ],
+    "ws": "Wholesale + Retail",
+    "web": "thecactusking.com",
+    "ph": "281-591-8833",
+    "email": "",
+    "access": "public",
+    "signup": "https://thecactusking.com/",
+    "accessNote": "Official Cactus King page confirms identity, product model, access model, and current location; raw dashboard Homestead FL/cactuskingfl.com values were not accepted.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "active_verified",
+    "d": {
+      "products": "Cactus, Succulents",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Retail and Wholesale",
+      "availability": "public",
+      "addr": "Ganado, TX, US",
+      "notes": "Official homepage confirms The Cactus King identity, retail/wholesale clientele, public product pricing, shipping, and current Ganado TX location notice.",
+      "canonicalId": "BB-SUP-000011",
+      "evidence": "https://thecactusking.com/",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "active_verified"
+    }
+  },
+  {
+    "id": 379,
+    "canonicalId": "BB-SUP-000012",
+    "legacyIds": [
+      379
+    ],
+    "n": "Prairie Moon Nursery",
+    "city": "Winona",
+    "st": "MN",
+    "type": "Native Seed and Plant Supplier",
+    "cat": [
+      "Seeds",
+      "Native Plants",
+      "Seed Mixes"
+    ],
+    "ws": "Online and Phone Orders",
+    "web": "prairiemoon.com",
+    "ph": "507-452-1362",
+    "email": "",
+    "access": "public",
+    "signup": "https://www.prairiemoon.com/",
+    "accessNote": "Official Prairie Moon pages confirm identity, location, product categories, public ordering model, and quote workflow.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "active_verified",
+    "d": {
+      "products": "Seeds, Native Plants, Seed Mixes",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Online and Phone Orders",
+      "availability": "public",
+      "addr": "Winona, MN, US",
+      "notes": "Official contact page confirms Prairie Moon Nursery identity, Winona MN location, online/phone-only ordering, quote requests, and seed/plant categories.",
+      "canonicalId": "BB-SUP-000012",
+      "evidence": "https://www.prairiemoon.com/contact-us.html | https://www.prairiemoon.com/seeds/wildflowers/",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "active_verified"
+    }
+  },
+  {
+    "id": 381,
+    "canonicalId": "BB-SUP-000013",
+    "legacyIds": [
+      381
+    ],
+    "n": "American Meadows",
+    "city": "",
+    "st": "VT",
+    "type": "Commercial Seed, Bulb, and Plant Supplier",
+    "cat": [
+      "Wildflower Seeds",
+      "Clover & Grass Seeds",
+      "Perennials",
+      "Flower Bulbs"
+    ],
+    "ws": "Commercial/Bulk Ordering",
+    "web": "americanmeadows.com",
+    "ph": "802-383-3850",
+    "email": "mike@americanmeadows.com",
+    "access": "public",
+    "signup": "https://www.americanmeadows.com/",
+    "accessNote": "Official American Meadows pages confirm identity, product categories, and commercial/bulk access; city is intentionally blank because the checked official pages did not publish one.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-04-30",
+    "adapterStatus": "active_verified",
+    "d": {
+      "products": "Wildflower Seeds, Clover & Grass Seeds, Perennials, Flower Bulbs",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Commercial/Bulk Ordering",
+      "availability": "public",
+      "addr": "VT, US",
+      "notes": "Official commercial and contact pages confirm American Meadows identity, bulk/commercial sales, product categories, and commercial contact; official pages confirm Vermont history but do not publish a current city in the checked sources.",
+      "canonicalId": "BB-SUP-000013",
+      "evidence": "https://www.americanmeadows.com/pages/commercial | https://www.americanmeadows.com/pages/contact-us | https://www.americanmeadows.com/pages/about-us",
+      "lastVerifiedAt": "2026-04-30",
+      "adapterStatus": "active_verified"
+    }
+  },
+  {
+    "id": 43,
+    "canonicalId": "BB-SUP-000014",
+    "legacyIds": [
+      43
+    ],
+    "n": "American Native Plants",
+    "city": "Middle River",
+    "st": "MD",
+    "type": "Wholesale Native Plant Nursery",
+    "cat": [
+      "Natives",
+      "Trees",
+      "Shrubs",
+      "Perennials",
+      "Hardgoods"
+    ],
+    "ws": "Wholesale Only",
+    "web": "americannativeplants.com",
+    "ph": "410-529-0552",
+    "email": "sales@americannativeplants.com",
+    "access": "pdf",
+    "signup": "https://www.americannativeplants.com/catalog/",
+    "accessNote": "Official American Native Plants pages and current availability workbook confirm identity, location, wholesale model, product categories, and downloadable availability access.",
+    "verificationStatus": "verified",
+    "lastVerifiedAt": "2026-05-08",
+    "adapterStatus": "active_verified",
+    "d": {
+      "products": "Natives, Trees, Shrubs, Perennials, Hardgoods",
+      "minOrder": "",
+      "payment": "",
+      "delivery": "",
+      "specificPlants": "",
+      "containers": "",
+      "ordering": "Wholesale Only",
+      "availability": "pdf",
+      "addr": "Middle River, MD, US",
+      "notes": "Official pages confirm American Native Plants identity, Middle River MD location, wholesale native plant business model, downloadable availability files, and account-gated pricing/availability. A live adapter run on 2026-05-08 extracted 522 rows from the official May 6, 2026 availability XLSX.",
+      "canonicalId": "BB-SUP-000014",
+      "evidence": "https://www.americannativeplants.com/contact-us/ | https://www.americannativeplants.com/catalog/ | https://www.americannativeplants.com/shipping/ | https://www.americannativeplants.com/creating-a-customer-account/ | https://www.americannativeplants.com/wp-content/uploads/2026/05/Availability-05-06-2026.xlsx",
+      "lastVerifiedAt": "2026-05-08",
+      "adapterStatus": "active_verified"
+    }
+  }
 ];
+
+function supplierMatchesId(supplier, supplierId) {
+    const id = Number(supplierId);
+    if (Number.isNaN(id)) return false;
+    if (supplier.id === id) return true;
+    return Array.isArray(supplier.legacyIds) && supplier.legacyIds.includes(id);
+}
 
 const PRICE_DATA = {};
+const PRICE_CATEGORIES = [];
 
 /* PURGED: manufactured price category data removed */
 /* PURGED: manufactured price comparison data removed */
 
 // =========================================================================
-// GEOCODE DATA — Approximate lat/lng for map
-// =========================================================================
-
-// =========================================================================
-// GEOGRAPHIC COORDINATES
+// GEOCODE DATA -- city-center coordinates for verified supplier locations
 // =========================================================================
 const GEO = {
-    // PA
-    "Landenberg,PA":[39.79,-75.88],"Kirkwood,PA":[39.84,-76.07],"Paoli,PA":[40.04,-75.49],"Honey Brook,PA":[40.09,-75.91],
-    "Lahaska,PA":[40.36,-75.02],"Kintnersville,PA":[40.63,-75.14],"Fountainville,PA":[40.37,-75.15],"Souderton,PA":[40.31,-75.33],
-    "Newtown,PA":[40.23,-74.94],"Chalfont,PA":[40.29,-75.21],"Douglassville,PA":[40.26,-75.74],"Quakertown,PA":[40.44,-75.34],
-    "Felton,PA":[39.86,-76.52],"Orefield,PA":[40.63,-75.57],"Dillsburg,PA":[40.11,-77.03],"Orrtanna,PA":[39.87,-77.36],
-    "Manheim,PA":[40.16,-76.40],"Meadville,PA":[41.64,-80.15],"Leola,PA":[40.09,-76.18],"Lancaster,PA":[40.04,-76.31],
-    "Reinholds,PA":[40.26,-76.12],"Indiana,PA":[40.62,-79.15],"Carrolltown,PA":[40.60,-78.71],"Muncy,PA":[41.20,-76.79],
-    "Aspers,PA":[39.97,-77.23],"Biglerville,PA":[39.93,-77.25],"Ephrata,PA":[40.18,-76.18],"Millersville,PA":[39.99,-76.35],
-    "Lititz,PA":[40.16,-76.31],"Jonestown,PA":[40.41,-76.48],"East Earl,PA":[40.12,-76.03],"York,PA":[39.96,-76.73],
-    "Lower Gwynedd,PA":[40.18,-75.24],"Duncannon,PA":[40.40,-77.03],"Shippensburg,PA":[40.05,-77.52],
-    "Temple,PA":[40.40,-75.92],
-    // MD
-    "Rosedale,MD":[39.33,-76.52],"Adamstown,MD":[39.31,-77.47],"Earleville,MD":[39.41,-75.93],"Laytonsville,MD":[39.21,-77.14],
-    "Union Bridge,MD":[39.57,-77.18],"Middle River,MD":[39.33,-76.44],"Detour,MD":[39.63,-77.29],"Quantico,MD":[38.32,-75.60],
-    "Queenstown,MD":[38.99,-76.16],"Kingsville,MD":[39.45,-76.42],"Baldwin,MD":[39.50,-76.53],"Woodbine,MD":[39.34,-77.07],
-    "Pylesville,MD":[39.69,-76.39],"Burtonsville,MD":[39.11,-76.93],"Jarrettsville,MD":[39.60,-76.48],"Bowie,MD":[38.94,-76.73],
-    "Bel Air,MD":[39.54,-76.35],"Baltimore,MD":[39.29,-76.61],"Indian Head,MD":[38.60,-77.16],"Westminster,MD":[39.57,-77.00],
-    // NJ
-    "Bridgeton,NJ":[39.43,-75.23],"Columbus,NJ":[40.07,-74.69],"Sewell,NJ":[39.75,-75.10],"Monroeville,NJ":[39.51,-75.15],
-    "Tabernacle,NJ":[39.84,-74.72],"Springfield,NJ":[40.70,-74.32],"Medford,NJ":[39.90,-74.82],"Jackson,NJ":[40.10,-74.35],
-    "Allentown,NJ":[40.18,-74.59],"Newfield,NJ":[39.55,-75.02],"Bordentown,NJ":[40.15,-74.71],
-    // VA
-    "Riner,VA":[37.06,-80.44],"Ashland,VA":[37.76,-77.48],"Keller,VA":[37.59,-75.77],"Exmore,VA":[37.53,-75.82],
-    "Midlothian,VA":[37.50,-77.65],"Grottoes,VA":[38.27,-78.83],"Smithfield,VA":[36.98,-76.63],"Cobbs Creek,VA":[37.52,-76.38],
-    "Leesburg,VA":[39.12,-77.56],"Catlett,VA":[38.63,-77.63],"Washington,DC":[38.91,-77.04],
-    // FL
-    "Miami,FL":[25.76,-80.19],"Apopka,FL":[28.68,-81.51],"Homestead,FL":[25.47,-80.48],"Winter Garden,FL":[28.56,-81.59],
-    "Delray Beach,FL":[26.46,-80.07],"Plant City,FL":[28.02,-82.12],"Rockwell,NC":[35.55,-80.41],"Galena,OH":[40.22,-82.88],
-    "Auburn,NY":[42.93,-76.57],"Bantam,CT":[41.72,-73.24],"Bridgeport,CT":[41.18,-73.19],"Shelby,NC":[35.29,-81.54],
-    // ON Canada
-    "Burlington,ON":[43.33,-79.79],"West Flamborough,ON":[43.28,-80.03],"Grand Haven,MI":[43.06,-86.23],
-    "Zeeland,MI":[42.81,-86.02],"Rougemont,NC":[36.22,-79.07],"Multiple,Regional":[39.95,-76.73],
-    "Glen Williams,ON":[43.68,-80.00],"Pickering,ON":[43.84,-79.09],"Fenwick,ON":[42.97,-79.37],
-    "Lynden,ON":[43.22,-80.11],"Lincoln,ON":[43.13,-79.43],"Rockton,ON":[43.25,-80.10],
-    "Georgetown,DE":[38.69,-75.39],
-    // Supply companies with 'Multiple' location
-    "Tewksbury,MA":[42.61,-71.23],"Twinsburg,OH":[41.31,-81.44],"Cranbury,NJ":[40.31,-74.51],
-    "Montague,MI":[43.42,-86.36],"Norristown,PA":[40.12,-75.34],"Redding,CA":[40.59,-122.39],
-    "Oro Valley,AZ":[32.39,-110.97],"Modena,PA":[39.96,-75.79],"Piqua,OH":[40.14,-84.24],
-"Lebanon,PA":[40.34,-76.41],
-"Doylestown,PA":[40.31,-75.13],
-"Allentown,PA":[40.6,-75.49],
-"Frederick,MD":[39.41,-77.41],
-"Oakland,MD":[39.41,-79.41],
-"Denton,MD":[38.88,-75.83],
-"Hammonton,NJ":[39.64,-74.8],
-"Staunton,VA":[38.15,-79.07],
-"Charlottesville,VA":[38.03,-78.48],
-"Martinsburg,WV":[39.46,-77.96],
-"Vineland,NJ":[39.49,-75.03],
-"Berryville,VA":[39.15,-77.98],
-"Tampa,FL":[27.95,-82.46],
-"Tampa,FL":[27.95,-82.46],
-"Leamington,ON":[42.05,-82.6],
-"Brampton,ON":[43.73,-79.76],
-"Brampton,ON":[43.73,-79.76],
-"Saint Paul,MN":[44.95,-93.09],
-"Saint-Modeste,QC":[47.83,-69.39],
-"Middlefield,OH":[41.46,-81.07],
-"Tampa,FL":[27.95,-82.46],
-"Marysville,OH":[40.24,-83.37],
-"Tampa,FL":[27.95,-82.46],
-"Brampton,ON":[43.73,-79.76],
-"Leamington,ON":[42.05,-82.6],
-"Sarasota,FL":[27.34,-82.53]
+    "Dillsburg,PA":[40.11,-77.03],
+    "Meadville,PA":[41.64,-80.15],
+    "Zeeland,MI":[42.81,-86.02],
+    "Rougemont,NC":[36.22,-79.07],
+    "Reinholds,PA":[40.26,-76.12],
+    "Manheim,PA":[40.16,-76.40],
+    "Ephrata,PA":[40.18,-76.18],
+    "Middle River,MD":[39.33,-76.44],
+    "Roswell,GA":[34.02,-84.36],
+    "Oro Valley,AZ":[32.39,-110.97],
+    "Lincoln,ON":[43.13,-79.43],
+    "Ganado,TX":[29.04,-96.51],
+    "Winona,MN":[44.05,-91.64]
 };
 
 // =========================================================================
 // LIVE DATA SOURCES
 // =========================================================================
 const LIVE_SOURCES = {
-    1: {url:'https://northcreeknurseries.com',type:'Daily Excel/PDF',freq:'Daily'},
-    16: {url:'https://qualitygreenhouses.net',type:'Friday email list',freq:'Weekly (Fri)'},
-    23: {url:'https://creekhillnursery.com/availability',type:'PDF download',freq:'Updated regularly'},
-    29: {url:'https://babikow.com',type:'Weekly email',freq:'Weekly'},
-    33: {url:'mailto:sales@tidalcreekgrowers.com',type:'Daily email list',freq:'Daily'},
-    43: {url:'https://americannativeplants.com',type:'XLSX/PDF download',freq:'Seasonal'},
-    48: {url:'https://grownbyoverdevest.com',type:'Online portal (login)',freq:'Real-time'},
-    52: {url:'https://riggins-nursery.com',type:'Priced PDF lists',freq:'Updated regularly'},
-    65: {url:'https://riverbendnursery.com',type:'Portal (login)',freq:'Real-time'},
-    69: {url:'https://colesvillenursery.com',type:'Public pricing PDFs',freq:'Updated regularly'},
-    98: {url:'https://morningdewtropical.com',type:'Daily availability (login)',freq:'Daily'},
-    30: {url:'https://shop.waverlyfarm.com/catalog.html',type:'Online catalog',freq:'Real-time'},
+    43: {url:'https://www.americannativeplants.com/wp-content/uploads/2026/05/Availability-05-06-2026.xlsx',type:'XLSX availability',freq:'Current catalog'},
+    16: {url:'https://www.qualitygreenhouses.net/customer-resources/',type:'Login availability',freq:'Weekly'},
+    21: {url:'https://www.ernstseed.com/price-list/',type:'PDF price list',freq:'Current catalog'},
+    110: {url:'https://www.waltersgardens.com/ordering.php',type:'Login pricing',freq:'Weekly availability'},
+    111: {url:'https://hoffmannursery.com/',type:'PDF/XLS availability',freq:'Current availability'},
+    121: {url:'https://mountainspringnursery.com/catalogandavail',type:'Password catalog',freq:'Weekly availability'},
+    130: {url:'https://www.gonativetrees.com/download/price-list/',type:'Price list',freq:'Current year'},
+    201: {url:'https://noltsgreenhousesupplies.com/NGScatalog.pdf',type:'PDF catalog',freq:'2026 catalog'},
+    207: {url:'https://www.siteone.com/en/',type:'Branch inventory',freq:'Live site'},
+    210: {url:'https://www.arbico-organics.com/',type:'Public catalog',freq:'Live site'},
+    244: {url:'https://blueskynursery.ca/orders/2025-catalogue/',type:'Catalog/availability',freq:'Current catalog'},
+    312: {url:'https://thecactusking.com/',type:'Public catalog',freq:'Live site'},
+    379: {url:'https://www.prairiemoon.com/',type:'Public catalog',freq:'Live site'},
+    381: {url:'https://www.americanmeadows.com/pages/commercial',type:'Commercial catalog',freq:'Live site'},
 };
 
 // =========================================================================
@@ -940,22 +1840,8 @@ function renderMetric(label, val, color) {
 // SEASONAL DEMAND FORECAST
 // =========================================================================
 function renderSeasonalForecast() {
-    const seasons = [
-        {name:'Spring (Mar-May)', demand:95, peak:'Annuals, Perennials, Vegetables, Herbs', notes:'Highest volume. Order plugs/liners Jan-Feb. Peak delivery Mar 15-May 1.'},
-        {name:'Summer (Jun-Aug)', demand:65, peak:'Tropicals, Houseplants, Succulents', notes:'Focus on heat-tolerant varieties. Tropicals from FL ship well. Indoor plant sales peak.'},
-        {name:'Fall (Sep-Nov)', demand:80, peak:'Mums, Pansies, Trees, Shrubs, Bulbs', notes:'Second busiest. Order mums by June. Fall color trees drive premium. Bulb pre-orders close Sep.'},
-        {name:'Winter (Dec-Feb)', demand:40, peak:'Poinsettias, Holiday, Indoor Plants', notes:'Poinsettia orders close Aug. Indoor/tropical sales carry revenue. Plan spring orders.'}
-    ];
-    let h = '<div class="forecast-grid">';
-    seasons.forEach(s => {
-        h += '<div class="forecast-card"><h4>' + s.name + '</h4>' +
-            '<div class="forecast-bar"><div class="forecast-fill" style="width:' + s.demand + '%;"></div></div>' +
-            '<div style="font-size:12px;font-weight:600;margin-bottom:4px;">Demand: ' + s.demand + '%</div>' +
-            '<div class="forecast-meta"><strong>Key Categories:</strong> ' + s.peak + '</div>' +
-            '<div class="forecast-meta" style="margin-top:4px;">' + s.notes + '</div></div>';
-    });
-    h += '</div>';
-    document.getElementById('seasonal-forecast').innerHTML = h;
+    document.getElementById('seasonal-forecast').innerHTML =
+        '<p style="color:var(--text-secondary);padding:20px;">No demand forecast is available because no verified sales or procurement history is connected.</p>';
 }
 
 // =========================================================================
@@ -964,10 +1850,10 @@ function renderSeasonalForecast() {
 function renderOrderCalendar() {
     const months = [
         {name:'January', items:[
-            {text:'Finalize spring plug/liner orders (North Creek, Four Star, Jolly Farmer)', cls:'cal-critical'},
-            {text:'Order seed for spring annuals (Ball Seed, AmeriSeed)', cls:'cal-critical'},
-            {text:'Review soil/media contracts (Sungro, Berger, Premier Tech)', cls:'cal-important'},
-            {text:'Tropical inventory check — FL grower availability', cls:'cal-normal'}
+            {text:'Finalize spring plug/liner orders from verified propagation suppliers', cls:'cal-critical'},
+            {text:'Order seed for spring annuals from verified seed suppliers', cls:'cal-critical'},
+            {text:'Review soil/media contracts against verified hard-goods suppliers', cls:'cal-important'},
+            {text:'Tropical inventory check against verified availability sources', cls:'cal-normal'}
         ]},
         {name:'February', items:[
             {text:'Receive first plug shipments — check root quality', cls:'cal-critical'},
@@ -976,16 +1862,16 @@ function renderOrderCalendar() {
             {text:'Order hard goods: pots, tags, soil amendments', cls:'cal-normal'}
         ]},
         {name:'March', items:[
-            {text:'PEAK RECEIVING — daily deliveries from PA/NJ growers', cls:'cal-critical'},
+            {text:'PEAK RECEIVING &mdash; daily deliveries from verified regional growers', cls:'cal-critical'},
             {text:'Begin retail spring opening across all 12 locations', cls:'cal-critical'},
-            {text:'Weekly availability checks with top 20 suppliers', cls:'cal-important'},
+            {text:'Weekly availability checks with verified suppliers', cls:'cal-important'},
             {text:'Order Easter/spring holiday merchandise', cls:'cal-normal'}
         ]},
         {name:'April', items:[
             {text:'Highest volume month — reorder annuals 2x/week', cls:'cal-critical'},
             {text:'Trees & shrubs: coordinate B&B deliveries', cls:'cal-important'},
             {text:'Native plant orders for Earth Day promotions', cls:'cal-important'},
-            {text:'Monitor pricing — arbitrage opportunities peak now', cls:'cal-normal'}
+            {text:'Monitor pricing &mdash; arbitrage opportunities peak now', cls:'cal-normal'}
         ]},
         {name:'May', items:[
             {text:'Mother\'s Day push — premium baskets, tropicals', cls:'cal-critical'},
@@ -1027,7 +1913,7 @@ function renderOrderCalendar() {
             {text:'Receive first poinsettia shipments', cls:'cal-critical'},
             {text:'Holiday decor & gift plant inventory', cls:'cal-important'},
             {text:'Close out fall perennials — markdown strategy', cls:'cal-normal'},
-            {text:'Begin spring planning: review supplier scorecards', cls:'cal-normal'}
+            {text:'Begin spring planning: review verified supplier performance notes', cls:'cal-normal'}
         ]},
         {name:'December', items:[
             {text:'Peak poinsettia & holiday plant sales', cls:'cal-critical'},
@@ -1053,7 +1939,7 @@ function renderOrderCalendar() {
 class Dashboard {
     constructor(data) {
         this.raw = data; this.filtered = data; this.charts = {};
-        this.page = 0; this.pageSize = 40; this.sortCol = 'score'; this.sortDir = 'desc';
+        this.page = 0; this.pageSize = 40; this.sortCol = 'n'; this.sortDir = 'asc';
         this.expandedId = null;
         this.init();
     }
@@ -1061,7 +1947,7 @@ class Dashboard {
         this.populateFilters();
         this.applyFilters();
         this.renderCharts();
-        this.renderPriceComparison(PRICE_CATEGORIES[0].key);
+        this.renderPriceComparison(PRICE_CATEGORIES.length ? PRICE_CATEGORIES[0].key : '');
         this.renderArbitrage();
         // Populate margin calculator dropdown
         const sel = document.getElementById('margin-cat');
@@ -1082,7 +1968,6 @@ class Dashboard {
         const tp = document.getElementById('filter-type').value;
         const cat = document.getElementById('filter-category').value;
         const ws = document.getElementById('filter-wholesale').value;
-        const minScore = parseInt(document.getElementById('filter-score').value) || 0;
         
         this.filtered = this.raw.filter(s => {
             if (st !== 'all' && s.st !== st) return false;
@@ -1090,7 +1975,6 @@ class Dashboard {
             if (cat !== 'all' && !s.cat.includes(cat)) return false;
             if (ws === 'wholesale' && s.ws !== 'Wholesale Only') return false;
             if (ws === 'both' && s.ws !== 'Wholesale + Retail') return false;
-            if (s.score < minScore) return false;
             if (q) {
                 const searchStr = (s.n + ' ' + s.city + ' ' + s.st + ' ' + s.type + ' ' + s.cat.join(' ') + ' ' + (s.d.products||'') + ' ' + (s.d.specificPlants||'') + ' ' + (s.d.notes||'')).toLowerCase();
                 return searchStr.includes(q);
@@ -1107,8 +1991,6 @@ class Dashboard {
         document.getElementById('filter-type').value = 'all';
         document.getElementById('filter-category').value = 'all';
         document.getElementById('filter-wholesale').value = 'all';
-        document.getElementById('filter-score').value = '70';
-        document.getElementById('score-val').textContent = '70';
         this.applyFilters();
     }
     renderKPIs() {
@@ -1139,11 +2021,11 @@ class Dashboard {
             return '<span class="badge badge-' + (m[t]||'grower') + '">' + t + '</span>';
         };
         const wBadge = w => w === 'Wholesale Only' ? '<span class="badge badge-wholesale">W</span>' : '<span class="badge badge-both">W+R</span>';
-        const sBadge = s => s > 0 ? '<span class="deal-score ' + (s>=88?'deal-hot':s>=80?'deal-warm':'deal-cool') + '">' + s + '</span>' : '<span style="color:var(--text-secondary);">—</span>';
+        const sBadge = () => '<span class="badge badge-wholesale">Verified</span>';
         const arrow = c => this.sortCol === c ? (this.sortDir === 'asc' ? ' \u25B2' : ' \u25BC') : '';
 
         let h = '<table class="data-table"><thead><tr>' +
-            '<th onclick="dashboard.sort(\'score\')">Score' + arrow('score') + '</th>' +
+            '<th>Registry</th>' +
             '<th style="width:20px;"></th>' +
             '<th onclick="dashboard.sort(\'n\')">Supplier' + arrow('n') + '</th>' +
             '<th onclick="dashboard.sort(\'city\')">Location' + arrow('city') + '</th>' +
@@ -1163,9 +2045,9 @@ class Dashboard {
             if (!keyDetail.length) keyDetail.push(s.d.products.substring(0,80) + '...');
 
             h += '<tr class="supplier-row" onclick="dashboard.toggle(' + s.id + ')">' +
-                '<td>' + sBadge(s.score) + '</td>' +
+                '<td>' + sBadge() + '</td>' +
                 '<td><button class="star-btn ' + (isFav?'starred':'') + '" onclick="event.stopPropagation();dashboard.toggleFavorite(' + s.id + ')">\u2605</button></td>' +
-                '<td><span class="expand-icon ' + (isExp?'open':'') + '">\u25B6</span><strong>' + s.n + '</strong>' + (s.d.est ? '<br><span style="font-size:10px;color:var(--text-secondary);">Est. ' + s.d.est + '</span>' : '') + '</td>' +
+                '<td><span class="expand-icon ' + (isExp?'open':'') + '">\u25B6</span><strong>' + s.n + '</strong><br><span style="font-size:10px;color:var(--text-secondary);">' + s.canonicalId + ' &middot; verified ' + s.lastVerifiedAt + '</span></td>' +
                 '<td style="font-size:12px;">' + s.city + '</td>' +
                 '<td style="font-size:12px;font-weight:600;">' + s.st + '</td>' +
                 '<td>' + tBadge(s.type) + '</td>' +
@@ -1206,7 +2088,7 @@ class Dashboard {
                 (s.d.addr ? '<div class="detail-label">Address</div><div class="detail-value">' + s.d.addr + '</div>' : '') +
                 (s.ph ? '<div class="detail-label">Phone</div><div class="detail-value"><strong>' + s.ph + '</strong></div>' : '') +
                 (s.web ? '<div class="detail-label">Website</div><div class="detail-value"><a href="https://' + s.web + '" target="_blank" style="color:var(--green-2);">' + s.web + '</a></div>' : '') +
-                (s.d.notes ? '<div style="margin-top:8px;padding:8px;background:rgba(234,179,8,0.1);border-radius:4px;border-left:3px solid var(--orange-2);"><div class="detail-label" style="color:#92400e;">Buyer Notes</div><p style="font-size:12px;font-style:italic;">' + s.d.notes + '</p></div>' : '') +
+                (s.d.notes ? '<div style="margin-top:8px;padding:8px;background:rgba(234,179,8,0.1);border-radius:4px;border-left:3px solid var(--orange-2);"><div class="detail-label" style="color:#92400e;">Evidence Notes</div><p style="font-size:12px;font-style:italic;">' + s.d.notes + '</p></div>' : '') +
                 '</div>';
 
             h += '</div></div></td></tr>';
@@ -1231,7 +2113,7 @@ class Dashboard {
     }
     sort(col) {
         if (this.sortCol === col) this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
-        else { this.sortCol = col; this.sortDir = col === 'score' ? 'desc' : 'asc'; }
+        else { this.sortCol = col; this.sortDir = 'asc'; }
         this.renderTable();
     }
     goPage(p) { this.page = p; this.renderTable(); }
@@ -1267,11 +2149,11 @@ class Dashboard {
     updateCharts() { Object.values(this.charts).forEach(c => c.destroy()); this.charts = {}; this.renderCharts(); }
 
     renderPriceComparison(k) {
-        document.getElementById('compare-pills').innerHTML = PRICE_CATEGORIES.map(c =>
+        document.getElementById('compare-pills').innerHTML = PRICE_CATEGORIES.length ? PRICE_CATEGORIES.map(c =>
             '<span class="pill ' + (c.key===k?'active':'') + '" onclick="dashboard.renderPriceComparison(\'' + c.key + '\')">' + c.label + '</span>'
-        ).join('');
+        ).join('') : '';
         const sups = PRICE_DATA[k] || [];
-        if (!sups.length) { document.getElementById('price-grid').innerHTML = '<p style="color:var(--text-secondary);">No data for this category.</p>'; return; }
+        if (!sups.length) { document.getElementById('price-grid').innerHTML = '<p style="color:var(--text-secondary);">No verified price records are available for comparison.</p>'; return; }
         const sorted = [...sups].sort((a,b) => a.typ - b.typ);
         document.getElementById('price-grid').innerHTML = sorted.map((s, i) => {
             const isBest = i === 0, sav = s.typ - sorted[0].typ, pct = sorted[0].typ > 0 ? ((sav/s.typ)*100).toFixed(1) : 0;
@@ -1287,6 +2169,10 @@ class Dashboard {
 
     renderArbitrage() {
         const opps = calcArbitrage().slice(0, 60);
+        if (!opps.length) {
+            document.getElementById('arbitrage-table-container').innerHTML = '<p style="color:var(--text-secondary);">No arbitrage calculations are available because no verified comparable price records are loaded.</p>';
+            return;
+        }
         let h = '<table class="data-table"><thead><tr><th>Category</th><th>Best Supplier</th><th>Best Price</th><th>vs. Supplier</th><th>Their Price</th><th>Savings/Unit</th><th>Savings %</th></tr></thead><tbody>';
         opps.forEach(o => {
             const cls = o.pct > 30 ? 'arb-positive' : '';
@@ -1319,8 +2205,8 @@ function switchTab(t) {
 // CSV EXPORT
 // =========================================================================
 function exportCSV() {
-    const h = ['Name','City','State','Type','Categories','Wholesale','Website','Phone','Min Order','Payment','Delivery','Products','Specific Plants','Containers','Notes','Score'];
-    const rows = dashboard.filtered.map(s => [s.n,s.city,s.st,s.type,s.cat.join('; '),s.ws,s.web,s.ph,'"'+(s.d.minOrder||'').replace(/"/g,'""')+'"','"'+(s.d.payment||'').replace(/"/g,'""')+'"','"'+(s.d.delivery||'').replace(/"/g,'""')+'"','"'+s.d.products.replace(/"/g,'""')+'"','"'+(s.d.specificPlants||'').replace(/"/g,'""')+'"','"'+(s.d.containers||'').replace(/"/g,'""')+'"','"'+(s.d.notes||'').replace(/"/g,'""')+'"',s.score]);
+    const h = ['Canonical ID','Legacy IDs','Name','City','State/Province','Type','Categories','Wholesale','Website','Phone','Evidence','Verification Date','Adapter Status'];
+    const rows = dashboard.filtered.map(s => [s.canonicalId,(s.legacyIds||[]).join('; '),s.n,s.city,s.st,s.type,'"'+s.cat.join('; ').replace(/"/g,'""')+'"',s.ws,s.web,s.ph,'"'+(s.d.evidence||'').replace(/"/g,'""')+'"',s.lastVerifiedAt,s.adapterStatus]);
     const csv = h.join(',') + '\n' + rows.map(r => r.join(',')).join('\n');
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
     a.download = 'bloombox_suppliers_' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
@@ -1425,14 +2311,14 @@ function renderStoreRoute() {
             '<h4 style="font-size:15px;">Nearest Suppliers to ' + store.name + '</h4>' +
             '<p style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">' + store.addr + '</p>' +
             '<p style="font-size:12px;color:var(--green-2);font-weight:600;">' + nearby.length + ' suppliers within 80 miles</p></div>';
-        h += '<table class="data-table"><thead><tr><th>Distance</th><th>Supplier</th><th>Location</th><th>Type</th><th>Score</th><th>Key Info</th></tr></thead><tbody>';
+        h += '<table class="data-table"><thead><tr><th>Distance</th><th>Supplier</th><th>Location</th><th>Type</th><th>Status</th><th>Key Info</th></tr></thead><tbody>';
         nearby.forEach(x => {
             const s = x.supplier;
             const distColor = x.dist <= 15 ? '#166534' : x.dist <= 30 ? '#854d0e' : '#6b7280';
             const info = s.d.minOrder && s.d.minOrder.includes('$') ? s.d.minOrder.substring(0,50) : s.d.products.substring(0,60) + '...';
             h += '<tr><td style="font-weight:700;color:' + distColor + ';">' + x.dist.toFixed(1) + ' mi</td>' +
                 '<td><strong>' + s.n + '</strong></td><td>' + s.city + ', ' + s.st + '</td>' +
-                '<td style="font-size:11px;">' + s.type + '</td><td>' + s.score + '</td>' +
+                '<td style="font-size:11px;">' + s.type + '</td><td>Verified</td>' +
                 '<td style="font-size:11px;max-width:200px;">' + info + '</td></tr>';
         });
         h += '</tbody></table>';
@@ -1462,7 +2348,7 @@ Dashboard.prototype.renderFavorites = function() {
         if (!s) return;
         const f = favData[id];
         h += '<div class="fav-card"><h4>' + s.n + '</h4>' +
-            '<div class="fav-meta">' + s.city + ', ' + s.st + ' — ' + s.type + ' — Score: ' + s.score + '</div>' +
+            '<div class="fav-meta">' + s.city + ', ' + s.st + ' &mdash; ' + s.type + ' &mdash; ' + s.canonicalId + '</div>' +
             '<textarea class="fav-note" placeholder="Add buyer notes..." onchange="favData[' + id + '].notes=this.value">' + (f.notes||'') + '</textarea></div>';
     });
     cont.innerHTML = h;
@@ -1473,9 +2359,9 @@ Dashboard.prototype.renderFavorites = function() {
         const s = S.find(x => x.id === id);
         if (!s) return;
         ot += '<div class="order-row"><div><strong>' + s.n + '</strong></div>' +
-            '<div><input type="text" placeholder="e.g. 1 gal perennials" style="width:100%;"></div>' +
+            '<div><input type="text" style="width:100%;"></div>' +
             '<div><input type="number" placeholder="Qty" style="width:100%;"></div>' +
-            '<div><input type="text" placeholder="$0.00" style="width:100%;"></div>' +
+            '<div><input type="text" style="width:100%;"></div>' +
             '<div><button class="btn-export" onclick="this.closest(\'.order-row\').remove()">\u00D7</button></div></div>';
     });
     document.getElementById('order-template').innerHTML = ot;
@@ -1483,8 +2369,8 @@ Dashboard.prototype.renderFavorites = function() {
 
 Dashboard.prototype.exportFavorites = function() {
     const favIds = Object.keys(favData).map(Number);
-    const h = ['Name','City','State','Type','Score','Notes'];
-    const rows = favIds.map(id => { const s = S.find(x => x.id === id); if (!s) return null; return [s.n,s.city,s.st,s.type,s.score,'"'+(favData[id].notes||'').replace(/"/g,'""')+'"']; }).filter(Boolean);
+    const h = ['Canonical ID','Name','City','State','Type','Notes'];
+    const rows = favIds.map(id => { const s = S.find(x => x.id === id); if (!s) return null; return [s.canonicalId,s.n,s.city,s.st,s.type,'"'+(favData[id].notes||'').replace(/"/g,'""')+'"']; }).filter(Boolean);
     const csv = h.join(',') + '\n' + rows.map(r => r.join(',')).join('\n');
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download = 'bloombox_favorites.csv'; a.click();
 };
@@ -1502,21 +2388,39 @@ Dashboard.prototype.clearFavorites = function() {
 // =========================================================================
 // SUPPLIER PORTAL MANAGER
 // =========================================================================
-const VAULT_KEY = 'bloombox_vault_v1';
-const SCRAPER_KEY = 'bloombox_scraper_status_v1';
-function loadVault(){try{return JSON.parse(localStorage.getItem(VAULT_KEY)||'{}');}catch(e){return{};}}
-function saveVault(v){localStorage.setItem(VAULT_KEY,JSON.stringify(v));}
-function loadScraper(){try{return JSON.parse(localStorage.getItem(SCRAPER_KEY)||'{}');}catch(e){return{};}}
-function saveScraper(s){localStorage.setItem(SCRAPER_KEY,JSON.stringify(s));}
+const LEGACY_VAULT_KEY = 'bloombox_vault_v1';
+const CREDENTIAL_META_KEY = 'bloombox_credential_metadata_v1';
+function loadCredentialMeta(){try{return JSON.parse(localStorage.getItem(CREDENTIAL_META_KEY)||'{}');}catch(e){return{};}}
+function saveCredentialMeta(v){localStorage.setItem(CREDENTIAL_META_KEY,JSON.stringify(v));}
+function escapeAttr(v){return String(v||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escapeHtml(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function migrateLegacyBrowserVault(){
+    const raw = localStorage.getItem(LEGACY_VAULT_KEY);
+    if (!raw) return;
+    let legacy = {};
+    try { legacy = JSON.parse(raw) || {}; } catch(e) { legacy = {}; }
+    const meta = loadCredentialMeta();
+    Object.entries(legacy).forEach(([sid,c]) => {
+        if (!c || typeof c !== 'object') return;
+        meta[sid] = {
+            url: c.url || '',
+            user: c.user || '',
+            acct: c.acct || '',
+            savedAt: c.savedAt || new Date().toISOString(),
+            migratedFromLegacyBrowserVault: true
+        };
+    });
+    saveCredentialMeta(meta);
+    localStorage.removeItem(LEGACY_VAULT_KEY);
+}
+migrateLegacyBrowserVault();
 
 // Merge ACCESS_META into supplier records at startup
-// Also provide safe defaults for fields that were purged (manufactured data removed)
+// Also provide safe defaults for optional display fields.
 S.forEach(s => {
     const m = ACCESS_META[s.id];
     if (m) { s.access = m.t; s.signup = m.u; s.accessNote = m.n; }
     else { s.access = 'quote'; s.signup = ''; s.accessNote = ''; }
-    // Safe defaults for purged manufactured fields
-    if (s.score === undefined) s.score = 0;
     if (!s.d) s.d = {};
     if (!s.d.products) s.d.products = '';
     if (!s.d.minOrder) s.d.minOrder = '';
@@ -1532,10 +2436,19 @@ Dashboard.prototype.portalFilter = 'all';
 Dashboard.prototype.filterPortal = function(f){this.portalFilter = f; this.renderPortal();};
 
 Dashboard.prototype.renderPortal = function(){
-    const vault = loadVault();
-    const scraper = loadScraper();
+    const credentialMeta = loadCredentialMeta();
     const counts = {public:0,login:0,pdf:0,quote:0,offline:0};
     this.raw.forEach(s => { counts[s.access] = (counts[s.access]||0)+1; });
+    const liveCounts = {};
+    if (window.LIVE_PRICES && window.LIVE_PRICES.products) {
+        window.LIVE_PRICES.products.forEach(p => {
+            if (p.supplier_id !== undefined && p.supplier_id !== null) {
+                const matched = this.raw.find(x => supplierMatchesId(x, p.supplier_id));
+                const key = matched ? matched.id : p.supplier_id;
+                liveCounts[key] = (liveCounts[key]||0)+1;
+            }
+        });
+    }
 
     // Live price feed banner (populated by scrape/run.py writing prices.js)
     const feedEl = document.getElementById('portal-live-banner');
@@ -1570,7 +2483,7 @@ Dashboard.prototype.renderPortal = function(){
     document.getElementById('portal-kpi-login').textContent = counts.login||0;
     document.getElementById('portal-kpi-pdf').textContent = counts.pdf||0;
     document.getElementById('portal-kpi-quote').textContent = counts.quote||0;
-    document.getElementById('portal-kpi-vault').textContent = Object.keys(vault).length;
+    document.getElementById('portal-kpi-vault').textContent = Object.keys(credentialMeta).length;
     ['public','login','pdf','quote'].forEach(k=>{
         const el=document.getElementById('playbook-'+k+'-count'); if(el) el.textContent=counts[k]||0;
     });
@@ -1579,12 +2492,15 @@ Dashboard.prototype.renderPortal = function(){
     if (this.portalFilter !== 'all') rows = rows.filter(s => s.access === this.portalFilter);
     // Order: login first (action items), then public, pdf, quote, offline
     const order = {login:0,public:1,pdf:2,quote:3,offline:4};
-    rows.sort((a,b) => (order[a.access]-order[b.access]) || (b.score-a.score));
+    rows.sort((a,b) => (order[a.access]-order[b.access]) || a.n.localeCompare(b.n));
 
     const accessBadge = t => '<span class="access-badge ab-'+t+'">'+t+'</span>';
     const statusDot = (s) => {
-        const st = scraper[s.id] || (s.access==='public'?'ready':s.access==='login' && vault[s.id]?'ready':s.access==='offline'?'dead':'idle');
-        const labels={live:'LIVE',ready:'READY',idle:'IDLE',dead:'OFFLINE'};
+        const st = liveCounts[s.id] ? 'live' :
+            (s.access==='offline' ? 'dead' :
+            (s.access==='public' || s.access==='pdf' ? 'ready' :
+            (s.access==='login' && credentialMeta[s.id] ? 'configured' : 'idle')));
+        const labels={live:'FEED',ready:'ADAPTER',configured:'METADATA',idle:'NEEDS SETUP',dead:'OFFLINE'};
         return '<span class="scraper-dot sd-'+st+'"></span>'+labels[st];
     };
 
@@ -1594,10 +2510,10 @@ Dashboard.prototype.renderPortal = function(){
         '<th>Access</th>'+
         '<th>Scraper</th>'+
         '<th>Notes</th>'+
-        '<th style="width:80px;">Vault</th>'+
+        '<th style="width:80px;">Config</th>'+
         '</tr></thead><tbody>';
     rows.forEach(s => {
-        const hasCreds = !!vault[s.id];
+        const hasMetadata = !!credentialMeta[s.id];
         const isExp = this.portalExpandedId === s.id;
         h += '<tr class="supplier-row" onclick="dashboard.togglePortal('+s.id+')">'+
             '<td style="font-size:11px;color:var(--text-secondary);">#'+s.id+'</td>'+
@@ -1605,24 +2521,22 @@ Dashboard.prototype.renderPortal = function(){
             '<td>'+accessBadge(s.access)+'</td>'+
             '<td style="font-size:11px;">'+statusDot(s)+'</td>'+
             '<td style="font-size:11px;max-width:280px;line-height:1.4;">'+(s.accessNote||'')+'</td>'+
-            '<td>'+(hasCreds?'<span style="color:var(--green-1);font-weight:700;">&#10003; Stored</span>':'<span style="color:var(--text-secondary);">&mdash;</span>')+'</td>'+
+            '<td>'+(hasMetadata?'<span style="color:var(--green-1);font-weight:700;">&#10003; Metadata</span>':'<span style="color:var(--text-secondary);">&mdash;</span>')+'</td>'+
             '</tr>';
         if (isExp) {
-            const c = vault[s.id] || {};
+            const c = credentialMeta[s.id] || {};
             h += '<tr class="detail-panel open"><td colspan="6"><div class="portal-detail">';
             if (s.signup) h += '<div><strong>Signup / Info:</strong> <a class="signup-link" href="'+s.signup+'" target="_blank" rel="noopener">'+s.signup+'</a></div>';
             if (s.access === 'login' || s.access === 'public') {
                 h += '<div class="cred-grid">'+
-                    '<div><label>Login URL</label><input id="cred-url-'+s.id+'" value="'+(c.url||s.signup||'')+'" placeholder="https://..."></div>'+
-                    '<div><label>Username / Email</label><input id="cred-user-'+s.id+'" value="'+(c.user||'')+'" placeholder="buyer@bloombox.com"></div>'+
-                    '<div><label>Password</label><input id="cred-pass-'+s.id+'" type="password" value="'+(c.pass||'')+'" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;"></div>'+
-                    '<div><label>Account #</label><input id="cred-acct-'+s.id+'" value="'+(c.acct||'')+'" placeholder="optional"></div>'+
+                    '<div><label>Login URL</label><input id="cred-url-'+s.id+'" value="'+escapeAttr(c.url||s.signup||'')+'" placeholder="https://..."></div>'+
+                    '<div><label>Username / Email</label><input id="cred-user-'+s.id+'" value="'+escapeAttr(c.user||'')+'"></div>'+
+                    '<div><label>Account #</label><input id="cred-acct-'+s.id+'" value="'+escapeAttr(c.acct||'')+'"></div>'+
                     '</div>'+
+                    '<div class="credential-runtime-note">Passwords are not stored in this browser. The scraper reads passwords from the local OS credential store and metadata from <code>~/.config/bloombox/credentials.json</code>.</div>'+
                     '<div class="cred-actions">'+
-                        '<button class="primary" onclick="event.stopPropagation();dashboard.saveCred('+s.id+')">Save Credentials</button>'+
-                        '<button onclick="event.stopPropagation();dashboard.markStatus('+s.id+',\'live\')">Mark Scraper Live</button>'+
-                        '<button onclick="event.stopPropagation();dashboard.markStatus('+s.id+',\'ready\')">Mark Ready</button>'+
-                        (hasCreds?'<button class="danger" onclick="event.stopPropagation();dashboard.deleteCred('+s.id+')">Delete</button>':'')+
+                        '<button class="primary" onclick="event.stopPropagation();dashboard.saveCred('+s.id+')">Save Metadata</button>'+
+                        (hasMetadata?'<button class="danger" onclick="event.stopPropagation();dashboard.deleteCred('+s.id+')">Delete Metadata</button>':'')+
                     '</div>';
             } else if (s.access === 'pdf') {
                 h += '<div style="margin-top:8px;font-size:12px;">PDF catalog supplier &mdash; schedule download + OCR pipeline.</div>';
@@ -1642,25 +2556,19 @@ Dashboard.prototype.togglePortal = function(id){
     this.renderPortal();
 };
 Dashboard.prototype.saveCred = function(id){
-    const v = loadVault();
+    const v = loadCredentialMeta();
     v[id] = {
         url: document.getElementById('cred-url-'+id).value,
         user: document.getElementById('cred-user-'+id).value,
-        pass: document.getElementById('cred-pass-'+id).value,
         acct: document.getElementById('cred-acct-'+id).value,
         savedAt: new Date().toISOString()
     };
-    saveVault(v);
-    const sc = loadScraper(); sc[id] = 'ready'; saveScraper(sc);
+    saveCredentialMeta(v);
     this.renderPortal();
 };
 Dashboard.prototype.deleteCred = function(id){
-    const v = loadVault(); delete v[id]; saveVault(v);
-    const sc = loadScraper(); delete sc[id]; saveScraper(sc);
+    const v = loadCredentialMeta(); delete v[id]; saveCredentialMeta(v);
     this.renderPortal();
-};
-Dashboard.prototype.markStatus = function(id,st){
-    const sc = loadScraper(); sc[id] = st; saveScraper(sc); this.renderPortal();
 };
 Dashboard.prototype.exportLoginQueue = function(){
     const rows = this.raw.filter(s => s.access === 'login');
@@ -1684,10 +2592,10 @@ Dashboard.prototype.exportLivePrices = function(){
     a.download = 'bloombox_live_prices_'+new Date().toISOString().slice(0,10)+'.csv';
     a.click();
 };
-Dashboard.prototype.exportVault = function(){
-    const v = loadVault();
+Dashboard.prototype.exportCredentialMetadata = function(){
+    const v = loadCredentialMeta();
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(v,null,2)],{type:'application/json'}));
-    a.download = 'bloombox_vault_' + new Date().toISOString().slice(0,10) + '.json'; a.click();
+    a.download = 'bloombox_credential_metadata_' + new Date().toISOString().slice(0,10) + '.json'; a.click();
 };
 
 const dashboard = new Dashboard(S);

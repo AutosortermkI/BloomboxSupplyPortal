@@ -114,11 +114,11 @@ class QualityGreenhousesAdapter(Adapter):
 
                 # Navigate to Availability > Crop Status via menu
                 log.info("Navigating to Crop Status Availability")
-                self._navigate_to_availability(frame)
+                self._navigate_to_availability(frame, page)
 
                 # Get all form categories from dropdown and scrape each
                 log.info("Scraping all form categories")
-                products.extend(self._scrape_all_forms(frame))
+                products.extend(self._scrape_all_forms(frame, page))
 
             finally:
                 page.close()
@@ -138,7 +138,7 @@ class QualityGreenhousesAdapter(Adapter):
 
         return unique
 
-    def _navigate_to_availability(self, frame) -> None:
+    def _navigate_to_availability(self, frame, page) -> None:
         """Click through menu to reach Crop Status Availability."""
         try:
             # The menu structure is: Availability > Crop Status
@@ -151,7 +151,7 @@ class QualityGreenhousesAdapter(Adapter):
 
             if menu_item.is_visible():
                 menu_item.click()
-                frame.page.wait_for_load_state("networkidle", timeout=15000)
+                page.wait_for_load_state("networkidle", timeout=15000)
 
             # Now click "Crop Status" submenu
             crop_status_xpath = "//span[contains(text(), 'Crop Status')] | //a[contains(text(), 'Crop Status')]"
@@ -159,12 +159,12 @@ class QualityGreenhousesAdapter(Adapter):
 
             if crop_status.is_visible():
                 crop_status.click()
-                frame.page.wait_for_load_state("networkidle", timeout=15000)
+                page.wait_for_load_state("networkidle", timeout=15000)
 
         except Exception as e:
             log.warning(f"Menu navigation failed (may already be on page): {e}")
 
-    def _scrape_all_forms(self, frame) -> list[dict]:
+    def _scrape_all_forms(self, frame, page) -> list[dict]:
         """Iterate through all "Form" dropdown options and scrape each."""
         products = []
 
@@ -180,11 +180,13 @@ class QualityGreenhousesAdapter(Adapter):
             ]
 
             dropdown = None
+            dropdown_selector = ""
             for selector in dropdown_selectors:
                 try:
                     el = frame.locator(selector).first
                     if el.is_visible():
                         dropdown = el
+                        dropdown_selector = selector
                         break
                 except Exception:
                     continue
@@ -195,7 +197,7 @@ class QualityGreenhousesAdapter(Adapter):
                 return products
 
             # Get all option values from the dropdown
-            options = frame.locator(f"{dropdown_selectors[0] or 'select'} option").all()
+            options = frame.locator(f"{dropdown_selector} option").all()
             form_values = [opt.get_attribute("value") for opt in options]
             form_values = [v for v in form_values if v]
 
@@ -207,8 +209,8 @@ class QualityGreenhousesAdapter(Adapter):
                     log.info(f"Scraping form {i+1}/{len(form_values)}: {form_val}")
 
                     # Select the form from dropdown
-                    frame.locator(dropdown_selectors[0] or "select").select_option(form_val)
-                    frame.page.wait_for_load_state("networkidle", timeout=15000)
+                    dropdown.select_option(form_val)
+                    page.wait_for_timeout(1200)
 
                     # Parse the table for this form
                     form_products = self._parse_availability_table(frame)
@@ -234,30 +236,19 @@ class QualityGreenhousesAdapter(Adapter):
             html = frame.locator("html").inner_html()
             soup = BeautifulSoup(html, "lxml")
 
-            # Find the main table — it should contain product rows
-            # Try multiple table selectors
-            table = None
-            for selector in ["table", "table[class*='data' i]", "table[class*='availability' i]"]:
-                t = soup.select_one(selector)
-                if t:
-                    table = t
-                    break
+            table = self._find_availability_table(soup)
 
             if not table:
-                log.warning("No table found on current page")
+                log.warning("No availability table found on current page")
                 return products
 
-            # Find all table rows (skip header)
             rows = table.find_all("tr")
-            if len(rows) <= 1:
-                log.warning("No data rows in table")
+            header_index, headers = self._find_header_row(rows)
+            if header_index is None:
+                log.warning("No product header row in availability table")
                 return products
 
-            header_row = rows[0]
-            data_rows = rows[1:]
-
-            # Parse header to understand column positions
-            headers = [th.get_text(strip=True).lower() for th in header_row.find_all(["th", "td"])]
+            data_rows = rows[header_index + 1:]
 
             # Column indices (adjust based on actual headers found)
             name_idx = self._find_column_index(headers, ["description", "name", "product"])
@@ -268,11 +259,11 @@ class QualityGreenhousesAdapter(Adapter):
             retail_idx = self._find_column_index(headers, ["retail ready", "retail"])
             emerging_idx = self._find_column_index(headers, ["emerging"])
             sku_idx = self._find_column_index(headers, ["crop", "sku"])
-            container_code_idx = self._find_column_index(headers, ["container", "code"])
+            container_code_idx = self._find_container_code_index(headers)
 
             # Parse data rows
             for row in data_rows:
-                cells = row.find_all("td")
+                cells = row.find_all("td", recursive=False)
                 if len(cells) < 2:
                     continue
 
@@ -280,8 +271,8 @@ class QualityGreenhousesAdapter(Adapter):
                     # Extract values safely
                     name = cells[name_idx].get_text(strip=True) if name_idx < len(cells) else ""
                     size = cells[size_idx].get_text(strip=True) if size_idx < len(cells) else ""
-                    bud_color = cells[bud_idx].get_text(strip=True) if bud_idx < len(cells) else ""
-                    cracking = cells[cracking_idx].get_text(strip=True) if cracking_idx < len(cells) else ""
+                    bud_color = self._parse_int(cells[bud_idx].get_text(strip=True) if bud_idx < len(cells) else "0")
+                    cracking = self._parse_int(cells[cracking_idx].get_text(strip=True) if cracking_idx < len(cells) else "0")
                     budded = self._parse_int(cells[budded_idx].get_text(strip=True) if budded_idx < len(cells) else "0")
                     retail_ready = self._parse_int(cells[retail_idx].get_text(strip=True) if retail_idx < len(cells) else "0")
                     emerging = self._parse_int(cells[emerging_idx].get_text(strip=True) if emerging_idx < len(cells) else "0")
@@ -292,7 +283,7 @@ class QualityGreenhousesAdapter(Adapter):
                         continue
 
                     # Total available across all stages
-                    total_available = budded + retail_ready + emerging
+                    total_available = bud_color + cracking + budded + retail_ready + emerging
 
                     products.append({
                         "name": name[:200],
@@ -318,6 +309,34 @@ class QualityGreenhousesAdapter(Adapter):
         return products
 
     @staticmethod
+    def _find_availability_table(soup: BeautifulSoup) -> Optional[Tag]:
+        """Find the product availability table, skipping menu/layout tables."""
+        for table in soup.find_all("table"):
+            rows = table.find_all("tr")
+            if len(rows) <= 1:
+                continue
+            header_index, _ = QualityGreenhousesAdapter._find_header_row(rows)
+            if header_index is not None:
+                return table
+        return None
+
+    @staticmethod
+    def _find_header_row(rows: list[Tag]) -> tuple[Optional[int], list[str]]:
+        """Find the real product header row inside the nested ePIcas table."""
+        for i, row in enumerate(rows):
+            cells = row.find_all(["th", "td"], recursive=False)
+            headers = [cell.get_text(" ", strip=True).lower() for cell in cells]
+            normalized = {" ".join(header.split()) for header in headers}
+            if (
+                len(headers) >= 8
+                and "description" in normalized
+                and "container size" in normalized
+                and "crop" in normalized
+            ):
+                return i, headers
+        return None, []
+
+    @staticmethod
     def _find_column_index(headers: list[str], keywords: list[str]) -> int:
         """Find the first column matching any of the keywords."""
         for i, header in enumerate(headers):
@@ -325,6 +344,15 @@ class QualityGreenhousesAdapter(Adapter):
                 if kw in header:
                     return i
         return 0  # Default to first column if not found
+
+    @staticmethod
+    def _find_container_code_index(headers: list[str]) -> int:
+        """Find the trailing container-code column, not the container-size column."""
+        for i, header in reversed(list(enumerate(headers))):
+            normalized = " ".join(header.split())
+            if normalized == "container":
+                return i
+        return 8 if len(headers) > 8 else 0
 
     @staticmethod
     def _parse_int(value: str) -> int:

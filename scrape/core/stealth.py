@@ -106,6 +106,14 @@ def session_path(supplier_id: int | str) -> Path:
     return _STATE_DIR / f"supplier_{supplier_id}.json"
 
 
+def storage_state_path(supplier_id: int | str) -> Path:
+    return _STATE_DIR / f"supplier_{supplier_id}.storage_state.json"
+
+
+def has_storage_state(supplier_id: int | str) -> bool:
+    return storage_state_path(supplier_id).exists()
+
+
 def load_cookies(supplier_id: int | str) -> dict[str, str]:
     p = session_path(supplier_id)
     if not p.exists():

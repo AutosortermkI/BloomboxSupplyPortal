@@ -29,14 +29,14 @@ class PrairieMoonAdapter(Adapter):
     supplier_name = "Prairie Moon Nursery"
     requires_login = False
     prefer_tier = "playwright"
-    wait_for = ".product-list .product-name, .x-product-list-item"
+    wait_for = ".g-product-card__name, .g-product-card"
     max_pages = 6
 
     def start_urls(self) -> list[str]:
         return [
-            "https://www.prairiemoon.com/seeds/wildflowers/?Per_Page=48",
-            "https://www.prairiemoon.com/seeds/grasses/?Per_Page=48",
-            "https://www.prairiemoon.com/plants/?Per_Page=48",
+            "https://www.prairiemoon.com/seeds",
+            "https://www.prairiemoon.com/plants",
+            "https://www.prairiemoon.com/seed-mixes/",
         ]
 
     def parse_page(self, html: str, url: str) -> list[dict]:
@@ -47,6 +47,7 @@ class PrairieMoonAdapter(Adapter):
         # Miva rendered product cards — multiple possible selectors
         # depending on theme version
         card_selectors = [
+            ".g-product-card",
             ".x-product-list-item",
             ".product-list-item",
             "[data-product-code]",
@@ -64,6 +65,7 @@ class PrairieMoonAdapter(Adapter):
             # Product name
             name = ""
             for name_sel in [
+                ".g-product-card__name",
                 ".product-name a", ".x-product-list-name a",
                 "h3 a", "h4 a", ".product-title a", "a.product-name",
             ]:
@@ -90,6 +92,7 @@ class PrairieMoonAdapter(Adapter):
             # Price
             price = None
             for price_sel in [
+                ".g-product-card__price",
                 ".product-price", ".x-product-list-price",
                 ".price", ".money", "span.price",
             ]:

@@ -7,15 +7,17 @@ into the Supplier Portal tab of the BloomBox dashboard.
 
 ```
 scrape/
+├── credentials.py  ← local credential helper (metadata + macOS Keychain)
+├── ADAPTER_AUDIT.md ← current production/scaffold/placeholder classifications
 ├── core/
 │   ├── fetcher.py     ← 3-tier cascade (curl_cffi → Playwright → undetected-chromedriver)
 │   ├── stealth.py     ← UA rotation, human delays, cookie persistence, proxy hooks
-│   ├── vault.py       ← reads credentials exported from dashboard Supplier Portal
+│   ├── vault.py       ← reads local credential metadata + OS-stored passwords
 │   ├── extractor.py   ← generic price extraction (JSON-LD → product cards → regex)
 │   └── adapter.py     ← base class + @register decorator
 ├── adapters/
 │   ├── generic.py     ← one-line adapters for public-pricing suppliers
-│   └── walters.py     ← example login-required adapter (Walters Gardens #110)
+│   └── walters.py     ← login-required adapter scaffold (Walters Gardens #110)
 ├── run.py             ← CLI runner with concurrency, filters, archival
 ├── output/
 │   ├── prices.json    ← latest merged feed
@@ -63,6 +65,7 @@ cd ~/BloomboxSupplyPortal/scrape
 source .venv/bin/activate
 
 python run.py --dry-run            # list adapters, don't fetch
+python run.py --preflight          # dependency and browser-tier readiness check
 python run.py --public             # all public-pricing suppliers
 python run.py --logged-in          # only suppliers with stored creds
 python run.py --id 207 178 179     # specific supplier IDs
@@ -90,18 +93,73 @@ After a successful run:
   Supplier Portal tab)
 - `scrape/output/history/<YYYYMMDD>.json` — daily archive
 
-## Credential vault
+## Preflight and publish safety
 
-Credentials live on your machine only. Export them from the dashboard:
+- Run `python -m scrape.run --preflight` before unattended jobs on a new machine.
+  It reports whether Playwright and undetected-chromedriver tiers are actually
+  installed for the selected adapters.
+- By default, an empty run will **not** overwrite an existing `prices.json` /
+  `prices.js` live feed. This prevents a broken adapter or half-configured
+  environment from wiping out the last good dashboard feed.
+- If you intentionally want to publish an empty feed, pass
+  `--allow-empty-publish`.
 
-1. Open `index.html` → **Supplier Portal** tab
-2. Click on a login-required supplier row to expand
-3. Fill in login URL / username / password / account # → **Save Credentials**
-4. Click **Export Vault JSON** to download `bloombox_vault_<date>.json`
-5. Move that file to `~/Downloads/` (default) or set `BLOOMBOX_VAULT_PATH`
-   to its location
+## Credentials
 
-The runner automatically loads the most recent export.
+The dashboard is not a password vault. It stores only non-secret login metadata
+for buyer workflow convenience. The scraper runner reads:
+
+- non-secret metadata from `~/.config/bloombox/credentials.json`
+- passwords from macOS Keychain
+
+Add one credential:
+
+```bash
+cd ~/BloomboxSupplyPortal
+python3 -m scrape.credentials set \
+  --id 110 \
+  --url https://www.waltersgardens.com/customer/account/login/ \
+  --user "$BLOOMBOX_WALTERS_USERNAME"
+```
+
+The command prompts for the supplier password. To inspect configured metadata
+without printing secrets:
+
+```bash
+python3 -m scrape.credentials list
+```
+
+That command is the source of truth for whether the Python runtime can see a
+Keychain-backed credential. The static dashboard cannot read macOS Keychain
+directly and may show zero browser metadata even when the scraper is fully
+credentialed.
+
+### Manual login session capture
+
+For suppliers with a CAPTCHA or other human approval step, do not automate the
+challenge. Use a headed Playwright handoff, complete the login manually in the
+opened browser, then let the scraper save reusable storage state:
+
+```bash
+python3 -m scrape.credentials login-session \
+  --id 43 \
+  --success-text "Log out" \
+  --success-text "Account details"
+```
+
+The helper prefills the saved username/password from the local credential
+store, never clicks CAPTCHA controls, and writes the authenticated Playwright
+storage state under `scrape/cache/sessions/`. That directory is ignored by git.
+Future Playwright-tier fetches for the supplier automatically load that state
+when it exists.
+
+Legacy plaintext dashboard vault exports are not auto-discovered anymore.
+They are accepted only when explicitly selected:
+
+```bash
+BLOOMBOX_VAULT_PATH="$HOME/Downloads/bloombox_vault_2026-04-27.json" \
+python3 -m scrape.run --logged-in
+```
 
 ## Adding a new supplier adapter
 
@@ -132,17 +190,23 @@ class MyAdapter(Adapter):
         ...
 ```
 
-**Login required:** see `adapters/walters.py` for the pattern.
+**Login required:** see `adapters/walters.py` for the current scaffold. It
+still needs verification against a real approved supplier account before it
+should be treated as production-grade.
 
-## Scheduling (later)
+## Scheduling and deployment model
 
-Once the manual runs are stable, wire it into a scheduled task with the
-Cowork `schedule` skill or a plain cron/launchd entry. Recommended:
-nightly at 3am local.
+The current deployable shape is a local internal tool:
+
+- run the static dashboard from disk or serve it as static files
+- run scraper jobs on a private local or server-side machine
+- publish only generated feed artifacts (`prices.js` / `prices.json`) to the
+  dashboard location
+- keep supplier credentials out of any hosted static dashboard
 
 ```bash
-# Example cron
-0 3 * * * cd ~/BloomboxSupplyPortal && .venv/bin/python -m scrape.run --public --logged-in
+# Example local launchd/cron payload once adapter quality is known:
+cd ~/BloomboxSupplyPortal && scrape/.venv/bin/python -m scrape.run --public --logged-in
 ```
 
 ## Proxy rotation (optional)
